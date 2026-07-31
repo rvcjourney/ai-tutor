@@ -1,0 +1,44 @@
+{
+  "states": [
+    {
+      "id": "AUCTION_RECOVERY_MENU",
+      "type": "menu",
+      "module": "auction_recovery",
+      "message": "Welcome to Auction and recovery! Please select a topic you would like to learn about.",
+      "options": [
+        { "id": "overdue_notice", "label": "Overdue Notice Process", "next": "OVERDUE_NOTICE" },
+        { "id": "pre_auction_notice", "label": "Pre-Auction Notice Requirements", "next": "PRE_AUCTION_NOTICE" },
+        { "id": "auction_conduct", "label": "Auction Conduct Rules", "next": "AUCTION_CONDUCT" },
+        { "id": "post_auction_settlement", "label": "Post-Auction Settlement", "next": "POST_AUCTION_SETTLEMENT" }
+      ]
+    },
+    {
+      "id": "OVERDUE_NOTICE",
+      "type": "auto",
+      "module": "auction_recovery",
+      "message": "When a loan crosses its due date without renewal or repayment, the system flags it overdue and an initial reminder notice is sent to the customer.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "PRE_AUCTION_NOTICE",
+      "type": "auto",
+      "module": "auction_recovery",
+      "message": "Before auctioning, at least two notices must be sent to the borrower, giving reasonable advance notice (typically around 30 days) and the auction must also be publicly advertised.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "AUCTION_CONDUCT",
+      "type": "auto",
+      "module": "auction_recovery",
+      "message": "Auctions must be conducted transparently with a fair reserve price based on the current gold rate — never auction below reserve, and maintain an auction register.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "POST_AUCTION_SETTLEMENT",
+      "type": "auto",
+      "module": "auction_recovery",
+      "message": "After the loan and charges are recovered from the auction proceeds, any surplus must be returned to the borrower — the branch cannot keep excess proceeds.",
+      "next": "EXPLAIN_FURTHER"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "states": [
+    {
+      "id": "BRANCH_OPERATIONS_MENU",
+      "type": "menu",
+      "module": "branch_operations",
+      "message": "Welcome to Branch operations and SOPs! Please select a topic you would like to learn about.",
+      "options": [
+        { "id": "opening_closing_checklist", "label": "Daily Opening/Closing Checklist", "next": "OPENING_CLOSING_CHECKLIST" },
+        { "id": "cash_vault_management", "label": "Cash & Vault Management", "next": "CASH_VAULT_MANAGEMENT" },
+        { "id": "gold_storage_security", "label": "Gold Storage & Security SOPs", "next": "GOLD_STORAGE_SECURITY" },
+        { "id": "audit_compliance_reporting", "label": "Audit & Compliance Reporting", "next": "AUDIT_COMPLIANCE_REPORTING" }
+      ]
+    },
+    {
+      "id": "OPENING_CLOSING_CHECKLIST",
+      "type": "auto",
+      "module": "branch_operations",
+      "message": "At opening, verify the vault count matches the previous closing balance and log system start-up. At closing, reconcile cash and gold stock before locking the vault.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "CASH_VAULT_MANAGEMENT",
+      "type": "auto",
+      "module": "branch_operations",
+      "message": "Cash beyond the branch's retention limit must be deposited promptly, and vault access always requires dual custody — never one person alone.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "GOLD_STORAGE_SECURITY",
+      "type": "auto",
+      "module": "branch_operations",
+      "message": "Pledged gold is stored in sealed, labeled packets matching the loan account number, inside the vault — never left at a counter or desk overnight.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "AUDIT_COMPLIANCE_REPORTING",
+      "type": "auto",
+      "module": "branch_operations",
+      "message": "Branches must maintain accurate registers (pledge, auction, cash) and be ready for surprise audits at any time — discrepancies must be reported immediately, not adjusted quietly.",
+      "next": "EXPLAIN_FURTHER"
+    }
+  ]
+}

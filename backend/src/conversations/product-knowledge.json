@@ -1,0 +1,44 @@
+{
+  "states": [
+    {
+      "id": "PRODUCT_KNOWLEDGE_MENU",
+      "type": "menu",
+      "module": "product_knowledge",
+      "message": "Welcome to Product knowledge! Please select a topic you would like to learn about.",
+      "options": [
+        { "id": "gold_loan_basics", "label": "Gold Loan Basics", "next": "GOLD_LOAN_BASICS" },
+        { "id": "ltv_ratio", "label": "Loan Amount & LTV Ratio", "next": "LTV_RATIO" },
+        { "id": "interest_schemes", "label": "Interest Rates & Schemes", "next": "INTEREST_SCHEMES" },
+        { "id": "tenure_repayment", "label": "Tenure & Repayment Options", "next": "TENURE_REPAYMENT" }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_BASICS",
+      "type": "auto",
+      "module": "product_knowledge",
+      "message": "A gold loan is a secured loan where the customer pledges gold jewelry/coins as collateral. Eligibility is simple — just valid ID and proof of gold ownership, no income proof required, which is why approval is usually same-day.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "LTV_RATIO",
+      "type": "auto",
+      "module": "product_knowledge",
+      "message": "The loan amount is capped by RBI's Loan-to-Value rule — currently up to 75% of the gold's appraised value. The rest stays as a safety margin in case gold prices fall.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "INTEREST_SCHEMES",
+      "type": "auto",
+      "module": "product_knowledge",
+      "message": "We offer bullet repayment (pay interest monthly, principal at closure), EMI schemes, and overdraft-style schemes where interest is charged only on the amount drawn.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "TENURE_REPAYMENT",
+      "type": "auto",
+      "module": "product_knowledge",
+      "message": "Standard tenure is 6-12 months, renewable. Customers can prepay or foreclose anytime; part-payments reduce the interest burden immediately.",
+      "next": "EXPLAIN_FURTHER"
+    }
+  ]
+}

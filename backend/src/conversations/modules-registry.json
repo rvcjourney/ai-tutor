@@ -1,0 +1,132 @@
+{
+  "modules": [
+    {
+      "id": "product_knowledge",
+      "title": "Product knowledge",
+      "available": true,
+      "entryState": "PRODUCT_KNOWLEDGE_MENU",
+      "reinforcementQuiz": {
+        "welcomeMessage": "Welcome back! Hope you remember what we covered on Product knowledge.",
+        "question": "What is the maximum Loan-to-Value (LTV) ratio allowed on gold loans as per RBI norms?",
+        "keywords": ["75"],
+        "minMatches": 1,
+        "maxAttempts": 3,
+        "incorrectMessage": "Not quite — it's a specific RBI-mandated percentage of the gold's value. Try again.",
+        "exhaustedMessage": "The correct answer: up to 75% LTV.",
+        "correctMessage": "Great job! What do you want to learn today out of the below menu?"
+      }
+    },
+    {
+      "id": "gold_appraisal",
+      "title": "Gold appraisal and calculations",
+      "available": true,
+      "entryState": "GOLD_APPRAISAL_MENU",
+      "reinforcementQuiz": {
+        "welcomeMessage": "Welcome back! Hope you remember what we covered on Gold appraisal and calculations.",
+        "question": "What three factors determine the loan amount during gold appraisal?",
+        "keywords": ["purity", "weight", "rate"],
+        "minMatches": 2,
+        "maxAttempts": 3,
+        "incorrectMessage": "Think about what's measured on the gold itself, plus the day's market rate. Try again.",
+        "exhaustedMessage": "The correct answer: purity, net weight, and the current gold rate per gram.",
+        "correctMessage": "Great job! What do you want to learn today out of the below menu?"
+      }
+    },
+    {
+      "id": "kyc_compliance",
+      "title": "KYC and compliance",
+      "available": true,
+      "entryState": "KYC_MENU",
+      "reinforcementQuiz": {
+        "welcomeMessage": "Welcome back! Hope you remember what we covered on KYC and compliance.",
+        "question": "So, what are the Basic KYC documents required?",
+        "keywords": ["aadhaar", "pan", "passport", "address"],
+        "minMatches": 3,
+        "maxAttempts": 3,
+        "incorrectMessage": "Not quite — think about ID, tax, travel, and residence documents. Try again.",
+        "exhaustedMessage": "The correct answer: Aadhaar, PAN, Passport, and Address proof.",
+        "correctMessage": "Great job! What do you want to learn today out of the below menu?"
+      }
+    },
+    {
+      "id": "customer_handling",
+      "title": "Customer handling",
+      "available": true,
+      "entryState": "CUSTOMER_HANDLING_MENU",
+      "reinforcementQuiz": {
+        "welcomeMessage": "Welcome back! Hope you remember what we covered on Customer handling.",
+        "question": "What should you always protect during any customer interaction?",
+        "keywords": ["privacy", "data", "confidential"],
+        "minMatches": 1,
+        "maxAttempts": 3,
+        "incorrectMessage": "Think about what the customer shares with you that others shouldn't overhear or see. Try again.",
+        "exhaustedMessage": "The correct answer: the customer's privacy/confidential data.",
+        "correctMessage": "Great job! What do you want to learn today out of the below menu?"
+      }
+    },
+    {
+      "id": "renewals_closures",
+      "title": "Renewals and closures",
+      "available": true,
+      "entryState": "RENEWALS_CLOSURES_MENU",
+      "reinforcementQuiz": {
+        "welcomeMessage": "Welcome back! Hope you remember what we covered on Renewals and closures.",
+        "question": "What are the two ways a customer can reduce their gold loan balance before full closure?",
+        "keywords": ["renewal", "part", "partial"],
+        "minMatches": 1,
+        "maxAttempts": 3,
+        "incorrectMessage": "Think about paying some of it back early, vs. resetting the whole loan. Try again.",
+        "exhaustedMessage": "The correct answer: renewal, or a part-release/partial payment.",
+        "correctMessage": "Great job! What do you want to learn today out of the below menu?"
+      }
+    },
+    {
+      "id": "auction_recovery",
+      "title": "Auction and recovery",
+      "available": true,
+      "entryState": "AUCTION_RECOVERY_MENU",
+      "reinforcementQuiz": {
+        "welcomeMessage": "Welcome back! Hope you remember what we covered on Auction and recovery.",
+        "question": "How many notices must be sent to a borrower before conducting an auction on a defaulted gold loan?",
+        "keywords": ["two", "2"],
+        "minMatches": 1,
+        "maxAttempts": 3,
+        "incorrectMessage": "It's a small number — think 'more than one'. Try again.",
+        "exhaustedMessage": "The correct answer: at least two notices.",
+        "correctMessage": "Great job! What do you want to learn today out of the below menu?"
+      }
+    },
+    {
+      "id": "fraud_detection",
+      "title": "Fraud detection",
+      "available": true,
+      "entryState": "FRAUD_DETECTION_MENU",
+      "reinforcementQuiz": {
+        "welcomeMessage": "Welcome back! Hope you remember what we covered on Fraud detection.",
+        "question": "What should you do immediately if you suspect a fraudulent gold loan application?",
+        "keywords": ["report", "escalate", "supervisor", "compliance", "manager"],
+        "minMatches": 1,
+        "maxAttempts": 3,
+        "incorrectMessage": "Think about who you should quietly involve, rather than handling it alone. Try again.",
+        "exhaustedMessage": "The correct answer: report/escalate it to your manager or compliance team.",
+        "correctMessage": "Great job! What do you want to learn today out of the below menu?"
+      }
+    },
+    {
+      "id": "branch_operations",
+      "title": "Branch operations and SOPs",
+      "available": true,
+      "entryState": "BRANCH_OPERATIONS_MENU",
+      "reinforcementQuiz": {
+        "welcomeMessage": "Welcome back! Hope you remember what we covered on Branch operations and SOPs.",
+        "question": "What should be checked and recorded at both branch opening and closing?",
+        "keywords": ["cash", "vault", "stock", "gold"],
+        "minMatches": 1,
+        "maxAttempts": 3,
+        "incorrectMessage": "Think about what's physically counted in the vault. Try again.",
+        "exhaustedMessage": "The correct answer: cash and gold/vault stock.",
+        "correctMessage": "Great job! What do you want to learn today out of the below menu?"
+      }
+    }
+  ]
+}

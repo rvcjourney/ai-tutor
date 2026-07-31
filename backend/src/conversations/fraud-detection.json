@@ -1,0 +1,44 @@
+{
+  "states": [
+    {
+      "id": "FRAUD_DETECTION_MENU",
+      "type": "menu",
+      "module": "fraud_detection",
+      "message": "Welcome to Fraud detection! Please select a topic you would like to learn about.",
+      "options": [
+        { "id": "fraud_patterns", "label": "Common Fraud Patterns", "next": "FRAUD_PATTERNS" },
+        { "id": "appraisal_red_flags", "label": "Red Flags During Appraisal", "next": "APPRAISAL_RED_FLAGS" },
+        { "id": "kyc_fraud_indicators", "label": "KYC Document Fraud Indicators", "next": "KYC_FRAUD_INDICATORS" },
+        { "id": "reporting_escalation", "label": "Reporting & Escalation Procedure", "next": "REPORTING_ESCALATION" }
+      ]
+    },
+    {
+      "id": "FRAUD_PATTERNS",
+      "type": "auto",
+      "module": "fraud_detection",
+      "message": "Watch for gold-plated fakes, tungsten-filled items (right weight, wrong purity), and borrowed jewelry pledged by someone who isn't the true owner.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "APPRAISAL_RED_FLAGS",
+      "type": "auto",
+      "module": "fraud_detection",
+      "message": "Inconsistent purity readings, tampered hallmarks, or a customer who's unusually anxious about the appraisal process are all worth a second look.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "KYC_FRAUD_INDICATORS",
+      "type": "auto",
+      "module": "fraud_detection",
+      "message": "Photocopied IDs presented as originals, mismatched photos, or documents with altered dates are common red flags — always verify against the original document.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "REPORTING_ESCALATION",
+      "type": "auto",
+      "module": "fraud_detection",
+      "message": "If you suspect fraud, don't confront the customer — quietly escalate to your branch manager or the compliance team and hold the transaction.",
+      "next": "EXPLAIN_FURTHER"
+    }
+  ]
+}

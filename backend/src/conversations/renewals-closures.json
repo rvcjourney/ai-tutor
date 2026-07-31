@@ -1,0 +1,44 @@
+{
+  "states": [
+    {
+      "id": "RENEWALS_CLOSURES_MENU",
+      "type": "menu",
+      "module": "renewals_closures",
+      "message": "Welcome to Renewals and closures! Please select a topic you would like to learn about.",
+      "options": [
+        { "id": "renewal_process", "label": "Loan Renewal Process & Eligibility", "next": "RENEWAL_PROCESS" },
+        { "id": "part_release", "label": "Part-Release / Partial Payment", "next": "PART_RELEASE" },
+        { "id": "full_closure", "label": "Full Closure & Gold Release Procedure", "next": "FULL_CLOSURE" },
+        { "id": "interest_recalc", "label": "Interest Recalculation on Renewal", "next": "INTEREST_RECALC" }
+      ]
+    },
+    {
+      "id": "RENEWAL_PROCESS",
+      "type": "auto",
+      "module": "renewals_closures",
+      "message": "A loan can be renewed by paying the outstanding interest; the principal and tenure reset. Renewal isn't automatic — the customer must request it before the due date.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "PART_RELEASE",
+      "type": "auto",
+      "module": "renewals_closures",
+      "message": "Customers can pay part of the principal to reduce their outstanding balance and interest, without fully closing the loan or releasing all the pledged gold.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "FULL_CLOSURE",
+      "type": "auto",
+      "module": "renewals_closures",
+      "message": "On full payment of principal + interest, verify the customer's ID matches the pledge receipt, then release all pledged gold and mark the loan closed in the system.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "INTEREST_RECALC",
+      "type": "auto",
+      "module": "renewals_closures",
+      "message": "On renewal, interest is recalculated from the renewal date at the then-current rate — always confirm the customer knows the new applicable rate before they agree.",
+      "next": "EXPLAIN_FURTHER"
+    }
+  ]
+}

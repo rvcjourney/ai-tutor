@@ -1,0 +1,21 @@
+{
+  "name": "rule-based-learning-chatbot-backend",
+  "version": "0.1.0",
+  "description": "Rule-based (FSM, config-driven) conversational learning platform backend. No LLM/RAG.",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --no-warnings src/server.js",
+    "dev": "nodemon --no-warnings src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
