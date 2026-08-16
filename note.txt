@@ -1,0 +1,66 @@
+AI Tutor — Feature Notes (Admin + User)
+
+======================
+ADMIN FEATURES
+======================
+
+1) Bulk content upload via CSV
+   - Paste or upload a CSV (Topic, Sub-Topic, Type, #, Question, Choice A-D, Correct, Answer/Explanation).
+   - "Preview" validates the file and shows what would be published (topic, sub-topics, question/MCQ counts) without writing anything.
+   - "Publish" writes it live — every file it touches is backed up first, and if anything fails, everything is rolled back automatically. A bad upload can never leave the app half-broken.
+
+2) Automatic content cleanup on upload
+   - Fixes CSVs exported from Excel with broken encoding: recovers lost "₹" signs and mangled em/en dashes automatically, no manual find-replace needed.
+
+3) Download / export content
+   - Any topic's current content can be downloaded as a CSV in the same format Publish accepts.
+   - Lets an admin do bulk edits offline in a spreadsheet, then re-upload to update that topic. Matching happens by the Topic name inside the file, not the filename.
+
+4) Full CRUD admin grid (Topics → Sub-Topics → Questions)
+   - A proper admin panel (Magento-style): browse Topics, drill into a Topic's Sub-Topics, drill into a Sub-Topic's Questions.
+   - Add / Edit / Delete at all three levels, one record at a time — no need to touch a spreadsheet for a single fix.
+   - A sub-topic can be created empty and filled in with questions afterward.
+   - Works alongside the CSV path, not instead of it — CSV for bulk authoring, the grid for quick one-off changes.
+   - Every single-record edit reuses the exact same validated, rollback-safe publish pipeline as the CSV path — no separate, less-safe write path.
+
+
+
+======================
+USER (LEARNER) FEATURES
+======================
+
+1) Personal greeting
+   - Asks for the learner's name once, then greets "Good Morning / Afternoon / Evening, [Name]!" based on time of day, every time they open the app.
+
+2) Progress dashboard
+   - Top of screen always shows overall % complete — moves as soon as any progress is made, not only when a full sub-topic is finished.
+   - Each topic shows a green completion bar ("3/6 topics · 50%").
+   - Each sub-topic (once inside a topic) also shows its own green bar with a real count ("6/15 covered · 40%").
+
+3) Resume where you left off
+   - Closing the app mid-course and coming back continues exactly where the learner stopped — no restart.
+   - Returning the next day to an already-finished topic instead offers a short reinforcement quiz before going back to the main menu.
+
+4) Feels like a real conversation
+   - Answering a question or picking an MCQ option shows as the learner's own sent message, with the bot's reply appearing underneath — like a real chat, without keeping any scroll-back history.
+   - A breadcrumb ("Gold Loan › LTV Ratio, Valuation & Interest Rates") shows where the learner is at all times.
+
+5) Question & Answer browsing
+   - Inside a sub-topic, questions are shown one at a time as a conversation, with Previous/Next to move around freely.
+   - The last question's "Next" becomes "Continue", which hands off into the graded quiz for that sub-topic.
+
+6) Graded quiz (MCQs)
+   - Multiple-choice questions, up to 3 attempts each, with the correct answer and explanation revealed after the attempts are used up.
+   - Clear correct/incorrect feedback, distinct from a normal reply.
+
+7) Always-available navigation
+   - "Back to Topic Menu" and "Main Menu" are shown on every single screen, so the learner is never stuck or lost.
+
+
+======================
+NOT YET BUILT (open items)
+======================
+- Estimated time left to finish the course (e.g. "~15 minutes left").
+- Automated WhatsApp reminders to bring back learners who've stalled.
+- A supervisor/manager view showing all learners' progress at once (today, each learner only sees their own).
+- Automated tests.

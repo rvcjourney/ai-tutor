@@ -8,4 +8,8 @@ function findOrCreateByExternalId(externalId) {
   return db.prepare('SELECT * FROM users WHERE id = ?').get(result.lastInsertRowid);
 }
 
-module.exports = { findOrCreateByExternalId };
+function setDisplayName(userId, displayName) {
+  db.prepare('UPDATE users SET display_name = ? WHERE id = ?').run(displayName, userId);
+}
+
+module.exports = { findOrCreateByExternalId, setDisplayName };

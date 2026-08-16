@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Tutor — Admin</title>
+  <style>
+    :root {
+      --bg: #f4f5f7;
+      --panel: #ffffff;
+      --panel-2: #fafbfc;
+      --border: #e1e4e9;
+      --text: #1c2430;
+      --text-dim: #667085;
+      --text-faint: #9499a8;
+      --accent: #2563eb;
+      --accent-2: #7c3aed;
+      --accent-bg: rgba(37, 99, 235, 0.08);
+      --success: #16a34a;
+      --success-bg: rgba(22, 163, 74, 0.1);
+      --danger: #dc2626;
+      --danger-bg: rgba(220, 38, 38, 0.08);
+      --warn: #b45309;
+      --warn-bg: rgba(180, 83, 9, 0.1);
+      --track: #e6e8ec;
+      --shadow: 0 1px 2px rgba(20, 22, 30, 0.04);
+      --shadow-lg: 0 16px 44px rgba(20, 22, 30, 0.16);
+      color-scheme: light dark;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111214;
+        --panel: #1b1c20;
+        --panel-2: #202227;
+        --border: #33353d;
+        --text: #e6e6e6;
+        --text-dim: #9aa0b4;
+        --text-faint: #6b7182;
+        --accent: #3b82f6;
+        --accent-2: #8b5cf6;
+        --accent-bg: rgba(59, 130, 246, 0.15);
+        --success: #4ade80;
+        --success-bg: rgba(74, 222, 128, 0.12);
+        --danger: #f87171;
+        --danger-bg: rgba(248, 113, 113, 0.12);
+        --warn: #d9a441;
+        --warn-bg: rgba(217, 164, 65, 0.14);
+        --track: #2c2e35;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 16px 44px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- Header ---- */
+
+    .admin-header {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      padding: 22px 20px;
+    }
+
+    .admin-header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .admin-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .admin-header-inner h1 {
+      margin: 0;
+      color: #fff;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+    }
+
+    .admin-header-sub {
+      margin: 1px 0 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12.5px;
+    }
+
+    /* ---- Layout ---- */
+
+    .admin-main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 26px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 22px 24px 26px;
+    }
+
+    .panel-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title-tag {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .panel-desc {
+      color: var(--text-dim);
+      font-size: 13.5px;
+      line-height: 1.55;
+      margin: 0 0 20px;
+      max-width: 62ch;
+    }
+
+    /* ---- Breadcrumb ---- */
+
+    .breadcrumb {
+      font-size: 12.5px;
+      margin: 0 0 16px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      min-height: 16px;
+    }
+
+    .breadcrumb a {
+      color: var(--text-dim);
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .breadcrumb a:hover { color: var(--accent); }
+
+    .breadcrumb .crumb-current {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb .crumb-sep {
+      color: var(--text-faint);
+      font-size: 12px;
+      margin: 0 1px;
+    }
+
+    /* ---- Toolbar ---- */
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .toolbar h2 {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.005em;
+    }
+
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* ---- Buttons ---- */
+
+    button {
+      font: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: filter 0.12s ease, border-color 0.12s ease, background 0.12s ease, transform 0.08s ease;
+    }
+
+    button:hover:not(:disabled) { filter: brightness(1.07); }
+    button:active:not(:disabled) { transform: scale(0.98); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    button.secondary {
+      background: var(--panel);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    button.secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); filter: none; }
+
+    button.danger {
+      background: var(--panel);
+      border-color: var(--border);
+      color: var(--danger);
+      padding: 6px 12px;
+      font-size: 12.5px;
+    }
+    button.danger:hover:not(:disabled) { background: var(--danger-bg); border-color: var(--danger); filter: none; }
+
+    button.small { padding: 6px 12px; font-size: 12.5px; }
+    button.small.primary { background: var(--accent); color: #fff; }
+
+    /* ---- Table ---- */
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-top: 14px;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+
+    thead th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--panel-2);
+      color: var(--text-faint);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      color: var(--text);
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--panel-2); }
+
+    td.actions { white-space: nowrap; text-align: right; }
+    td.truncate { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .type-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+    .type-q { background: var(--accent-bg); color: var(--accent); }
+    .type-mcq { background: var(--warn-bg); color: var(--warn); }
+
+    .correct-badge {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--success);
+      background: var(--success-bg);
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+
+    /* ---- Empty state ---- */
+
+    #gridEmpty {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 13.5px;
+      padding: 34px 20px;
+      margin-top: 14px;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      background: var(--panel-2);
+    }
+
+    /* ---- CSV source (collapsible) ---- */
+
+    #csvSource {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px 16px;
+      background: var(--panel-2);
+    }
+
+    #csvSource[open] { padding-bottom: 16px; }
+
+    #csvSourceSummary {
+      cursor: pointer;
+      padding: 12px 0;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-dim);
+      list-style: none;
+    }
+    #csvSourceSummary::-webkit-details-marker { display: none; }
+
+    #csvSourceSummary::before {
+      content: '▸';
+      display: inline-block;
+      margin-right: 8px;
+      color: var(--text-faint);
+      transition: transform 0.15s ease;
+    }
+    #csvSource[open] #csvSourceSummary::before { transform: rotate(90deg); }
+
+    #csvSourceSummary:hover { color: var(--accent); }
+
+    .link-btn {
+      background: none;
+      border: none;
+      padding: 4px 0;
+      margin-top: 10px;
+      color: var(--accent);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .link-btn:hover { opacity: 0.75; }
+
+    .preview-status {
+      font-size: 12.5px;
+      color: var(--text-dim);
+    }
+
+    .preview-intro {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .preview-intro button { flex-shrink: 0; }
+
+    /* ---- Forms ---- */
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 16px 0 6px;
+      font-size: 12.5px;
+      color: var(--text-dim);
+    }
+
+    input[type="file"], input[type="text"], select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      box-sizing: border-box;
+      font: inherit;
+      font-size: 13.5px;
+      color: var(--text);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.12s ease;
+    }
+
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
+    }
+
+    textarea.csv {
+      height: 260px;
+      font-family: ui-monospace, "SF Mono", Consolas, monospace;
+      font-size: 12.5px;
+      background: var(--panel-2);
+      resize: vertical;
+    }
+
+    textarea.field { height: 72px; resize: vertical; }
+
+    /* ---- Modal ---- */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 17, 22, 0.5);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 60px 20px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal h3 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .modal .btn-row {
+      justify-content: flex-end;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .modal-error {
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      border-radius: 8px;
+      font-size: 12.5px;
+      white-space: pre-wrap;
+    }
+
+    /* Class-only (not ID) so ".ok"/".err"/".info" can win the cascade over the
+       default hidden state without an ID-vs-class specificity fight. */
+    .result-box {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+      display: none;
+    }
+    .ok { background: var(--success-bg); border: 1px solid var(--success); color: var(--text); display: block; }
+    .err { background: var(--danger-bg); border: 1px solid var(--danger); color: var(--text); display: block; }
+    .info { background: var(--accent-bg); border: 1px solid var(--accent); color: var(--text); display: block; }
+
+    /* Used only for raw error text (e.g. a multi-line list of CSV row problems) —
+       everything else in a result box is real structured markup, not preformatted
+       text, so this stays a targeted modifier rather than the box's default. */
+    .result-box.raw {
+      white-space: pre-wrap;
+      font-family: ui-monospace, "SF Mono", Consolas, monospace;
+      font-size: 12.5px;
+    }
+
+    .preview-intro {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+    .preview-intro strong { color: var(--text); }
+
+    .preview-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preview-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .preview-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .preview-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .preview-stat {
+      font-size: 12.5px;
+      color: var(--text-dim);
+    }
+    .preview-stat strong {
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      margin-right: 3px;
+    }
+
+    .preview-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .preview-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .preview-table-wrap {
+      max-height: 440px;
+      overflow-y: auto;
+      background: var(--panel);
+    }
+
+    .preview-table { font-size: 12.5px; }
+    .preview-table th, .preview-table td { padding: 8px 10px; }
+    .preview-table td.truncate { max-width: 220px; }
+    .preview-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .preview-chip {
+      font-size: 11.5px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .btn-row { display: flex; gap: 10px; }
+  </style>
+</head>
+<body>
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-logo">🎓</div>
+      <div>
+        <h1>AI Tutor</h1>
+        <p class="admin-header-sub">Admin</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section class="panel">
+      <nav id="breadcrumb" class="breadcrumb"></nav>
+
+      <div class="toolbar">
+        <h2 id="gridTitle">Topics</h2>
+        <div class="btn-row">
+          <button id="downloadBtn" class="small secondary" style="display: none">⬇ Download CSV</button>
+          <button id="addBtn" class="small primary">+ Add</button>
+        </div>
+      </div>
+
+      <p id="gridEmpty" style="display: none"></p>
+      <div class="table-wrap">
+        <table id="grid" style="display: none">
+          <thead id="gridHead"></thead>
+          <tbody id="gridBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="toolbar">
+        <h2 class="panel-title">Publish content <span class="panel-title-tag">Bulk CSV</span></h2>
+        <button id="downloadTemplateBtn" type="button" class="small secondary">⬇ Download Template</button>
+      </div>
+      <p class="panel-desc">
+        Paste CSV below (or choose a file) to add or update a whole topic at once. Preview first to
+        check it before it goes live. For one-off fixes, use the grid above instead. New to this?
+        Download the template for the exact column format.
+      </p>
+
+      <details id="csvSource" open>
+        <summary id="csvSourceSummary">CSV source — upload a file or paste content</summary>
+
+        <label for="csvFile">CSV file</label>
+        <input type="file" id="csvFile" accept=".csv,text/csv" />
+
+        <button type="button" id="pasteToggleBtn" class="link-btn">Paste CSV text instead</button>
+
+        <div id="pasteArea" style="display: none">
+          <label for="csvText">CSV content</label>
+          <textarea id="csvText" class="csv" placeholder="ID,Topic,Sub-Topic,Type,#,Question,Choice A,Choice B,Choice C,Choice D,Correct,Answer/Explanation,Notes"></textarea>
+        </div>
+
+        <div class="btn-row" style="margin-top: 16px; align-items: center;">
+          <button id="publishBtn">Publish</button>
+          <span id="previewStatus" class="preview-status"></span>
+        </div>
+      </details>
+
+      <div id="previewResult" class="result-box"></div>
+      <div id="result" class="result-box"></div>
+    </section>
+  </main>
+
+  <div id="modalOverlay" class="modal-overlay" style="display: none">
+    <div class="modal">
+      <h3 id="modalTitle"></h3>
+      <div id="modalFields"></div>
+      <div id="modalError" class="modal-error" style="display: none"></div>
+      <div class="btn-row">
+        <button id="modalCancel" class="secondary">Cancel</button>
+        <button id="modalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

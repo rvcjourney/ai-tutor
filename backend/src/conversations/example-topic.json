@@ -1,0 +1,84 @@
+{
+  "states": [
+    {
+      "id": "EXAMPLE_TOPIC_EXAMPLE_SUB_TOPIC_Q1",
+      "type": "menu",
+      "module": "example_topic",
+      "subTopic": "example_sub_topic",
+      "screenType": "fact",
+      "message": "What is an example question?\nThis is the answer shown right below the question.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "EXAMPLE_TOPIC_EXAMPLE_SUB_TOPIC_MCQ1"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "EXAMPLE_TOPIC_EXAMPLE_SUB_TOPIC_MCQ1",
+      "type": "mcq",
+      "module": "example_topic",
+      "subTopic": "example_sub_topic",
+      "message": "Which option is correct?",
+      "options": [
+        {
+          "id": "A",
+          "label": "First choice"
+        },
+        {
+          "id": "B",
+          "label": "Second choice"
+        },
+        {
+          "id": "C",
+          "label": "Third choice"
+        },
+        {
+          "id": "D",
+          "label": "Fourth choice"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Shown after the learner answers.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "EXAMPLE_TOPIC_MENU",
+      "type": "menu",
+      "module": "example_topic",
+      "message": "Welcome to Example Topic! Please select a topic you would like to learn about.",
+      "options": [
+        {
+          "id": "example_sub_topic",
+          "label": "Example Sub-Topic",
+          "next": "EXAMPLE_TOPIC_EXAMPLE_SUB_TOPIC_Q1"
+        }
+      ]
+    }
+  ]
+}

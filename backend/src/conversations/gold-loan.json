@@ -1,0 +1,2802 @@
+{
+  "states": [
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q1",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Gold Loan\nA secured loan in which the borrower pledges gold ornaments/coins as collateral to raise funds from a bank or NBFC.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q2",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Secured Nature of Gold Loan\nSecured — the pledged gold acts as collateral against default.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q3",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Eligible Collateral for Gold Loan\nOnly jewellery, ornaments, and coins made of gold (bullion/gold ETFs/mutual fund units are not eligible).",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q4"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q4",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Fast Disbursal of Gold Loans\nBecause the collateral (gold) is easy to value, reducing the need for extensive income or credit checks.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q5"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q5",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Gold Loan Providers in India\nCommercial banks, NBFCs (e.g., Muthoot Finance, Manappuram), cooperative banks, and housing finance companies.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q6"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q6",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Lender's Risk in Gold Loan\nA fall in gold market prices reducing the collateral's value below the outstanding loan amount.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q7"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q7",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Borrower's Risk in Gold Loan\nLosing the pledged gold through auction if they default on repayment.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q8"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q8",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Purpose / Usage of Gold Loan\nYes, they can be used for consumption needs (medical, education, personal) or business/working-capital needs.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q9"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q9",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Gold Loan vs Loan Against Property\nGold loans use movable, easily liquidable collateral (gold) versus immovable property, so they process much faster.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q10"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q10",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "screenType": "fact",
+      "message": "Priority Sector Lending in Gold Loans\nGold loans extended for agricultural or small-business purposes can be classified under priority sector lending, which carries regulatory incentives for the lender.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ1"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ1",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "message": "A gold loan is classified as:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Unsecured loan"
+        },
+        {
+          "id": "B",
+          "label": "Secured loan"
+        },
+        {
+          "id": "C",
+          "label": "Overdraft"
+        },
+        {
+          "id": "D",
+          "label": "Trade credit"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Gold loans are backed by pledged gold, which makes them a secured form of credit.",
+      "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ2"
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ2",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "message": "Which of the following is NOT eligible as gold loan collateral under current RBI norms?",
+      "options": [
+        {
+          "id": "A",
+          "label": "Gold jewellery"
+        },
+        {
+          "id": "B",
+          "label": "Gold coins"
+        },
+        {
+          "id": "C",
+          "label": "Gold ETF units"
+        },
+        {
+          "id": "D",
+          "label": "Gold ornaments"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "RBI norms bar lending against primary/paper gold like ETFs; only physical jewellery, coins, and ornaments qualify.",
+      "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ3"
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ3",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "message": "Gold loans are popular mainly because of:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Long processing time"
+        },
+        {
+          "id": "B",
+          "label": "High documentation"
+        },
+        {
+          "id": "C",
+          "label": "Fast disbursal"
+        },
+        {
+          "id": "D",
+          "label": "No collateral requirement"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Because gold is quick to value, funds can be disbursed within hours, unlike most other secured loans.",
+      "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ4"
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ4",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "message": "Which entity type does NOT typically offer gold loans?",
+      "options": [
+        {
+          "id": "A",
+          "label": "NBFCs"
+        },
+        {
+          "id": "B",
+          "label": "Commercial banks"
+        },
+        {
+          "id": "C",
+          "label": "Stock exchanges"
+        },
+        {
+          "id": "D",
+          "label": "Cooperative banks"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Stock exchanges are trading venues, not lenders; gold loans come from banks, NBFCs, and cooperative banks.",
+      "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ5"
+    },
+    {
+      "id": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_MCQ5",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "fundamentals_and_concept_of_gold_loan",
+      "message": "The biggest risk to a lender in a gold loan is:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Rise in gold prices"
+        },
+        {
+          "id": "B",
+          "label": "Fall in gold prices"
+        },
+        {
+          "id": "C",
+          "label": "Borrower's income growth"
+        },
+        {
+          "id": "D",
+          "label": "Change in RBI repo rate"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "If gold prices fall, the collateral value can drop below the outstanding loan, exposing the lender to loss.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q1",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "Minimum Age for Gold Loan\nTypically 18 years, though some lenders set it at 21.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q2",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "Income Proof Requirement\nNot always — especially for small-ticket loans (below ₹2.5 lakh), where mandatory credit appraisal has been eased.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q3",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "KYC / Identity Documents Required\nKYC documents such as Aadhaar, PAN, voter ID, or passport.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q4"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q4",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "Ownership Proof of Pledged Gold\nLenders generally rely on the borrower's declaration of ownership, though some ask for purchase invoices.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q5"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q5",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "Gold Assaying Process\nThe gold is tested for purity and weight in the borrower's presence, and any deductions are explained and documented.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q6"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q6",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "Key Fact Statement (KFS)\nA mandatory, simplified disclosure document that clearly states interest rate, charges, LTV, and other key terms to the borrower.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q7"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q7",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "Disbursal Timeline\nOften within a few hours of gold valuation and document verification.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q8"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q8",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "Eligibility for Self-Employed Without ITR\nYes, since gold loans rely primarily on collateral value rather than income documentation.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q9"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q9",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "End-Use Monitoring\nA check on how loan funds are used; it mainly applies when the loan is classified under priority sector lending.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q10"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q10",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "screenType": "fact",
+      "message": "Borrower's Physical Presence Requirement\nYes, typically the borrower must be present for gold handover and assaying, per standardised RBI norms.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ1"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ1",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "message": "Under 2026 RBI norms, mandatory credit appraisal is eased for gold loans below:",
+      "options": [
+        {
+          "id": "A",
+          "label": "₹1 lakh"
+        },
+        {
+          "id": "B",
+          "label": "₹2.5 lakh"
+        },
+        {
+          "id": "C",
+          "label": "₹5 lakh"
+        },
+        {
+          "id": "D",
+          "label": "₹10 lakh"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "RBI eased mandatory credit appraisal for small-ticket gold loans under ₹2.5 lakh to speed up access for small borrowers.",
+      "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ2"
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ2",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "message": "The document that discloses interest rate, charges, and LTV clearly to the borrower is called:",
+      "options": [
+        {
+          "id": "A",
+          "label": "NOC"
+        },
+        {
+          "id": "B",
+          "label": "KFS"
+        },
+        {
+          "id": "C",
+          "label": "CIBIL report"
+        },
+        {
+          "id": "D",
+          "label": "Form 16"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "The Key Fact Statement (KFS) is the standardised, simplified disclosure of all key loan terms.",
+      "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ3"
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ3",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "message": "Assaying of gold refers to:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Insuring the gold"
+        },
+        {
+          "id": "B",
+          "label": "Testing purity and weight"
+        },
+        {
+          "id": "C",
+          "label": "Transporting the gold"
+        },
+        {
+          "id": "D",
+          "label": "Auctioning the gold"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Assaying is the process of testing the pledged gold's purity and weight before valuation.",
+      "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ4"
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ4",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "message": "Gold loan eligibility depends primarily on:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Credit score"
+        },
+        {
+          "id": "B",
+          "label": "Salary slip"
+        },
+        {
+          "id": "C",
+          "label": "Value/ownership of gold pledged"
+        },
+        {
+          "id": "D",
+          "label": "Tax returns"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Because the loan is secured by gold, eligibility hinges mainly on the value and ownership of the pledged collateral.",
+      "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ5"
+    },
+    {
+      "id": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_MCQ5",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "eligibility_documentation_and_process",
+      "message": "End-use monitoring for gold loans mainly applies to loans classified under:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Retail lending"
+        },
+        {
+          "id": "B",
+          "label": "Priority sector lending"
+        },
+        {
+          "id": "C",
+          "label": "Export credit"
+        },
+        {
+          "id": "D",
+          "label": "Bullet repayment"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "End-use checks are tied to priority sector classification, e.g., agricultural or small-business gold loans.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q1",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "Loan-to-Value (LTV) Ratio\nLoan-to-Value ratio — the loan amount expressed as a percentage of the gold's assessed value.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q2",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "Pre-2026 Uniform LTV Cap\n75% for all loan sizes.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q3",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "LTV Cap for Loans up to Rs.2.5 Lakh\nUp to 85%.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q4"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q4",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "LTV Cap for Rs.2.5-5 Lakh Loans\nUp to 80%.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q5"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q5",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "LTV Cap for Loans Above Rs.5 Lakh\n75%.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q6"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q6",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "Effective Date of Tiered LTV Framework\nApril 1, 2026.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q7"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q7",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "LTV Maintenance Throughout Tenure\nThroughout the loan tenure — lenders must ensure LTV limits don't get breached even after disbursal (e.g., due to gold price fall).",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q8"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q8",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "Rationale for Tiered LTV\nTo give small borrowers more liquidity while keeping tighter risk controls on large-ticket loans.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q9"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q9",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "Gold Loan Interest Rate Range\nRoughly 8.2% to 24% per annum, depending on the lender and loan type.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q10"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q10",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "screenType": "fact",
+      "message": "LTV Calculation Example\n₹1,70,000.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ1"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ1",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "message": "The current LTV cap for gold loans above ₹5 lakh is:",
+      "options": [
+        {
+          "id": "A",
+          "label": "85%"
+        },
+        {
+          "id": "B",
+          "label": "80%"
+        },
+        {
+          "id": "C",
+          "label": "75%"
+        },
+        {
+          "id": "D",
+          "label": "90%"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Large-ticket gold loans above ₹5 lakh remain capped at the stricter 75% LTV to control lender risk.",
+      "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ2"
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ2",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "message": "The tiered LTV framework became effective from:",
+      "options": [
+        {
+          "id": "A",
+          "label": "January 1, 2025"
+        },
+        {
+          "id": "B",
+          "label": "April 1, 2026"
+        },
+        {
+          "id": "C",
+          "label": "October 1, 2025"
+        },
+        {
+          "id": "D",
+          "label": "June 1, 2026"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "RBI's tiered LTV structure for gold loans took effect on April 1, 2026.",
+      "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ3"
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ3",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "message": "For a loan between ₹2.5 lakh and ₹5 lakh, the maximum LTV is:",
+      "options": [
+        {
+          "id": "A",
+          "label": "75%"
+        },
+        {
+          "id": "B",
+          "label": "80%"
+        },
+        {
+          "id": "C",
+          "label": "85%"
+        },
+        {
+          "id": "D",
+          "label": "90%"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "The middle loan-size tier (₹2.5–5 lakh) carries an 80% LTV cap under the new structure.",
+      "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ4"
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ4",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "message": "Under the new rules, the LTV ratio must be maintained:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Only at disbursal"
+        },
+        {
+          "id": "B",
+          "label": "Only at closure"
+        },
+        {
+          "id": "C",
+          "label": "Throughout the loan tenure"
+        },
+        {
+          "id": "D",
+          "label": "Only during renewal"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Lenders must monitor and maintain LTV limits for the full tenure, not just at the start.",
+      "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ5"
+    },
+    {
+      "id": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_MCQ5",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "ltv_ratio_valuation_and_interest_rates",
+      "message": "Approximate gold loan interest rate range in India is:",
+      "options": [
+        {
+          "id": "A",
+          "label": "2%–5% p.a."
+        },
+        {
+          "id": "B",
+          "label": "8%–24% p.a."
+        },
+        {
+          "id": "C",
+          "label": "25%–40% p.a."
+        },
+        {
+          "id": "D",
+          "label": "1%–3% p.a."
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Gold loan interest rates in India broadly range from about 8.2% to 24% per annum.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q1",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "RBI's 2025 Gold Loan Regulation\nReserve Bank of India (Lending Against Gold and Silver Collateral) Directions, 2025.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q2",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Silver Included Under Framework\nSilver (silver jewellery, ornaments, and coins).",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q3",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Rationale for Standardised Framework\nTo address inconsistent gold valuation, unmonitored LTV ratios, misuse of top-up loans, and opaque auction practices across lenders.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q4"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q4",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Ineligible Collateral (ETFs / Mutual Funds)\nNo — lending against primary (bullion) gold/silver or financial assets backed by them is prohibited.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q5"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q5",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Maximum Tenure for Bullet Repayment\n12 months — bullet loans must be fully repaid within this period.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q6"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q6",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Restrictions on Indefinite Renewal\nNo — RBI has tightened renewal/top-up norms to discourage indefinite rollovers and improve borrower discipline.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q7"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q7",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Requirements for Loan Renewal\nA formal request from the borrower, applicable credit assessment, and clearance of accrued interest (for standard-classified loans only).",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q8"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q8",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Gold Valuation Standard (IBJA)\nIBJA (India Bullion and Jewellers Association)-based valuation.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q9"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q9",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Lenders Covered Under Framework\nAll regulated lenders — commercial banks, NBFCs, cooperative banks, and housing finance companies.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q10"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q10",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "screenType": "fact",
+      "message": "Applicability to Existing Loans\nYes — existing loans must align with the updated norms at the time of renewal, including fresh valuation and KFS issuance.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ1"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ1",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "message": "RBI's gold and silver lending directions were issued in:",
+      "options": [
+        {
+          "id": "A",
+          "label": "April 2024"
+        },
+        {
+          "id": "B",
+          "label": "April 2025"
+        },
+        {
+          "id": "C",
+          "label": "January 2026"
+        },
+        {
+          "id": "D",
+          "label": "July 2026"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "The RBI (Lending Against Gold and Silver Collateral) Directions were issued in April 2025.",
+      "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ2"
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ2",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "message": "Under the new RBI rules, lending against gold ETFs or bullion is:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Encouraged"
+        },
+        {
+          "id": "B",
+          "label": "Prohibited"
+        },
+        {
+          "id": "C",
+          "label": "Mandatory"
+        },
+        {
+          "id": "D",
+          "label": "Unregulated"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "The framework prohibits lending against primary/paper gold instruments like ETFs and bullion.",
+      "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ3"
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ3",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "message": "The maximum tenure for a bullet repayment gold loan is:",
+      "options": [
+        {
+          "id": "A",
+          "label": "6 months"
+        },
+        {
+          "id": "B",
+          "label": "12 months"
+        },
+        {
+          "id": "C",
+          "label": "24 months"
+        },
+        {
+          "id": "D",
+          "label": "36 months"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Bullet repayment gold loans must be fully repaid within 12 months under the new norms.",
+      "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ4"
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ4",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "message": "The valuation of gold under the new framework is commonly benchmarked to:",
+      "options": [
+        {
+          "id": "A",
+          "label": "LIBOR"
+        },
+        {
+          "id": "B",
+          "label": "IBJA rates"
+        },
+        {
+          "id": "C",
+          "label": "NSE index"
+        },
+        {
+          "id": "D",
+          "label": "MCLR"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Gold valuation is commonly benchmarked to IBJA (India Bullion and Jewellers Association) rates.",
+      "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ5"
+    },
+    {
+      "id": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_MCQ5",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "rbi_regulatory_framework",
+      "message": "Existing gold loans must align with the new framework:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Never"
+        },
+        {
+          "id": "B",
+          "label": "Immediately, regardless of renewal"
+        },
+        {
+          "id": "C",
+          "label": "At the time of renewal"
+        },
+        {
+          "id": "D",
+          "label": "Only after 5 years"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Pre-2026 loans transition to the new norms at renewal, including fresh valuation and KFS issuance.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q1",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Bullet Repayment Gold Loan\nA loan where the borrower pays interest periodically (or accrues it) and repays the entire principal in one lump sum at the end of tenure (capped at 12 months under new rules).",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q2",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Common Repayment Structures\nEMI (principal + interest), overdraft-style facilities, and interest-only payments with principal at maturity.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q3",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Consequence of Non-Repayment\nThe lender can auction the pledged gold to recover the outstanding dues after following due notice procedures.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q4"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q4",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Borrower Notification Before Auction\nYes — transparent auction processes with prior notice to the borrower are mandated under the new framework.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q5"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q5",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Surplus After Auction\nThe surplus must be returned to the borrower.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q6"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q6",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Timeline for Return of Gold\nLenders are expected to return the gold promptly, generally within about a week of repayment, under the borrower-protective framework.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q7"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q7",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Auction Process on Default\nNo — lenders must follow due process, including notice periods, before proceeding to auction.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q8"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q8",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Standard-Classified Loan\nA loan that is not in default and is being serviced regularly, making it eligible for renewal/top-up.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q9"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q9",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Impact of Gold Price Fall on Borrower\nIt can — since LTV must be maintained through the tenure, lenders may ask for part-repayment or additional collateral if price falls significantly.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q10"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q10",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "screenType": "fact",
+      "message": "Borrower Protection in Auction Process\nTransparent, well-publicised auction procedures with timely borrower notification, replacing the earlier opaque practices.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ1"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ1",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "message": "In a bullet repayment gold loan, the principal is repaid:",
+      "options": [
+        {
+          "id": "A",
+          "label": "In monthly instalments"
+        },
+        {
+          "id": "B",
+          "label": "In one lump sum at maturity"
+        },
+        {
+          "id": "C",
+          "label": "Never"
+        },
+        {
+          "id": "D",
+          "label": "Only via auction"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Bullet loans defer the full principal to a single repayment at the end of the tenure.",
+      "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ2"
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ2",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "message": "If a borrower defaults, the lender's recourse is typically to:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Waive the loan"
+        },
+        {
+          "id": "B",
+          "label": "Auction the pledged gold"
+        },
+        {
+          "id": "C",
+          "label": "Seize other assets automatically"
+        },
+        {
+          "id": "D",
+          "label": "Report only, no recovery"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "The lender recovers dues by auctioning the pledged gold after due notice.",
+      "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ3"
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ3",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "message": "Any surplus from an auction after clearing dues must be:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Retained by the lender"
+        },
+        {
+          "id": "B",
+          "label": "Returned to the borrower"
+        },
+        {
+          "id": "C",
+          "label": "Given to RBI"
+        },
+        {
+          "id": "D",
+          "label": "Donated"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Any amount left after settling the outstanding loan from auction proceeds must go back to the borrower.",
+      "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ4"
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ4",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "message": "A loan eligible for renewal/top-up must be classified as:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Defaulted"
+        },
+        {
+          "id": "B",
+          "label": "Standard"
+        },
+        {
+          "id": "C",
+          "label": "Written-off"
+        },
+        {
+          "id": "D",
+          "label": "Auctioned"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Only standard-classified (non-defaulted) loans qualify for renewal or top-up.",
+      "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ5"
+    },
+    {
+      "id": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_MCQ5",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "repayment_default_and_auction",
+      "message": "Under the new framework, auction processes must be:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Opaque"
+        },
+        {
+          "id": "B",
+          "label": "Immediate without notice"
+        },
+        {
+          "id": "C",
+          "label": "Transparent with prior notice"
+        },
+        {
+          "id": "D",
+          "label": "Decided solely by the borrower"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "The framework mandates transparent, well-notified auction procedures to protect borrowers.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q1",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "Major NBFCs for Gold Loans\nMuthoot Finance and Manappuram Finance.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q2",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "Interest Rate Comparison: Banks vs NBFCs\nBanks generally offer lower interest rates than NBFCs, though NBFCs often disburse faster.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q3",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "NBFC Reach in Rural / Semi-Urban Areas\nBecause they've built extensive branch networks specifically focused on gold-loan lending in these areas.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q4"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q4",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "Public Sector Banks Offering Gold Loans\nYes, most public and private sector banks offer gold loan products.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q5"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q5",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "Regulator Overseeing Gold Lending\nThe Reserve Bank of India (RBI).",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q6"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q6",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "NBFC Processing Speed Advantage\nFaster in-branch valuation and disbursal, often within a few hours.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q7"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q7",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "Coverage of Cooperative Banks & HFCs\nYes, the RBI framework applies to all regulated lenders, including these.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q8"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q8",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "Digital / Fintech Platforms for Gold Loans\nYes, some platforms (e.g., digital lending apps) partner with banks/NBFCs to offer gold loans online, subject to RBI norms.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q9"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q9",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "Reasons to Choose a Bank\nTypically for a lower interest rate, especially if they already have a banking relationship.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q10"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q10",
+      "type": "menu",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "screenType": "fact",
+      "message": "Reasons to Choose an NBFC\nFor faster disbursal, more flexible eligibility, and easier access in areas with limited bank presence.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ1"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ1",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "message": "Which of these is an NBFC known for gold loans?",
+      "options": [
+        {
+          "id": "A",
+          "label": "SBI"
+        },
+        {
+          "id": "B",
+          "label": "Muthoot Finance"
+        },
+        {
+          "id": "C",
+          "label": "HDFC Bank"
+        },
+        {
+          "id": "D",
+          "label": "ICICI Bank"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Muthoot Finance is a leading NBFC specialising in gold loans; the others listed are banks.",
+      "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ2"
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ2",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "message": "Compared to NBFCs, banks generally offer:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Higher interest rates"
+        },
+        {
+          "id": "B",
+          "label": "Lower interest rates"
+        },
+        {
+          "id": "C",
+          "label": "No gold loans"
+        },
+        {
+          "id": "D",
+          "label": "Only business loans"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Banks typically price gold loans lower than NBFCs due to their lower cost of funds.",
+      "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ3"
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ3",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "message": "NBFCs are often preferred by borrowers for:",
+      "options": [
+        {
+          "id": "A",
+          "label": "Slower processing"
+        },
+        {
+          "id": "B",
+          "label": "Faster disbursal"
+        },
+        {
+          "id": "C",
+          "label": "Higher documentation"
+        },
+        {
+          "id": "D",
+          "label": "No collateral requirement"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "B",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "NBFCs are known for quick, streamlined gold-loan disbursal, often within hours.",
+      "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ4"
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ4",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "message": "The regulator overseeing gold lending by both banks and NBFCs is:",
+      "options": [
+        {
+          "id": "A",
+          "label": "SEBI"
+        },
+        {
+          "id": "B",
+          "label": "IRDAI"
+        },
+        {
+          "id": "C",
+          "label": "RBI"
+        },
+        {
+          "id": "D",
+          "label": "PFRDA"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "C",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "The Reserve Bank of India regulates gold lending across both banks and NBFCs.",
+      "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ5"
+    },
+    {
+      "id": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_MCQ5",
+      "type": "mcq",
+      "module": "gold_loan",
+      "subTopic": "providers_banks_vs_nbfcs",
+      "message": "Which entity type is NOT covered under the RBI gold/silver lending framework?",
+      "options": [
+        {
+          "id": "A",
+          "label": "Cooperative banks"
+        },
+        {
+          "id": "B",
+          "label": "NBFCs"
+        },
+        {
+          "id": "C",
+          "label": "Housing finance companies"
+        },
+        {
+          "id": "D",
+          "label": "Stock brokers"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__",
+          "navigate": true
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU",
+          "navigate": true
+        }
+      ],
+      "correctOptionId": "D",
+      "maxAttempts": 3,
+      "incorrectMessage": "Not quite — try again.",
+      "revealMessage": "Stock brokers are not lenders under this framework; the rules apply to regulated credit institutions.",
+      "next": "EXPLAIN_FURTHER"
+    },
+    {
+      "id": "GOLD_LOAN_MENU",
+      "type": "menu",
+      "module": "gold_loan",
+      "message": "Welcome to Gold Loan! Please select a topic you would like to learn about.",
+      "options": [
+        {
+          "id": "fundamentals_and_concept_of_gold_loan",
+          "label": "Fundamentals & Concept of Gold Loan",
+          "next": "GOLD_LOAN_FUNDAMENTALS_AND_CONCEPT_OF_GOLD_LOAN_Q1"
+        },
+        {
+          "id": "eligibility_documentation_and_process",
+          "label": "Eligibility, Documentation & Process",
+          "next": "GOLD_LOAN_ELIGIBILITY_DOCUMENTATION_AND_PROCESS_Q1"
+        },
+        {
+          "id": "ltv_ratio_valuation_and_interest_rates",
+          "label": "LTV Ratio, Valuation & Interest Rates",
+          "next": "GOLD_LOAN_LTV_RATIO_VALUATION_AND_INTEREST_RATES_Q1"
+        },
+        {
+          "id": "rbi_regulatory_framework",
+          "label": "RBI Regulatory Framework",
+          "next": "GOLD_LOAN_RBI_REGULATORY_FRAMEWORK_Q1"
+        },
+        {
+          "id": "repayment_default_and_auction",
+          "label": "Repayment, Default & Auction",
+          "next": "GOLD_LOAN_REPAYMENT_DEFAULT_AND_AUCTION_Q1"
+        },
+        {
+          "id": "providers_banks_vs_nbfcs",
+          "label": "Providers: Banks vs NBFCs",
+          "next": "GOLD_LOAN_PROVIDERS_BANKS_VS_NBFCS_Q1"
+        }
+      ]
+    }
+  ]
+}

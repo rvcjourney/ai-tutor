@@ -10,6 +10,11 @@
   --accent-2: #7c3aed;
   --accent-bg: rgba(37, 99, 235, 0.08);
   --error: #d33;
+  --error-bg: rgba(211, 51, 51, 0.1);
+  --success: #16a34a;
+  --success-bg: rgba(22, 163, 74, 0.1);
+  --success-fill: rgba(22, 163, 74, 0.2);
+  --track: #e6e8ec;
 
   color-scheme: light dark;
   font: 16px/1.45 system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -30,6 +35,11 @@
     --accent-2: #8b5cf6;
     --accent-bg: rgba(59, 130, 246, 0.15);
     --error: #ff6b6b;
+    --error-bg: rgba(255, 107, 107, 0.12);
+    --success: #4ade80;
+    --success-bg: rgba(74, 222, 128, 0.12);
+    --success-fill: rgba(74, 222, 128, 0.24);
+    --track: #2c2e35;
   }
 }
 
@@ -39,10 +49,20 @@
 
 body {
   margin: 0;
+  background:
+    radial-gradient(circle at 15% 0%, var(--accent-bg), transparent 45%),
+    radial-gradient(circle at 100% 100%, var(--success-bg), transparent 40%),
+    var(--bg);
 }
 
 #root {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
+}
+
+@media (min-width: 700px) {
+  #root {
+    padding: 24px 0;
+  }
 }

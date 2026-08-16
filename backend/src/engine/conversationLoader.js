@@ -27,8 +27,13 @@ function validateReferences() {
     if (state.next && !RESERVED_STATE_IDS.has(state.next) && !statesById.has(state.next)) {
       throw new Error(`State "${state.id}" has dangling "next" reference: "${state.next}"`);
     }
+    // "menu" options always carry their own "next"; "mcq" answer-choice options don't
+    // (graded against the state's top-level "next"/"correctOptionId" instead), but an
+    // "mcq" option flagged "navigate" (e.g. a Back/Main Menu button mixed into the
+    // choices) does carry its own "next" and needs the same dangling-reference check.
     if (Array.isArray(state.options)) {
       for (const option of state.options) {
+        if (!('next' in option)) continue;
         if (!RESERVED_STATE_IDS.has(option.next) && !statesById.has(option.next)) {
           throw new Error(`State "${state.id}" option "${option.id}" has dangling "next" reference: "${option.next}"`);
         }
@@ -43,6 +48,15 @@ function validateReferences() {
         if (!RESERVED_STATE_IDS.has(target) && !statesById.has(target)) {
           throw new Error(`Quiz state "${state.id}" has dangling "quiz.${key}" reference: "${target}"`);
         }
+      }
+    }
+    if (state.type === 'mcq') {
+      // state.next is already checked by the generic "next" validation above.
+      if (!Array.isArray(state.options) || state.options.length === 0) {
+        throw new Error(`MCQ state "${state.id}" has no options`);
+      }
+      if (!state.options.some((o) => o.id === state.correctOptionId)) {
+        throw new Error(`MCQ state "${state.id}" has "correctOptionId" ("${state.correctOptionId}") that doesn't match any option id`);
       }
     }
   }
@@ -82,4 +96,8 @@ function getModulesRegistry() {
   return modulesRegistry;
 }
 
-module.exports = { getState, getModulesRegistry, reload: loadAll, RESERVED_STATE_IDS };
+function getAllStates() {
+  return Array.from(statesById.values());
+}
+
+module.exports = { getState, getModulesRegistry, getAllStates, reload: loadAll, RESERVED_STATE_IDS };

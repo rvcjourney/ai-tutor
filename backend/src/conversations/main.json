@@ -11,64 +11,43 @@
       "type": "menu",
       "message": "Welcome, what support do you need with these topics?",
       "options": [
-        { "id": "product_knowledge", "label": "Product knowledge", "next": "PRODUCT_KNOWLEDGE_MENU" },
-        { "id": "gold_appraisal", "label": "Gold appraisal and calculations", "next": "GOLD_APPRAISAL_MENU" },
-        { "id": "kyc_compliance", "label": "KYC and compliance", "next": "KYC_MENU" },
-        { "id": "customer_handling", "label": "Customer handling", "next": "CUSTOMER_HANDLING_MENU" },
-        { "id": "renewals_closures", "label": "Renewals and closures", "next": "RENEWALS_CLOSURES_MENU" },
-        { "id": "auction_recovery", "label": "Auction and recovery", "next": "AUCTION_RECOVERY_MENU" },
-        { "id": "fraud_detection", "label": "Fraud detection", "next": "FRAUD_DETECTION_MENU" },
-        { "id": "branch_operations", "label": "Branch operations and SOPs", "next": "BRANCH_OPERATIONS_MENU" }
+        {
+          "id": "gold_loan",
+          "label": "Gold Loan",
+          "next": "GOLD_LOAN_MENU"
+        },
+        {
+          "id": "home_loan",
+          "label": "Home Loan",
+          "next": "HOME_LOAN_MENU"
+        },
+        {
+          "id": "example_topic",
+          "label": "Example Topic",
+          "next": "EXAMPLE_TOPIC_MENU"
+        }
       ]
-    },
-    {
-      "id": "KYC_MENU",
-      "type": "menu",
-      "module": "kyc_compliance",
-      "message": "Welcome to KYC and compliance! Please select a topic you would like to learn about.",
-      "options": [
-        { "id": "basic_kyc", "label": "Basic KYC Requirements", "next": "BASIC_KYC" },
-        { "id": "ownership_eligibility", "label": "Ownership, Eligibility & Third-Party Restrictions", "next": "OWNERSHIP_ELIGIBILITY" },
-        { "id": "aml_fraud", "label": "AML, Fraud & Suspicious Behavior", "next": "AML_FRAUD" },
-        { "id": "compliance_docs", "label": "Compliance, Documentation & Rejection Cases", "next": "COMPLIANCE_DOCS" }
-      ]
-    },
-    {
-      "id": "BASIC_KYC",
-      "type": "auto",
-      "module": "kyc_compliance",
-      "message": "Basic KYC documents required: Aadhaar, PAN, Passport, and Address proof.",
-      "next": "EXPLAIN_FURTHER"
-    },
-    {
-      "id": "OWNERSHIP_ELIGIBILITY",
-      "type": "auto",
-      "module": "kyc_compliance",
-      "message": "The gold must belong to the applicant — third-party or benami pledges aren't accepted. Applicants must be 18+ with a valid photo ID, and joint ownership requires all owners' consent and KYC.",
-      "next": "EXPLAIN_FURTHER"
-    },
-    {
-      "id": "AML_FRAUD",
-      "type": "auto",
-      "module": "kyc_compliance",
-      "message": "Watch for structuring (splitting a loan into smaller amounts to dodge reporting), mismatched applicant profile vs. loan value, and reluctance to provide originals. Report suspicious pledges to your compliance officer before disbursing.",
-      "next": "EXPLAIN_FURTHER"
-    },
-    {
-      "id": "COMPLIANCE_DOCS",
-      "type": "auto",
-      "module": "kyc_compliance",
-      "message": "Every application needs KYC + ownership declaration + appraisal certificate on file. Reject applications with mismatched signatures, expired ID, or gold that fails purity/authenticity checks — don't override an appraiser's rejection without compliance sign-off.",
-      "next": "EXPLAIN_FURTHER"
     },
     {
       "id": "EXPLAIN_FURTHER",
       "type": "menu",
       "message": "I hope this was helpful. For more topics, click on the Menu button.",
       "options": [
-        { "id": "back", "label": "Back to topic menu", "next": "__MODULE_ENTRY__" },
-        { "id": "menu", "label": "Main Menu", "next": "MAIN_MENU" },
-        { "id": "exit", "label": "Exit", "next": "EXIT" }
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        },
+        {
+          "id": "exit",
+          "label": "Exit",
+          "next": "EXIT"
+        }
       ]
     },
     {
