@@ -64,3 +64,43 @@ NOT YET BUILT (open items)
 - Automated WhatsApp reminders to bring back learners who've stalled.
 - A supervisor/manager view showing all learners' progress at once (today, each learner only sees their own).
 - Automated tests.
+
+
+Techstack ---------------------------
+Here's the actual stack, straight from the two package.json files:
+
+Backend (/backend)
+
+Node.js + Express — the whole API (/chat, /modules, /progress, /quiz, /admin), plain REST, JSON in/out.
+node:sqlite (Node's built-in SQLite, no external driver) — stores users, progress, quiz attempts, sub-topic completion, and item-level progress. Chosen originally to avoid needing native build tools for better-sqlite3.
+Plain JSON files on disk (backend/src/conversations/*.json) — the actual course content (topics/sub-topics/questions), loaded into memory as a Map at boot, hot-reloadable without a restart.
+csv-parse — parses the admin's CSV uploads.
+cors, dotenv — standard middleware/config.
+nodemon (dev only) — auto-restart on file changes.
+No ORM, no template engine — the whole conversation logic is a hand-rolled finite-state-machine engine (fsmEngine.js), not an LLM.
+Frontend (/frontend)
+
+React 19 + Vite — the learner-facing chat-bubble dashboard.
+Plain CSS (styles.css/index.css) — no Tailwind, no component library, hand-written design tokens (light/dark theme via CSS custom properties).
+No state library — a single useAppState hook plus fetch-based API calls (api/chatApi.js) is the whole data layer.
+oxlint for linting.
+Admin panel
+
+Plain HTML/CSS/vanilla JS (backend/public/admin.html + admin.js) — no framework, no build step, served directly as a static file by the Express backend.
+Deployment
+
+Render — two services: the frontend (static Vite build) and the backend (Node/Express), currently on Render's free tier with ephemeral disk (the durable-storage gap we've talked about — SQLite + the conversation JSON both live on that disk today, not in a managed database).
+Notably absent, by design: no LLM, no vector DB, no RAG — the "AI Tutor" name refers to the guided/conversational UX, not the underlying logic, which is a deterministic rule-based FSM you (or another admin) author entirely through CSV/the admin grid.
+
+Why we not choose python ?
+Honestly, this project doesn't do anything that plays to Python's strengths — no ML, no data science, no numerical work — so it wasn't rejected for a technical shortcoming. Node/Express was the more natural fit for a few concrete reasons:
+
+The frontend was always going to be React (your original spec named it). Building the backend in JavaScript too means one language, one package manager (npm), one JSON-native data flow end-to-end — no context-switching between two ecosystems, no serialization mismatches between a Python backend's types and a JS frontend's types.
+
+The app's actual shape fits Node's model well: it's a stream of small, fast request/response cycles (one chat turn = one request), nothing CPU-heavy, nothing that blocks — exactly what Node's event loop is built for. A rule-based FSM answering "what's the next state" is I/O-bound, not compute-bound.
+
+Nothing here needed Python specifically. If this were doing text embeddings, ML-based grading, or heavy data analysis, Python's ecosystem (numpy, pandas, scikit-learn, etc.) would have been the obvious pull. This is deliberately not that — it's a deterministic FSM, so that pull never existed.
+
+To be fair to Python: it would have worked completely fine here too — FastAPI + Python's built-in sqlite3 + csv module would have handled this app's actual requirements just as well, with a React frontend talking to it over REST like any other backend. It's a legitimate alternative, not one I'd argue against if you preferred it — it just wasn't the path of least friction given the frontend was already decided as React.
+
+

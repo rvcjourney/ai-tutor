@@ -11,7 +11,7 @@ export default function NamePrompt({ onSubmit }) {
 
   return (
     <div className="name-prompt">
-      <div className="bot-avatar large">🎓</div>
+      <div className="bot-avatar large">CK</div>
       <h1>Welcome to AI Tutor</h1>
       <p>What should we call you?</p>
       <form onSubmit={submit}>

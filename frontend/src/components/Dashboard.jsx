@@ -90,6 +90,7 @@ export default function Dashboard() {
             moduleId={turn.moduleId}
             subTopicId={turn.subTopicId}
             onContinue={skipToQuiz}
+            onSelect={selectOption}
             disabled={loading}
           />
         )}
@@ -109,8 +110,15 @@ export default function Dashboard() {
           />
         )}
 
-        {!error && turn && <NavFooter onSelect={selectOption} disabled={loading} />}
       </main>
+
+      {/* QAExplorer renders its own combined fixed bar (Previous/Next stacked above
+          this same footer) — rendering it again here would duplicate it. */}
+      {!error && turn && !isQaExplorer && (
+        <div className="fixed-bottom-bar">
+          <NavFooter onSelect={selectOption} disabled={loading} />
+        </div>
+      )}
     </div>
   );
 }

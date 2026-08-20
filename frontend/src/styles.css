@@ -170,6 +170,35 @@
   padding: 22px 16px 40px;
   display: flex;
   flex-direction: column;
+  /* Room for the fixed bottom bar so scrolled content never ends up hidden behind
+     it — sized for the taller variant (Q&A nav row + footer stacked together); a
+     screen with just the footer just gets a little extra breathing room instead. */
+  padding-bottom: 150px;
+}
+
+/* Pinned to the bottom of the screen at all times — Previous/Next (when present)
+   and Back to Topic Menu/Main Menu shouldn't require scrolling past a long answer
+   to reach. */
+.fixed-bottom-bar {
+  position: fixed;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 640px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 20;
+}
+
+.fixed-bottom-bar .nav-footer {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 /* ---- Breadcrumb: where you are, without a redundant nav bubble ---- */
@@ -237,6 +266,22 @@
 }
 
 .bot-bubble p + p {
+  margin-top: 6px;
+}
+
+/* Bullet lists reconstructed from tab/emoji-marked lines in long-form content
+   (multi-paragraph Answer/Explanation cells) — used inside both .bot-bubble and
+   .turn-message, so kept generic rather than scoped to one parent. */
+.rich-list {
+  margin: 6px 0 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rich-list + p,
+p + .rich-list {
   margin-top: 6px;
 }
 
@@ -653,6 +698,38 @@
 
 .option-buttons button:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+/* "Exit" reads as the finish line, not just another menu choice — filled success
+   green instead of the neutral pill every other option uses, so a learner knows at
+   a glance they've reached the end of this path. */
+.option-buttons button.option-exit {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+  font-weight: 600;
+  justify-content: center;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.option-buttons button.option-exit:hover:not(:disabled) {
+  background: var(--success);
+  filter: brightness(1.08);
+  border-color: var(--success);
+}
+
+.option-exit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 11px;
 }
 
 /* ---- MCQ grid (graded answer choices) ---- */

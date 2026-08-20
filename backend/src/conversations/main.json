@@ -25,6 +25,11 @@
           "id": "example_topic",
           "label": "Example Topic",
           "next": "EXAMPLE_TOPIC_MENU"
+        },
+        {
+          "id": "bfsi",
+          "label": "BFSI",
+          "next": "BFSI_MENU"
         }
       ]
     },

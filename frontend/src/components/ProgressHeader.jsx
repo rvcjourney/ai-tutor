@@ -4,7 +4,7 @@ export default function ProgressHeader({ overallPercent, estimatedMinutesLeft, l
   const timeLabel = formatMinutesLeft(estimatedMinutesLeft);
   return (
     <header className="app-header">
-      <div className="bot-avatar">🎓</div>
+      <div className="bot-avatar">CK</div>
       <div className="app-header-text">
         <h1>AI Tutor</h1>
         <div className="overall-progress">

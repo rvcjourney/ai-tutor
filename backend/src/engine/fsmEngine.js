@@ -202,14 +202,16 @@ function startSession(externalUserId, { simulateNextDay = false, displayName, cl
     if (progress.status === 'completed' && returningNextDay && getReinforcementQuiz(progress.module_id)) {
       entryStateId = 'ND_WELCOME';
       moduleIdHint = progress.module_id;
-    } else if (progress.status === 'in_progress') {
-      // Resume exactly where they left off (already an input-awaiting state) — no
-      // greeting here, they're mid-conversation, not "starting" a fresh interaction.
+    } else if (progress.status === 'in_progress' && progress.current_state !== 'MAIN_MENU') {
+      // Resume exactly where they left off (mid-question/quiz, an input-awaiting
+      // state) — no greeting here, they're genuinely mid-conversation, not
+      // "starting" a fresh interaction.
       const node = resolveNode(progress.current_state, progress.module_id);
       return buildResponse(node, node.message);
     }
-    // status === 'completed' and (same day, or that module has no reinforcement
-    // quiz configured) => re-greet from WELCOME (falls through).
+    // Sitting at MAIN_MENU already (idle, not mid-conversation), or completed
+    // (same day, or that module has no reinforcement quiz configured) => re-greet
+    // from WELCOME (falls through) — every time the app is opened, not just once.
   }
 
   if (entryStateId === 'WELCOME') {

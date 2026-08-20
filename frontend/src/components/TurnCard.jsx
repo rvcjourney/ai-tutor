@@ -1,5 +1,6 @@
 import OptionButtons from './OptionButtons';
 import ChatInputBar from './ChatInputBar';
+import RichText from './RichText';
 
 const FEEDBACK_META = {
   correct: { className: 'feedback-correct', icon: '✓', label: 'Correct' },
@@ -27,20 +28,14 @@ export default function TurnCard({
 
   return (
     <div className={`turn-card ${cardClass}`}>
-      {feedbackMeta ? (
+      {feedbackMeta && (
         <div className={`feedback-badge ${feedbackMeta.className}`}>
           <span className="feedback-icon">{feedbackMeta.icon}</span>
           {feedbackMeta.label}
         </div>
-      ) : (
-        <div className={`turn-avatar ${screenMeta ? 'turn-avatar-tinted' : ''}`}>{screenMeta ? screenMeta.icon : '🎓'}</div>
       )}
       <div className="turn-message">
-        {message.split('\n').map((line, i) => (
-          <p key={i} className={screenType === 'fact' && i === 0 ? 'fact-question' : undefined}>
-            {line}
-          </p>
-        ))}
+        <RichText text={message} firstLineClassName={screenType === 'fact' ? 'fact-question' : undefined} />
       </div>
       <div className="turn-input">
         {inputType === 'options' && (
