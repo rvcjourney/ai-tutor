@@ -221,25 +221,33 @@ function buildTopic(topicName, subTopicsMap) {
   const allStates = [];
   const menuOptions = [];
   const subTopicsList = [];
-  // A sub-topic literally named "Greeting" (any topic, case-insensitive — a
-  // reusable convention, not a BFSI special case) isn't a separate screen to tap
-  // through — its answer text gets folded straight into the sub-topic menu's own
-  // message, shown above the tiles on the very first screen. It still exists as a
-  // real, admin-editable sub-topic underneath; learners just never navigate to it
-  // directly, and it's excluded from the tile list.
+  // Two reusable naming conventions (any topic, case-insensitive — not BFSI
+  // specials):
+  // - A sub-topic literally named "Greeting" isn't a separate screen to tap
+  //   through — its answer text gets folded straight into the sub-topic menu's
+  //   own message, shown above the tiles. Hidden from the tile list.
+  // - A sub-topic named the *same as its topic* (an "overview" section, e.g.
+  //   topic "BFSI" having its own "BFSI" sub-topic) stays a normal, visible tile,
+  //   but finishing it flows straight into the real tile menu instead of the
+  //   generic end-of-lesson screen — so "please pick a sector" text that ends an
+  //   overview actually lands the learner on real, tappable sector tiles.
   let introMessage = null;
 
   for (const [subTopicName, rows] of subTopicsMap) {
     const subTopicId = slugifyLower(subTopicName);
     const prefix = `${moduleIdUpper}_${slugifyUpper(subTopicName)}`;
-    const isIntro = subTopicName.trim().toLowerCase() === 'greeting';
+    const normalizedSubTopic = subTopicName.trim().toLowerCase();
+    const isIntro = normalizedSubTopic === 'greeting';
+    const isOverview = normalizedSubTopic === topicName.trim().toLowerCase();
     if (isIntro) {
       introMessage = rows
         .map((r) => r.answer)
         .filter(Boolean)
         .join('\n\n');
     }
-    const { states, firstStateId } = buildStatesForSubTopic(prefix, moduleId, subTopicId, rows);
+    const { states, firstStateId } = buildStatesForSubTopic(prefix, moduleId, subTopicId, rows, {
+      endTarget: isIntro || isOverview ? menuId : undefined,
+    });
     allStates.push(...states);
     // Always listed for admin management, even with zero questions yet — but only
     // reachable from the learner-facing menu once it actually has content. Hidden

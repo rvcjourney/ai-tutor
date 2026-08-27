@@ -11,7 +11,7 @@
         {
           "id": "next",
           "label": "Next ▸",
-          "next": "EXPLAIN_FURTHER"
+          "next": "BFSI_MENU"
         },
         {
           "id": "back",
@@ -111,7 +111,7 @@
         {
           "id": "next",
           "label": "Next ▸",
-          "next": "EXPLAIN_FURTHER"
+          "next": "BFSI_MENU"
         },
         {
           "id": "back",
