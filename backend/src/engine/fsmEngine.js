@@ -185,6 +185,17 @@ function persistProgress(userId, node, moduleId, subTopicId) {
   }
 }
 
+/** A learner's saved position (current_state/module_id) can go stale if an admin
+ *  deletes or renames the topic they were in — the state they were pointing at
+ *  simply doesn't exist anymore. Rather than let that surface as a raw "unknown
+ *  state" error with no way out (the old behavior — "Retry" just failed the same
+ *  way every time), land them back on the main menu, which always exists. */
+function recoverToMainMenu(userId) {
+  const { node, message, moduleId, subTopicId } = resolveChain('MAIN_MENU', null, null);
+  persistProgress(userId, node, moduleId, subTopicId);
+  return buildResponse(node, message);
+}
+
 function startSession(externalUserId, { simulateNextDay = false, displayName, clientHour } = {}) {
   const user = userRepository.findOrCreateByExternalId(externalUserId);
   if (displayName) {
@@ -206,8 +217,12 @@ function startSession(externalUserId, { simulateNextDay = false, displayName, cl
       // Resume exactly where they left off (mid-question/quiz, an input-awaiting
       // state) — no greeting here, they're genuinely mid-conversation, not
       // "starting" a fresh interaction.
-      const node = resolveNode(progress.current_state, progress.module_id);
-      return buildResponse(node, node.message);
+      try {
+        const node = resolveNode(progress.current_state, progress.module_id);
+        return buildResponse(node, node.message);
+      } catch {
+        return recoverToMainMenu(user.id);
+      }
     }
     // Sitting at MAIN_MENU already (idle, not mid-conversation), or completed
     // (same day, or that module has no reinforcement quiz configured) => re-greet
@@ -235,7 +250,14 @@ function handleMessage(externalUserId, input) {
     throw Object.assign(new Error('No active session — call /chat/start first.'), { statusCode: 400 });
   }
 
-  const currentNode = resolveNode(progress.current_state, progress.module_id);
+  let currentNode;
+  try {
+    currentNode = resolveNode(progress.current_state, progress.module_id);
+  } catch {
+    // Same stale-reference case as startSession — the topic they were mid-message
+    // in got deleted/renamed out from under them. Recover instead of erroring.
+    return recoverToMainMenu(user.id);
+  }
   const trimmedInput = typeof input === 'string' ? input.trim() : '';
 
   // Global navigation shortcuts — the UI's persistent "Back to Topic Menu"/"Main

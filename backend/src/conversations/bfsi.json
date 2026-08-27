@@ -1,17 +1,217 @@
 {
   "states": [
     {
-      "id": "BFSI_BANK_Q1",
+      "id": "BFSI_GREETING_Q1",
       "type": "menu",
       "module": "bfsi",
-      "subTopic": "bank",
+      "subTopic": "greeting",
       "screenType": "fact",
-      "message": "What is a Bank?\n\"Great! Let us understand more about Banks!      \n\nBanks accept deposits from savers, provide loans to borrowers, and offer services that help individuals and businesses manage their finances.\n\nBanks offer two major categories of products:\n\n1. Liability Products � Deposits\n�\tSavings Account\n�\tCurrent Account\n�\tFixed Deposit (FD)\n�\tRecurring Deposit (RD)\n�\tSalary Account\n\n2. Asset Products � Loans\n\n�\tHome Loan\n�\tPersonal Loan\n�\tVehicle Loan\n�\tEducation Loan\n�\tGold Loan\n�\tBusiness Loan\n�\tLoan Against Property (LAP)\n�\tAgricultural Loan\n�\tWorking Capital Loan\n\nBanks also provide digital banking, payment solutions, investment options and other financial services, including Debit Cards, Credit Cards, UPI, Internet Banking, Mobile Banking and Locker Facilities.\n\nLet us continue to understand the next segment of BFSI!\"",
+      "message": "Greeting\nI am your AI learning guide. Welcome to the world of BFSI � Banking, Financial Services, and Insurance!\n\nI will help you explore the BFSI industry, understand career opportunities, and discover the skills you need to build a successful career.",
       "options": [
         {
           "id": "next",
           "label": "Next ▸",
           "next": "EXPLAIN_FURTHER"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_BFSI_Q1",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "bfsi",
+      "screenType": "fact",
+      "message": "What is BFSI?\nLet us begin with \"What is BFSI?\"\nIn simple terms, it is the industry that helps people and businesses manage, save, borrow, invest, and protect their money.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_BFSI_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_BFSI_Q2",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "bfsi",
+      "screenType": "fact",
+      "message": "Meet the Four BFSI Sectors\nThere are four major sectors of BFSI: Banking, Financial Services (NBFCs), Securities & Capital Markets, and Insurance. \nThese four sectors are closely connected to our everyday lives.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_BFSI_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_BFSI_Q3",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "bfsi",
+      "screenType": "fact",
+      "message": "BFSI in Everyday Life\nLet us look at an example: In your everyday life you may have a bank account, use UPI or a debit card, take an education or home loan, invest in a mutual fund, or have health or life insurance. \nAll these activities are part of BFSI industry.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_BFSI_Q4"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_BFSI_Q4",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "bfsi",
+      "screenType": "fact",
+      "message": "Explore Each BFSI Sector\nLet us learn more about each sector:\nPlease select a topic:\n1. Banking\n2. Financial Services (NBFCs)\n3. Securities and Capital Market\n4. Insurance",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "EXPLAIN_FURTHER"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_BANKING_Q1",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "banking",
+      "screenType": "fact",
+      "message": "Meet the Banking World\nGreat! \nLet us learn more about banks! \nBanks accept deposits from customers and use these funds to provide loans and other financial services. They also offer payment and digital banking services.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_BANKING_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_BANKING_Q2",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "banking",
+      "screenType": "fact",
+      "message": "Explore Banking Products\nNow, let us discover what banks offer!\nBanks offer two major categories of products:\n\n1. Liability Products � Deposits\n?? Savings Account\n?? Current Account\n?? Salary Account\n�and more\n\n2. Asset Products � Loans\n?? Home Loan\n?? Personal Loan\n?? Vehicle Loan\n?? Business Loan\n�and more",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_BANKING_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_BANKING_Q3",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "banking",
+      "screenType": "fact",
+      "message": "Know Your Banks\nFew examples of banks are SBI, ICICI and AU Small Finance Bank etc.\n\nLet us continue to understand the next BFSI sector!\n\nPlease select a topic:\n1. Banking\n2. Financial Services (NBFCs)\n3. Securities and Capital Market\n4. Insurance",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "EXPLAIN_FURTHER"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_FINANCIAL_SERVICES_NBFCS_Q1",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "financial_services_nbfcs",
+      "screenType": "fact",
+      "message": "Step into Financial Services\nNow, let us explore Financial Services!\nFinancial Services are companies that provide loans, investments, payments and other financial solutions and NBFC is an important part of this sector.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_FINANCIAL_SERVICES_NBFCS_Q2"
         },
         {
           "id": "back",
@@ -31,12 +231,112 @@
       "module": "bfsi",
       "subTopic": "financial_services_nbfcs",
       "screenType": "fact",
-      "message": "What are Financial Services?\nLet�s move to Financial Services.\n\nNBFCs (Non-Banking Financial Companies) are financial institutions that provide various financial services, especially loans and credit, without functioning as traditional banks.\n\nKey Features of NBFCs:\n?? Provide Loans � Personal, Business, Gold, Vehicle and other loans\n?? Gold Financing � Provide loans against eligible gold jewellery\n?? Vehicle & Tractor Finance � Support vehicle and agricultural equipment purchases\n?? Property Finance � Offer Loans Against Property (LAP)\n?? Business Finance � Provide loans to SMEs and MSMEs\n?? Microfinance � Provide small loans to underserved customers\n?? Digital Services � Offer online loan applications, payments and customer services\n?? Specialized Financing � Focus on specific customer segments and financial needs\"",
+      "message": "Discover NBFCs\nNBFC stands for Non-Banking Financial Company.\nNBFCs serve individuals, small businesses, farmers, and many other customer segments.\nThey play an important role in making credit available to businesses, especially where traditional banking may have limited reach.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_FINANCIAL_SERVICES_NBFCS_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_FINANCIAL_SERVICES_NBFCS_Q3",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "financial_services_nbfcs",
+      "screenType": "fact",
+      "message": "Explore Loan Products\nNow, let us explore the loans that help meet different financial needs!\nCommon Loan Products Include:\n?? Vehicle Loans\n?? Housing Loans\n?? Gold Loans\n?? Microfinance\n�and more\nUnderstanding these loan products will help you confidently interact with customers and identify suitable financial solutions.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_FINANCIAL_SERVICES_NBFCS_Q4"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_FINANCIAL_SERVICES_NBFCS_Q4",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "financial_services_nbfcs",
+      "screenType": "fact",
+      "message": "Meet the NBFCs\nExamples of NBFCs are L&T Finance, Muthoot Fincorp, and Poonawalla Fincorp.\nNow we�ve explored Financial Services, let�s move on to the next BFSI sector.\nPlease select a topic:\n1. Banking\n2. Financial Services (NBFCs)\n3. Securities and Capital Market\n4. Insurance",
       "options": [
         {
           "id": "next",
           "label": "Next ▸",
           "next": "EXPLAIN_FURTHER"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_SECURITIES_AND_CAPITAL_MARKETS_Q1",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "securities_and_capital_markets",
+      "screenType": "fact",
+      "message": "Explore the World of Investments\nLet us explore the world of investments.\nThe securities market helps companies raise funds and enables people to invest for wealth creation through:",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_SECURITIES_AND_CAPITAL_MARKETS_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_SECURITIES_AND_CAPITAL_MARKETS_Q2",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "securities_and_capital_markets",
+      "screenType": "fact",
+      "message": "Discover Investment Products & Services\nInvestors can access the market through:\n?? Stock Exchanges � Where securities are bought and sold\n?? Stock Brokers � Help investors buy and sell securities\n?? Investment Platforms � Provide convenient access to investment products\n�and more",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_SECURITIES_AND_CAPITAL_MARKETS_Q3"
         },
         {
           "id": "back",
@@ -56,7 +356,7 @@
       "module": "bfsi",
       "subTopic": "securities_and_capital_markets",
       "screenType": "fact",
-      "message": "What are Securities & Capital Markets?\n\"Let�s explore the world of investments.\nThe securities market helps companies raise funds for business growth while providing individuals with opportunities to invest and build wealth.\n\nCommon securities market products include:\n�\tShares (Equity)\n�\tBonds\n�\tMutual Funds\n�\tGovernment Securities\n�\tExchange Traded Funds (ETFs)\n�\tInitial Public Offerings (IPO)\nInvestors can access these products through stock exchanges and investment platforms, with support from brokers, investment advisors, and financial institutions.\"",
+      "message": "Meet the Market Players\nLet us look at a few examples!\n\nSome well-known investment platforms and brokers include HDFC Securities, Angel One, and Sharekhan.\n\nNow we�ve explored the securities market, let�s move on to the next BFSI sector!\nPlease select a topic:\n1. Banking\n2. Financial Services (NBFCs)\n3. Securities and Capital Market\n4. Insurance",
       "options": [
         {
           "id": "next",
@@ -76,12 +376,62 @@
       ]
     },
     {
-      "id": "BFSI_INSURANCE_Q4",
+      "id": "BFSI_INSURANCE_Q1",
       "type": "menu",
       "module": "bfsi",
       "subTopic": "insurance",
       "screenType": "fact",
-      "message": "What is Insurance Markets?\n\"Let�s explore insurance.\nInsurance provides financial protection against unexpected losses and risks such as accidents, illness, death, and damage to property. It helps individuals and businesses manage financial risks and provides support when unexpected events occur. \n\nTypes of Insurance:\n???????? Life Insurance � Provides financial protection to your family.\n?? Health Insurance � Helps cover medical and hospitalization expenses.\n?? Motor Insurance � Provides protection against risks related to vehicles.\n?? Property Insurance � Protects homes and other property against covered risks.\n?? Travel Insurance � Provides protection against common travel-related risks.\n??? Personal Accident Insurance � Provides financial support in case of accidental injury, disability or death.\n?? Commercial Insurance � Protects businesses against various risks, losses and liabilities.\"",
+      "message": "Step into the World of Insurance\nNow, let us explore the world of Insurance!\nInsurance protects people and businesses against financial losses caused by accidents, illness, death or damage to property. Insurance covers many areas of our lives.",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_INSURANCE_Q2"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_INSURANCE_Q2",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "insurance",
+      "screenType": "fact",
+      "message": "Explore Types of Insurance\nInsurance covers different areas of our lives: \n???????? Life Insurance � Protects your family\n?? Health Insurance � Covers medical expenses\n?? Motor Insurance � Protects vehicles\n?? Property Insurance � Protects property\n?? Travel Insurance � Covers travel-related risks\n�and more",
+      "options": [
+        {
+          "id": "next",
+          "label": "Next ▸",
+          "next": "BFSI_INSURANCE_Q3"
+        },
+        {
+          "id": "back",
+          "label": "Back to topic menu",
+          "next": "__MODULE_ENTRY__"
+        },
+        {
+          "id": "menu",
+          "label": "Main Menu",
+          "next": "MAIN_MENU"
+        }
+      ]
+    },
+    {
+      "id": "BFSI_INSURANCE_Q3",
+      "type": "menu",
+      "module": "bfsi",
+      "subTopic": "insurance",
+      "screenType": "fact",
+      "message": "Meet the Insurance Players\nLet us look at a few examples!\nSome well-known insurance companies include LIC, Tata AIG General Insurance, and Bajaj Allianz.\n\nNow we�ve explored the insurance, let�s move on to the next BFSI sector!\nPlease select a topic:\n1. Banking\n2. Financial Services (NBFCs)\n3. Securities and Capital Market\n4. Insurance",
       "options": [
         {
           "id": "next",
@@ -101,87 +451,12 @@
       ]
     },
     {
-      "id": "BFSI_ANALYZE_CAREER_OPPORTUNITIES_AND_GROWTH_Q5",
+      "id": "BFSI_CLOSURE_Q1",
       "type": "menu",
       "module": "bfsi",
-      "subTopic": "analyze_career_opportunities_and_growth",
+      "subTopic": "closure",
       "screenType": "fact",
-      "message": "Analyze Career Opportunities and Growth\n\"Great choice!\nBFSI is a rapidly growing industry in India, creating numerous career opportunities across banking, digital finance and insurance�from entry-level roles to leadership positions.\n\nKey Benefits of a BFSI Career:\n�\t?? Abundant career opportunities\n�\t?? Professional work environment\n�\t?? Competitive salary and incentives\n�\t?? Performance-based growth\n�\t?? Job stability and long-term career growth\n�\t?? Opportunities across India\n�\t?? Continuous learning and skill development\"",
-      "options": [
-        {
-          "id": "next",
-          "label": "Next ▸",
-          "next": "EXPLAIN_FURTHER"
-        },
-        {
-          "id": "back",
-          "label": "Back to topic menu",
-          "next": "__MODULE_ENTRY__"
-        },
-        {
-          "id": "menu",
-          "label": "Main Menu",
-          "next": "MAIN_MENU"
-        }
-      ]
-    },
-    {
-      "id": "BFSI_EXPLORE_CAREER_OPPORTUNITIES_Q6",
-      "type": "menu",
-      "module": "bfsi",
-      "subTopic": "explore_career_opportunities",
-      "screenType": "fact",
-      "message": "Explore Career Opportunities\nExcellent choice! \nBFSI offers clear career progression. With experience and performance, you can move from entry-level roles to supervisory, managerial and specialist positions.\nFor example:\nExecutive ? Senior Executive ? Team Leader ? Manager ? Regional/Business Head\n\nEntry-level career opportunities in BFSI include:\n� Relationship Executive\n� Sales Officer\n� Customer Service Executive\n� Banking Operations Executive\n� Loan Processing Executive\n� Credit Officer/Analyst\n� Collection Officer\n� Branch Operations Executive\n� Gold Loan Executive\n� Insurance Advisor\n� Claims Executive\n� Customer Relationship Officer\n� Business Development Executive\n� Tele-Relationship Executive",
-      "options": [
-        {
-          "id": "next",
-          "label": "Next ▸",
-          "next": "EXPLAIN_FURTHER"
-        },
-        {
-          "id": "back",
-          "label": "Back to topic menu",
-          "next": "__MODULE_ENTRY__"
-        },
-        {
-          "id": "menu",
-          "label": "Main Menu",
-          "next": "MAIN_MENU"
-        }
-      ]
-    },
-    {
-      "id": "BFSI_DEVELOP_ESSENTIAL_BFSI_SKILLS_Q7",
-      "type": "menu",
-      "module": "bfsi",
-      "subTopic": "develop_essential_bfsi_skills",
-      "screenType": "fact",
-      "message": "Develop Essential BFSI Skills\nExcellent choice! ??\n\nLet�s now identify the skills that can help you succeed in BFSI:\n\n� ??? Strong communication skills\n� ?? Customer-focused attitude\n� ?? Basic computer skills\n� ?? Numerical and analytical ability\n� ?? Positive and professional personality\n� ?? Problem-solving skills\n� ?? Teamwork and collaboration\n� ?? Professional ethics and integrity\n� ?? Willingness to learn and grow\n\nRemember: Technical knowledge can be learned through training, but a positive attitude, discipline, and willingness to learn help build a successful long-term career.",
-      "options": [
-        {
-          "id": "next",
-          "label": "Next ▸",
-          "next": "EXPLAIN_FURTHER"
-        },
-        {
-          "id": "back",
-          "label": "Back to topic menu",
-          "next": "__MODULE_ENTRY__"
-        },
-        {
-          "id": "menu",
-          "label": "Main Menu",
-          "next": "MAIN_MENU"
-        }
-      ]
-    },
-    {
-      "id": "BFSI_END_Q8",
-      "type": "menu",
-      "module": "bfsi",
-      "subTopic": "end",
-      "screenType": "fact",
-      "message": "End\nCongratulations! ??\n\nYou�ve explored:\n\n� ?? Banking\n� ?? Financial Services (NBFCs)\n� ?? Securities & Capital Markets\n� ??? Insurance\n� ?? Career Opportunities\n� ?? Essential BFSI Skills\nYou�re now one step closer to building a successful career in BFSI! ??\n\nWhat would you like to do next?\n\n?? Menu\n?? Exit",
+      "message": "Close\nNow that you have read about the four sectors, let us understand how are these connected with each other.\n�\tImagine you receive your salary in a Bank.\n�\tYou take a Home Loan from a bank or NBFC.\n�\tYou invest some savings in Mutual Funds or Shares.\n�\tYou buy Health and Life Insurance for protection.\n\n?? Without realising it, BFSI is already a part of your everyday life!",
       "options": [
         {
           "id": "next",
@@ -204,47 +479,42 @@
       "id": "BFSI_MENU",
       "type": "menu",
       "module": "bfsi",
-      "message": "Welcome to BFSI! Please select a topic you would like to learn about.",
+      "message": "I am your AI learning guide. Welcome to the world of BFSI � Banking, Financial Services, and Insurance!\n\nI will help you explore the BFSI industry, understand career opportunities, and discover the skills you need to build a successful career.",
       "options": [
         {
-          "id": "bank",
-          "label": "Bank",
-          "next": "BFSI_BANK_Q1"
+          "id": "greeting",
+          "label": "Greeting",
+          "next": "BFSI_GREETING_Q1"
+        },
+        {
+          "id": "bfsi",
+          "label": "BFSI",
+          "next": "BFSI_BFSI_Q1"
+        },
+        {
+          "id": "banking",
+          "label": "Banking",
+          "next": "BFSI_BANKING_Q1"
         },
         {
           "id": "financial_services_nbfcs",
           "label": "Financial Services (NBFCs)",
-          "next": "BFSI_FINANCIAL_SERVICES_NBFCS_Q2"
+          "next": "BFSI_FINANCIAL_SERVICES_NBFCS_Q1"
         },
         {
           "id": "securities_and_capital_markets",
           "label": "Securities & Capital Markets",
-          "next": "BFSI_SECURITIES_AND_CAPITAL_MARKETS_Q3"
+          "next": "BFSI_SECURITIES_AND_CAPITAL_MARKETS_Q1"
         },
         {
           "id": "insurance",
           "label": "Insurance",
-          "next": "BFSI_INSURANCE_Q4"
+          "next": "BFSI_INSURANCE_Q1"
         },
         {
-          "id": "analyze_career_opportunities_and_growth",
-          "label": "Analyze Career Opportunities and Growth",
-          "next": "BFSI_ANALYZE_CAREER_OPPORTUNITIES_AND_GROWTH_Q5"
-        },
-        {
-          "id": "explore_career_opportunities",
-          "label": "Explore Career Opportunities",
-          "next": "BFSI_EXPLORE_CAREER_OPPORTUNITIES_Q6"
-        },
-        {
-          "id": "develop_essential_bfsi_skills",
-          "label": "Develop Essential BFSI Skills",
-          "next": "BFSI_DEVELOP_ESSENTIAL_BFSI_SKILLS_Q7"
-        },
-        {
-          "id": "end",
-          "label": "End",
-          "next": "BFSI_END_Q8"
+          "id": "closure",
+          "label": "Closure",
+          "next": "BFSI_CLOSURE_Q1"
         }
       ]
     }

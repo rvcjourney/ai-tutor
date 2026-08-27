@@ -94,22 +94,27 @@ function getProgressSummary(userId) {
       return {
         id: st.id,
         label: st.label,
+        hidden: Boolean(st.hidden),
         completed: isCompleted,
         itemsSeen,
         totalItems,
         percent: isCompleted ? 100 : percent,
       };
     });
-    const completedSubTopics = subTopicDetails.filter((st) => st.completed).length;
-    totalSubTopics += subTopics.length;
+    // An auto-play intro ("Greeting") isn't a pickable topic, so it doesn't count
+    // toward the "3/6 topics" tally either — that number should match what's
+    // actually shown as tiles.
+    const visibleSubTopics = subTopicDetails.filter((st) => !st.hidden);
+    const completedSubTopics = visibleSubTopics.filter((st) => st.completed).length;
+    totalSubTopics += visibleSubTopics.length;
     totalCompleted += completedSubTopics;
     return {
       id: m.id,
       title: m.title,
       entryState: m.entryState || null,
-      totalSubTopics: subTopics.length,
+      totalSubTopics: visibleSubTopics.length,
       completedSubTopics,
-      percent: subTopics.length ? Math.round((completedSubTopics / subTopics.length) * 100) : 0,
+      percent: visibleSubTopics.length ? Math.round((completedSubTopics / visibleSubTopics.length) * 100) : 0,
       estimatedMinutesLeft: Math.ceil(moduleRemainingSeconds / 60),
       subTopics: subTopicDetails,
     };

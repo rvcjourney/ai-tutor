@@ -63,8 +63,17 @@
       "entryState": "BFSI_MENU",
       "subTopics": [
         {
-          "id": "bank",
-          "label": "Bank"
+          "id": "greeting",
+          "label": "Greeting",
+          "hidden": true
+        },
+        {
+          "id": "bfsi",
+          "label": "BFSI"
+        },
+        {
+          "id": "banking",
+          "label": "Banking"
         },
         {
           "id": "financial_services_nbfcs",
@@ -79,20 +88,8 @@
           "label": "Insurance"
         },
         {
-          "id": "analyze_career_opportunities_and_growth",
-          "label": "Analyze Career Opportunities and Growth"
-        },
-        {
-          "id": "explore_career_opportunities",
-          "label": "Explore Career Opportunities"
-        },
-        {
-          "id": "develop_essential_bfsi_skills",
-          "label": "Develop Essential BFSI Skills"
-        },
-        {
-          "id": "end",
-          "label": "End"
+          "id": "closure",
+          "label": "Closure"
         }
       ]
     }

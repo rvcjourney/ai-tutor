@@ -156,14 +156,14 @@ function groupByTopicAndSubTopic(rows) {
   return topicOrder.map((topicName) => ({ topicName, subTopics: topicGroups.get(topicName) }));
 }
 
-function buildStatesForSubTopic(prefix, moduleId, subTopicId, allRows) {
+function buildStatesForSubTopic(prefix, moduleId, subTopicId, allRows, { endTarget = 'EXPLAIN_FURTHER' } = {}) {
   const qRows = allRows.filter((r) => r.type === 'Q').sort((a, b) => a.num - b.num);
   const mcqRows = allRows.filter((r) => r.type === 'MCQ').sort((a, b) => a.num - b.num);
   const states = [];
 
   qRows.forEach((row, i) => {
     const id = `${prefix}_Q${row.num}`;
-    const next = i < qRows.length - 1 ? `${prefix}_Q${qRows[i + 1].num}` : mcqRows.length ? `${prefix}_MCQ${mcqRows[0].num}` : 'EXPLAIN_FURTHER';
+    const next = i < qRows.length - 1 ? `${prefix}_Q${qRows[i + 1].num}` : mcqRows.length ? `${prefix}_MCQ${mcqRows[0].num}` : endTarget;
     // One paced turn per fact: question + its answer shown together (no hide/reveal
     // tap) — the hide/reveal implied a recall check that wasn't actually graded;
     // real recall-testing already happens later via the MCQs, so it just added
@@ -186,7 +186,7 @@ function buildStatesForSubTopic(prefix, moduleId, subTopicId, allRows) {
 
   mcqRows.forEach((row, i) => {
     const id = `${prefix}_MCQ${row.num}`;
-    const next = i < mcqRows.length - 1 ? `${prefix}_MCQ${mcqRows[i + 1].num}` : 'EXPLAIN_FURTHER';
+    const next = i < mcqRows.length - 1 ? `${prefix}_MCQ${mcqRows[i + 1].num}` : endTarget;
     const choiceOptions = ['A', 'B', 'C', 'D'].filter((l) => row[`choice${l}`]).map((l) => ({ id: l, label: row[`choice${l}`] }));
     // "navigate" options are mixed into the same array as the graded choices but
     // skip attempt-counting/grading entirely — see fsmEngine's mcq handling.
@@ -221,25 +221,45 @@ function buildTopic(topicName, subTopicsMap) {
   const allStates = [];
   const menuOptions = [];
   const subTopicsList = [];
+  // A sub-topic literally named "Greeting" (any topic, case-insensitive — a
+  // reusable convention, not a BFSI special case) isn't a separate screen to tap
+  // through — its answer text gets folded straight into the sub-topic menu's own
+  // message, shown above the tiles on the very first screen. It still exists as a
+  // real, admin-editable sub-topic underneath; learners just never navigate to it
+  // directly, and it's excluded from the tile list.
+  let introMessage = null;
 
   for (const [subTopicName, rows] of subTopicsMap) {
     const subTopicId = slugifyLower(subTopicName);
     const prefix = `${moduleIdUpper}_${slugifyUpper(subTopicName)}`;
+    const isIntro = subTopicName.trim().toLowerCase() === 'greeting';
+    if (isIntro) {
+      introMessage = rows
+        .map((r) => r.answer)
+        .filter(Boolean)
+        .join('\n\n');
+    }
     const { states, firstStateId } = buildStatesForSubTopic(prefix, moduleId, subTopicId, rows);
     allStates.push(...states);
     // Always listed for admin management, even with zero questions yet — but only
-    // reachable from the learner-facing menu once it actually has content.
-    subTopicsList.push({ id: subTopicId, label: subTopicName });
+    // reachable from the learner-facing menu once it actually has content. Hidden
+    // ones (the intro) are still fully editable in the admin grid; only the
+    // learner-facing tile list filters them out.
+    subTopicsList.push({ id: subTopicId, label: subTopicName, hidden: isIntro || undefined });
     if (firstStateId) {
       menuOptions.push({ id: subTopicId, label: subTopicName, next: firstStateId });
     }
   }
 
+  const defaultMenuMessage = `Welcome to ${topicName}! Please select a topic you would like to learn about.`;
   allStates.push({
     id: menuId,
     type: 'menu',
     module: moduleId,
-    message: `Welcome to ${topicName}! Please select a topic you would like to learn about.`,
+    // A custom "Greeting" fully replaces the generic default line — showing only
+    // what the sheet actually says, not both stacked together. Topics with no
+    // Greeting sub-topic still fall back to the generic line, same as before.
+    message: introMessage || defaultMenuMessage,
     options: menuOptions,
   });
 
