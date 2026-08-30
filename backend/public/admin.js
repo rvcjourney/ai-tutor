@@ -17,6 +17,20 @@ async function api(method, path, body) {
   return data;
 }
 
+// A momentary pop-up confirmation (checkmark + message, fixed to the top of the
+// viewport) — for actions like Publish where the admin should notice success
+// immediately, not have to spot a line of text further down the page.
+let toastTimer = null;
+function showToast(message, isError) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMessage').textContent = message;
+  document.getElementById('toastIcon').textContent = isError ? '✕' : '✓';
+  toast.classList.toggle('err', Boolean(isError));
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
 // ---- app state: which grid is showing ----
 
 const state = {
@@ -103,7 +117,7 @@ async function showTopics() {
       <td>${escapeHtml(m.title)}</td>
       <td>${Array.isArray(m.subTopics) ? m.subTopics.length : '—'}</td>
       <td class="actions">
-        <button class="small secondary" data-action="manage" data-id="${escapeHtml(m.id)}">Manage</button>
+        <button class="small secondary" data-action="manage" data-id="${escapeHtml(m.id)}">View</button>
         <button class="small secondary" data-action="edit" data-id="${escapeHtml(m.id)}" data-title="${escapeHtml(m.title)}">Edit</button>
         <button class="small danger" data-action="delete" data-id="${escapeHtml(m.id)}" data-title="${escapeHtml(m.title)}">Delete</button>
       </td>
@@ -181,7 +195,7 @@ function showSubTopics(moduleId, data) {
         <td>${escapeHtml(st.label)}</td>
         <td>${st.items.length}</td>
         <td class="actions">
-          <button class="small secondary" data-action="manage" data-id="${escapeHtml(st.id)}">Manage</button>
+          <button class="small secondary" data-action="manage" data-id="${escapeHtml(st.id)}">View</button>
           <button class="small secondary" data-action="edit" data-id="${escapeHtml(st.id)}" data-label="${escapeHtml(st.label)}">Edit</button>
           <button class="small danger" data-action="delete" data-id="${escapeHtml(st.id)}" data-label="${escapeHtml(st.label)}">Delete</button>
         </td>
@@ -246,10 +260,15 @@ function showQuestions(subTopicId) {
     const rows = subTopic.items
       .map((item, index) => {
         const correctText = item.type === 'MCQ' ? `<span class="correct-badge">${escapeHtml(item.correct)}</span>` : '—';
+        // MCQ items carry their reveal text as "explanation", not "answer" — this is
+        // the actual uploaded content the grid was missing entirely, forcing an Edit
+        // click just to check whether a row's Answer/Explanation had come through.
+        const answerText = item.answer || item.explanation || '';
         return `
       <tr>
         <td><span class="type-pill type-${item.type.toLowerCase()}">${item.type}</span></td>
         <td class="truncate" title="${escapeHtml(item.question)}">${escapeHtml(item.question)}</td>
+        <td class="truncate" title="${escapeHtml(answerText)}">${escapeHtml(answerText)}</td>
         <td>${correctText}</td>
         <td class="actions">
           <button class="small secondary" data-action="edit" data-index="${index}">Edit</button>
@@ -258,7 +277,7 @@ function showQuestions(subTopicId) {
       </tr>`;
       })
       .join('');
-    setGridRows('<tr><th>Type</th><th>Question</th><th>Correct</th><th></th></tr>', rows);
+    setGridRows('<tr><th>Type</th><th>Question</th><th>Answer / Explanation</th><th>Correct</th><th></th></tr>', rows);
 
     els.gridBody.querySelectorAll('button[data-action]').forEach((btn) => {
       btn.addEventListener('click', async () => {
@@ -432,8 +451,15 @@ const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
 // and a downloaded topic look identical — one format to learn, not two. Two example
 // rows (a Q and an MCQ) show the shape without an admin having to guess from the
 // header alone.
+// GREETING/OVERVIEW rows are optional — a topic works fine with just Q/MCQ rows —
+// but a Type=GREETING sub-topic auto-plays first and a Type=OVERVIEW sub-topic
+// auto-continues right after it, both skipped from the learner-facing tile menu.
+// Showing one example of each here is the only place an admin would otherwise
+// learn these exist.
 const CSV_TEMPLATE =
   'Topic,Sub-Topic,Type,#,Question,Choice A,Choice B,Choice C,Choice D,Correct,Answer/Explanation\r\n' +
+  'Example Topic,Greeting,GREETING,1,Greeting,,,,,,"Shown automatically the first time a learner opens this topic — optional, delete this row and the next if you don\'t need an intro."\r\n' +
+  'Example Topic,More about Example Topic,OVERVIEW,1,What is this topic about?,,,,,,"Plays right after the Greeting, before the learner reaches the sub-topic menu below — also optional."\r\n' +
   'Example Topic,Example Sub-Topic,Q,1,What is an example question?,,,,,,This is the answer shown right below the question.\r\n' +
   'Example Topic,Example Sub-Topic,MCQ,1,Which option is correct?,First choice,Second choice,Third choice,Fourth choice,B,Shown after the learner answers.\r\n';
 
@@ -458,6 +484,14 @@ pasteToggleBtn.addEventListener('click', () => {
   pasteToggleBtn.textContent = showing ? 'Paste CSV text instead' : 'Hide paste area';
 });
 
+// Publish stays disabled until there's actually something to publish — clicking
+// it with nothing chosen used to reach the server and bounce back a raw
+// "csv (string) is required" API error, which is a bug report waiting to happen,
+// not a real error case an admin should ever be able to trigger.
+function updatePublishAvailability() {
+  publishBtn.disabled = !textArea.value.trim();
+}
+
 fileInput.addEventListener('change', () => {
   const file = fileInput.files[0];
   if (!file) return;
@@ -472,6 +506,7 @@ fileInput.addEventListener('change', () => {
     } catch {
       textArea.value = new TextDecoder('windows-1252').decode(bytes);
     }
+    updatePublishAvailability();
     // A chosen file should just show its data — no extra click needed.
     runPreview();
   };
@@ -482,6 +517,7 @@ fileInput.addEventListener('change', () => {
 // button to remember to click. Debounced so it doesn't fire on every keystroke.
 let pasteDebounce = null;
 textArea.addEventListener('input', () => {
+  updatePublishAvailability();
   clearTimeout(pasteDebounce);
   pasteDebounce = setTimeout(() => {
     if (textArea.value.trim()) runPreview();
@@ -568,11 +604,19 @@ async function runPreview() {
 
 publishBtn.addEventListener('click', async () => {
   const csv = textArea.value;
+  // Defense in depth — the button is already disabled until there's content, but
+  // this keeps a stray/programmatic click from ever reaching the API with nothing
+  // to publish and bouncing back a raw server validation error.
+  if (!csv.trim()) {
+    showToast('Choose a file or paste CSV content first', true);
+    return;
+  }
   resultBox.className = 'result-box';
   publishBtn.disabled = true;
   publishBtn.textContent = 'Publishing…';
   try {
     const data = await api('POST', '/admin/import', { csv });
+    showToast(`Published ${data.published.length} topic${data.published.length === 1 ? '' : 's'} successfully`);
     resultBox.className = 'result-box ok';
     const cards = data.published
       .map((t) =>
@@ -582,13 +626,14 @@ publishBtn.addEventListener('click', async () => {
         ])
       )
       .join('');
-    resultBox.innerHTML = `<div class="preview-intro">&check; Published successfully:</div><div class="preview-cards">${cards}</div>`;
+    resultBox.innerHTML = `<div class="preview-cards">${cards}</div>`;
     if (state.view === 'topics') await showTopics();
   } catch (err) {
+    showToast(err.message, true);
     resultBox.className = 'result-box err raw';
     resultBox.textContent = err.message;
   } finally {
-    publishBtn.disabled = false;
+    updatePublishAvailability();
     publishBtn.textContent = 'Publish';
   }
 });

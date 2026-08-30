@@ -25,6 +25,33 @@ function getModuleEntryState(moduleId) {
   return module?.entryState || null;
 }
 
+/** The tappable sub-topic tiles for a module's real menu (Greeting/Overview
+ *  excluded, same "hidden" filter the tile-list UI already applies) — reused both
+ *  to let the shared EXPLAIN_FURTHER end screen offer them directly, and to know
+ *  which ids that screen should accept as valid taps. */
+function getVisibleSubTopicOptions(moduleId) {
+  if (!moduleId) return [];
+  const module = getModulesRegistry().find((m) => m.id === moduleId);
+  if (!module) return [];
+  const menuState = getState(module.entryState);
+  const hiddenIds = new Set((module.subTopics || []).filter((st) => st.hidden).map((st) => st.id));
+  return (menuState.options || [])
+    .filter((o) => !hiddenIds.has(o.id))
+    .map((o) => ({ id: o.id, label: o.label, next: o.next }));
+}
+
+/** True once a learner has fully passed through every hidden (Greeting/Overview)
+ *  sub-topic of a module at least once — used to skip straight to the module's real
+ *  menu on repeat visits instead of replaying the whole intro chain every time. A
+ *  module with no hidden sub-topics has nothing to skip, so it's trivially "seen." */
+function hasSeenIntro(userId, moduleId) {
+  const module = getModulesRegistry().find((m) => m.id === moduleId);
+  if (!module) return false;
+  const hiddenSubTopics = (module.subTopics || []).filter((st) => st.hidden);
+  if (!hiddenSubTopics.length) return true;
+  return hiddenSubTopics.every((st) => subTopicProgressRepository.isComplete(userId, moduleId, st.id));
+}
+
 function buildGreeting(displayName, clientHour) {
   const hour = Number.isInteger(clientHour) ? clientHour : new Date().getHours();
   const timeOfDay = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening';
@@ -111,11 +138,17 @@ function resolveChain(startId, moduleIdHint = null, subTopicIdHint = null) {
 
 const OPTIONS_VARIANT_BY_STATE_TYPE = { mcq: 'mcq', menu: 'menu' };
 
-function buildResponse(node, message, feedback = null) {
+function buildResponse(node, message, feedback = null, moduleIdHint = null, subTopicIdHint = null) {
   // Fact screens are technically "menu" states (a single Next choice plus Back/Menu),
   // but they get their own "qa" variant so the UI can give the primary action real
   // visual weight instead of three equal-looking pill buttons.
   const optionsVariant = node.screenType === 'fact' ? 'qa' : OPTIONS_VARIANT_BY_STATE_TYPE[node.type] || null;
+  // Shared/untagged states (EXPLAIN_FURTHER, MAIN_MENU) carry no module/subTopic of
+  // their own — resolveChain already threads forward which module/sub-topic the
+  // learner is actually in as it walks "auto" states, so callers pass that resolved
+  // value through here rather than it silently getting dropped back to null.
+  const moduleId = node.module || moduleIdHint || null;
+  const subTopicId = node.subTopic || subTopicIdHint || null;
 
   return {
     state: node.id,
@@ -126,16 +159,20 @@ function buildResponse(node, message, feedback = null) {
     // Set only on a topic's own sub-topic-selection menu (the state csvImporter.js
     // tags with `module` — every other shared/untagged state leaves this null) — lets
     // the UI recognize "this is a module's menu" and render sub-topic progress tiles.
-    moduleId: node.module || null,
+    moduleId,
     // Set on any state within a sub-topic (fact/MCQ states) — lets the UI fetch that
     // sub-topic's full Q&A list for the two-pane explorer.
-    subTopicId: node.subTopic || null,
+    subTopicId,
     // 'question' | 'answer' | null — which half of a Q&A pair this is, so the UI can
     // style/animate the reveal distinctly (icon, accent, "flip" transition).
     screenType: node.screenType || null,
     // 'correct' | 'incorrect' | null — lets the UI show a real correct/wrong signal
     // instead of the client having to guess by pattern-matching the message text.
     feedback,
+    // Only populated on the shared end-of-sub-topic screen — lets the learner jump
+    // straight into another sub-topic from there instead of being forced through
+    // "Back to Topic Menu" first.
+    subTopicOptions: node.id === 'EXPLAIN_FURTHER' ? getVisibleSubTopicOptions(moduleId) : null,
   };
 }
 
@@ -160,13 +197,16 @@ function computeItemPosition(node) {
   return qCount + num;
 }
 
-/** Persists where the learner landed, and — the actual completion trigger — if they
- *  landed on EXPLAIN_FURTHER (the shared end-of-lesson state every sub-topic chains
- *  into) with a known module+sub-topic, records that sub-topic as done. Centralizing
- *  this here means every call site gets completion-tracking for free. Also records
- *  the furthest Q/MCQ item reached, so a sub-topic still in progress can show a real
- *  "6 of 15 covered" figure instead of just done/not-done. */
-function persistProgress(userId, node, moduleId, subTopicId) {
+/** Persists where the learner landed, and — the actual completion trigger — marks the
+ *  sub-topic they were just IN as done the moment they leave it (the resolved node's
+ *  own `subTopic` tag no longer matches where they were). That covers finishing a
+ *  normal sub-topic (-> EXPLAIN_FURTHER) as well as Greeting/Overview silently
+ *  chaining into the next sub-topic or the real tile menu — either way, once left,
+ *  it won't replay. Centralizing this here means every call site gets both
+ *  completion-tracking and "furthest item reached" tracking for free, so a sub-topic
+ *  still in progress can show a real "6 of 15 covered" figure instead of just
+ *  done/not-done. `previous` is the pre-this-turn {moduleId, subTopicId}, if any. */
+function persistProgress(userId, node, moduleId, subTopicId, previous = null) {
   const status = node.type === 'exit' ? 'completed' : 'in_progress';
   progressRepository.upsert(userId, {
     currentState: node.id,
@@ -175,9 +215,9 @@ function persistProgress(userId, node, moduleId, subTopicId) {
     subTopicId,
     status,
   });
-  if (node.id === 'EXPLAIN_FURTHER' && moduleId && subTopicId) {
-    subTopicProgressRepository.markComplete(userId, moduleId, subTopicId);
-  } else if (moduleId && subTopicId) {
+  if (previous?.moduleId && previous?.subTopicId && node.subTopic !== previous.subTopicId) {
+    subTopicProgressRepository.markComplete(userId, previous.moduleId, previous.subTopicId);
+  } else if (node.subTopic) {
     const itemsSeen = computeItemPosition(node);
     if (itemsSeen !== null) {
       subTopicItemProgressRepository.recordProgress(userId, moduleId, subTopicId, itemsSeen);
@@ -193,7 +233,7 @@ function persistProgress(userId, node, moduleId, subTopicId) {
 function recoverToMainMenu(userId) {
   const { node, message, moduleId, subTopicId } = resolveChain('MAIN_MENU', null, null);
   persistProgress(userId, node, moduleId, subTopicId);
-  return buildResponse(node, message);
+  return buildResponse(node, message, null, moduleId, subTopicId);
 }
 
 function startSession(externalUserId, { simulateNextDay = false, displayName, clientHour } = {}) {
@@ -219,7 +259,7 @@ function startSession(externalUserId, { simulateNextDay = false, displayName, cl
       // "starting" a fresh interaction.
       try {
         const node = resolveNode(progress.current_state, progress.module_id);
-        return buildResponse(node, node.message);
+        return buildResponse(node, node.message, null, progress.module_id, progress.sub_topic_id);
       } catch {
         return recoverToMainMenu(user.id);
       }
@@ -234,13 +274,15 @@ function startSession(externalUserId, { simulateNextDay = false, displayName, cl
     // straight to MAIN_MENU and prepend the computed greeting instead.
     const greeting = buildGreeting(effectiveName, clientHour);
     const { node, message, moduleId, subTopicId } = resolveChain('MAIN_MENU', moduleIdHint, subTopicIdHint);
-    persistProgress(user.id, node, moduleId, subTopicId);
-    return buildResponse(node, `${greeting}\n\n${message}`);
+    // Starting/resuming a session is never itself "finishing" whatever sub-topic a
+    // learner's saved position happens to carry — never a completion signal here.
+    persistProgress(user.id, node, moduleId, subTopicId, null);
+    return buildResponse(node, `${greeting}\n\n${message}`, null, moduleId, subTopicId);
   }
 
   const { node, message, moduleId, subTopicId } = resolveChain(entryStateId, moduleIdHint, subTopicIdHint);
-  persistProgress(user.id, node, moduleId, subTopicId);
-  return buildResponse(node, message);
+  persistProgress(user.id, node, moduleId, subTopicId, null);
+  return buildResponse(node, message, null, moduleId, subTopicId);
 }
 
 function handleMessage(externalUserId, input) {
@@ -259,41 +301,68 @@ function handleMessage(externalUserId, input) {
     return recoverToMainMenu(user.id);
   }
   const trimmedInput = typeof input === 'string' ? input.trim() : '';
+  const previous = { moduleId: progress.module_id, subTopicId: progress.sub_topic_id };
+  // A sub-topic only counts as "complete" when it's left via its own content's
+  // forward `next` link (finishing a fact/MCQ card) — never via a navigation escape
+  // (the global Back/Main Menu shortcuts below, or an MCQ's embedded nav option), and
+  // never from a state that isn't itself tagged as being inside a sub-topic (a tile
+  // menu, MAIN_MENU). Scoping it to "the state we're leaving is itself sub-topic
+  // content" is what keeps a mid-sub-topic bail-out from being misrecorded as done.
+  const previousForCompletion = currentNode.subTopic ? previous : null;
 
   // Global navigation shortcuts — the UI's persistent "Back to Topic Menu"/"Main
   // Menu" controls need to work from literally any screen, including list screens
   // (main menu, sub-topic menu) that have no such option of their own. Checked
   // before the type-specific option matching below, so this always wins over
-  // whatever the current state's own options happen to be.
+  // whatever the current state's own options happen to be. Deliberately never
+  // trigger sub-topic completion — leaving via these is an escape, not "finished."
   if (trimmedInput === 'menu') {
-    const { node, message, moduleId, subTopicId } = resolveChain('MAIN_MENU', progress.module_id, progress.sub_topic_id);
-    persistProgress(user.id, node, moduleId, subTopicId);
-    return buildResponse(node, message);
+    // No hints here, deliberately — MAIN_MENU is the one truly context-free
+    // "reset" screen. Passing the old module/sub-topic through would leak into
+    // the response (MAIN_MENU carries no tag of its own, so resolveChain's hint
+    // fallback would substitute the stale ones), making the breadcrumb/UI still
+    // think the learner is inside whatever topic they just left.
+    const { node, message, moduleId, subTopicId } = resolveChain('MAIN_MENU', null, null);
+    persistProgress(user.id, node, moduleId, subTopicId, null);
+    return buildResponse(node, message, null, moduleId, subTopicId);
   }
   if (trimmedInput === 'back') {
     const target = progress.module_id ? '__MODULE_ENTRY__' : 'MAIN_MENU';
     const { node, message, moduleId, subTopicId } = resolveChain(target, progress.module_id, progress.sub_topic_id);
-    persistProgress(user.id, node, moduleId, subTopicId);
-    return buildResponse(node, message);
+    persistProgress(user.id, node, moduleId, subTopicId, null);
+    return buildResponse(node, message, null, moduleId, subTopicId);
   }
 
   if (currentNode.type === 'menu') {
-    const option = currentNode.options.find((o) => o.id === trimmedInput);
-    if (!option) {
-      return buildResponse(currentNode, `Sorry, I didn't understand that.\n\n${currentNode.message}`);
+    let option = currentNode.options.find((o) => o.id === trimmedInput);
+    // The shared end-of-sub-topic screen only lists back/menu/exit statically —
+    // its real options are computed at runtime (see getVisibleSubTopicOptions),
+    // matching the same set the frontend was just handed as `subTopicOptions`.
+    if (!option && currentNode.id === 'EXPLAIN_FURTHER') {
+      option = getVisibleSubTopicOptions(progress.module_id).find((o) => o.id === trimmedInput);
     }
-    const { node, message, moduleId, subTopicId } = resolveChain(option.next, progress.module_id, progress.sub_topic_id);
-    persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id);
-    return buildResponse(node, message);
+    if (!option) {
+      return buildResponse(currentNode, `Sorry, I didn't understand that.\n\n${currentNode.message}`, null, progress.module_id, progress.sub_topic_id);
+    }
+    // Tapping a topic tile from the Main Menu normally starts its Greeting/Overview
+    // intro chain — but only the first time. Once a learner has already been through
+    // it, skip straight to the topic's real sub-topic menu instead of replaying it.
+    let targetId = option.next;
+    if (currentNode.id === 'MAIN_MENU' && hasSeenIntro(user.id, option.id)) {
+      targetId = getModuleEntryState(option.id) || targetId;
+    }
+    const { node, message, moduleId, subTopicId } = resolveChain(targetId, progress.module_id, progress.sub_topic_id);
+    persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+    return buildResponse(node, message, null, moduleId, subTopicId);
   }
 
   if (currentNode.type === 'input') {
     if (!trimmedInput) {
-      return buildResponse(currentNode, currentNode.message);
+      return buildResponse(currentNode, currentNode.message, null, progress.module_id, progress.sub_topic_id);
     }
     const { node, message, moduleId, subTopicId } = resolveChain(currentNode.next, progress.module_id, progress.sub_topic_id);
-    persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id);
-    return buildResponse(node, message);
+    persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+    return buildResponse(node, message, null, moduleId, subTopicId);
   }
 
   if (currentNode.type === 'quiz') {
@@ -309,34 +378,35 @@ function handleMessage(externalUserId, input) {
 
     if (isCorrect) {
       const { node, message, moduleId, subTopicId } = resolveChain(quiz.onCorrect, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id);
+      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
       const prefix = quiz.correctMessage ? `${quiz.correctMessage}\n\n` : '';
-      return buildResponse(node, prefix + message, 'correct');
+      return buildResponse(node, prefix + message, 'correct', moduleId, subTopicId);
     }
 
     if (attemptNumber >= quiz.maxAttempts) {
       const { node, message, moduleId, subTopicId } = resolveChain(quiz.onExhausted, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id);
-      return buildResponse(node, `${quiz.exhaustedMessage}\n\n${message}`, 'incorrect');
+      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+      return buildResponse(node, `${quiz.exhaustedMessage}\n\n${message}`, 'incorrect', moduleId, subTopicId);
     }
 
     // Incorrect, retries remaining — stay on the quiz state.
-    persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id);
-    return buildResponse(currentNode, `${quiz.incorrectMessage}\n\n${currentNode.message}`, 'incorrect');
+    persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id, previousForCompletion);
+    return buildResponse(currentNode, `${quiz.incorrectMessage}\n\n${currentNode.message}`, 'incorrect', progress.module_id, progress.sub_topic_id);
   }
 
   if (currentNode.type === 'mcq') {
     const option = currentNode.options.find((o) => o.id === trimmedInput);
     if (!option) {
-      return buildResponse(currentNode, `Sorry, I didn't understand that.\n\n${currentNode.message}`);
+      return buildResponse(currentNode, `Sorry, I didn't understand that.\n\n${currentNode.message}`, null, progress.module_id, progress.sub_topic_id);
     }
 
     // "Back"/"Main Menu" are navigation options mixed into the same options array as
-    // the graded answer choices — not an attempt, don't count or grade it.
+    // the graded answer choices — not an attempt, don't count or grade it, and (like
+    // the global shortcuts above) not a completion signal either.
     if (option.navigate) {
       const { node, message, moduleId, subTopicId } = resolveChain(option.next, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id);
-      return buildResponse(node, message);
+      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, null);
+      return buildResponse(node, message, null, moduleId, subTopicId);
     }
 
     // Scoped per-module, same convention as the free-text quiz's attempt key.
@@ -348,25 +418,25 @@ function handleMessage(externalUserId, input) {
 
     if (isCorrect) {
       const { node, message, moduleId, subTopicId } = resolveChain(currentNode.next, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id);
+      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
       const prefix = currentNode.revealMessage ? `Correct! ${currentNode.revealMessage}\n\n` : 'Correct!\n\n';
-      return buildResponse(node, prefix + message, 'correct');
+      return buildResponse(node, prefix + message, 'correct', moduleId, subTopicId);
     }
 
     const maxAttempts = currentNode.maxAttempts || 3;
     if (attemptNumber >= maxAttempts) {
       const { node, message, moduleId, subTopicId } = resolveChain(currentNode.next, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id);
-      return buildResponse(node, `${currentNode.revealMessage}\n\n${message}`, 'incorrect');
+      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+      return buildResponse(node, `${currentNode.revealMessage}\n\n${message}`, 'incorrect', moduleId, subTopicId);
     }
 
     // Incorrect, retries remaining — stay on the mcq state.
-    persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id);
-    return buildResponse(currentNode, `${currentNode.incorrectMessage}\n\n${currentNode.message}`, 'incorrect');
+    persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id, previousForCompletion);
+    return buildResponse(currentNode, `${currentNode.incorrectMessage}\n\n${currentNode.message}`, 'incorrect', progress.module_id, progress.sub_topic_id);
   }
 
   // exit / auto should never be the persisted "current" state, but guard defensively.
-  return buildResponse(currentNode, currentNode.message);
+  return buildResponse(currentNode, currentNode.message, null, progress.module_id, progress.sub_topic_id);
 }
 
 module.exports = { startSession, handleMessage, resolveNode };

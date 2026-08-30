@@ -700,38 +700,6 @@ p + .rich-list {
   transform: scale(0.98);
 }
 
-/* "Exit" reads as the finish line, not just another menu choice — filled success
-   green instead of the neutral pill every other option uses, so a learner knows at
-   a glance they've reached the end of this path. */
-.option-buttons button.option-exit {
-  background: var(--success);
-  color: #fff;
-  border-color: var(--success);
-  font-weight: 600;
-  justify-content: center;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.option-buttons button.option-exit:hover:not(:disabled) {
-  background: var(--success);
-  filter: brightness(1.08);
-  border-color: var(--success);
-}
-
-.option-exit-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  font-size: 11px;
-}
-
 /* ---- MCQ grid (graded answer choices) ---- */
 
 .mcq-grid {

@@ -3,13 +3,17 @@ const { getModulesRegistry, getState, getAllStates } = require('../engine/conver
 /** Follows the actual "next" links for one sub-topic (from its first fact/MCQ state
  *  through to EXPLAIN_FURTHER), reconstructing the original Q&A/MCQ rows from the
  *  published state graph — this is what "view uploaded data" reads from, since the
- *  raw CSV isn't kept anywhere after publish. */
-function walkSubTopic(startId, statesById) {
+ *  raw CSV isn't kept anywhere after publish. Stops the moment a state's own
+ *  `subTopic` tag no longer matches where the walk started — some sub-topics
+ *  (Greeting, a "More about X" overview) chain straight into a *different*
+ *  sub-topic instead of ending at EXPLAIN_FURTHER, and without this check their
+ *  content would get silently absorbed into whichever sub-topic walked in first. */
+function walkSubTopic(startId, statesById, expectedSubTopic) {
   const items = [];
   let current = statesById.get(startId);
   let guard = 0;
 
-  while (current && current.id !== 'EXPLAIN_FURTHER' && guard < 500) {
+  while (current && current.id !== 'EXPLAIN_FURTHER' && current.subTopic === expectedSubTopic && guard < 500) {
     guard += 1;
     if (current.screenType === 'fact') {
       const [question, ...rest] = current.message.split('\n');
@@ -57,7 +61,7 @@ function getTopicContent(moduleId) {
     return {
       id: st.id,
       label: st.label,
-      items: option ? walkSubTopic(option.next, statesById) : [],
+      items: option ? walkSubTopic(option.next, statesById, st.id) : [],
     };
   });
 
@@ -81,7 +85,7 @@ function getTopicRows(moduleId) {
     const option = menuOptionBySubTopic.get(subTopic.id);
     if (!option) continue; // empty sub-topic — nothing published for it yet
 
-    const items = walkSubTopic(option.next, statesById);
+    const items = walkSubTopic(option.next, statesById, subTopic.id);
     let qNum = 0;
     let mcqNum = 0;
     for (const item of items) {
@@ -130,7 +134,7 @@ function getSubTopicQaList(moduleId, subTopicId) {
   if (!option) return []; // registered but empty — nothing published for it yet
 
   const statesById = new Map(getAllStates().filter((s) => s.module === moduleId).map((s) => [s.id, s]));
-  const items = walkSubTopic(option.next, statesById);
+  const items = walkSubTopic(option.next, statesById, subTopicId);
   return items.filter((item) => item.type === 'Q').map((item) => ({ question: item.question, answer: item.answer }));
 }
 

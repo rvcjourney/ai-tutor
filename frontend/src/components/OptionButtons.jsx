@@ -47,13 +47,7 @@ export default function OptionButtons({ options, onSelect, disabled, variant }) 
   return (
     <div className="option-buttons">
       {options.map((option) => (
-        <button
-          key={option.id}
-          className={option.id === 'exit' ? 'option-exit' : undefined}
-          disabled={disabled}
-          onClick={() => onSelect(option)}
-        >
-          {option.id === 'exit' && <span className="option-exit-icon">✓</span>}
+        <button key={option.id} disabled={disabled} onClick={() => onSelect(option)}>
           {option.label}
         </button>
       ))}

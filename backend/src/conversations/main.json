@@ -17,19 +17,9 @@
           "next": "GOLD_LOAN_MENU"
         },
         {
-          "id": "home_loan",
-          "label": "Home Loan",
-          "next": "HOME_LOAN_MENU"
-        },
-        {
-          "id": "example_topic",
-          "label": "Example Topic",
-          "next": "EXAMPLE_TOPIC_MENU"
-        },
-        {
           "id": "bfsi",
           "label": "BFSI",
-          "next": "BFSI_MENU"
+          "next": "BFSI_GREETING_Q1"
         }
       ]
     },
@@ -40,26 +30,15 @@
       "options": [
         {
           "id": "back",
-          "label": "Back to topic menu",
+          "label": "Topic Menu",
           "next": "__MODULE_ENTRY__"
         },
         {
           "id": "menu",
-          "label": "Main Menu",
+          "label": "Home",
           "next": "MAIN_MENU"
-        },
-        {
-          "id": "exit",
-          "label": "Exit",
-          "next": "EXIT"
         }
       ]
-    },
-    {
-      "id": "EXIT",
-      "type": "exit",
-      "message": "Thanks for learning with us today! See you next time.",
-      "options": []
     }
   ]
 }

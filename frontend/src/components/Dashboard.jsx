@@ -35,6 +35,7 @@ export default function Dashboard() {
   const moduleForTurn = turn?.moduleId ? progress?.modules?.find((m) => m.id === turn.moduleId) : null;
   const isModuleMenu = Boolean(moduleForTurn && moduleForTurn.entryState === turn.state);
   const isQaExplorer = Boolean(turn && !isModuleMenu && turn.screenType === 'fact' && turn.moduleId && turn.subTopicId);
+  const isSubTopicCompletion = Boolean(turn?.subTopicOptions?.length > 0);
   const subTopicForTurn = turn?.subTopicId ? moduleForTurn?.subTopics?.find((st) => st.id === turn.subTopicId) : null;
   // Picking a topic or sub-topic is pure navigation — the breadcrumb already shows
   // where you are, so it doesn't also need a sent-bubble ("Gold Loan" bubble
@@ -42,7 +43,7 @@ export default function Dashboard() {
   // also has its own internal bubble pair for whichever question is selected, so the
   // outer "you tapped this sub-topic" bubble would just be a second, stale one above
   // it. Bubbles stay for real interactions: answering a question, an MCQ choice.
-  const showUserBubble = Boolean(turn) && turn.state !== 'MAIN_MENU' && !isModuleMenu && !isQaExplorer;
+  const showUserBubble = Boolean(turn) && turn.state !== 'MAIN_MENU' && !isModuleMenu && !isQaExplorer && !isSubTopicCompletion;
 
   return (
     <div className="dashboard">
@@ -95,7 +96,22 @@ export default function Dashboard() {
           />
         )}
 
-        {!error && !typing && turn && turn.state !== 'MAIN_MENU' && !isModuleMenu && !isQaExplorer && (
+        {/* The shared "you finished a sub-topic" screen — same layout as the real
+            tile menu (it offers the exact same tiles), letting the learner jump
+            straight into another sub-topic instead of forcing a "Back to Topic
+            Menu" tap first. Takes priority over the generic TurnCard render below. */}
+        {!error && !typing && isSubTopicCompletion && (
+          <SubTopicList
+            key={turn.state}
+            message={turn.message}
+            options={turn.subTopicOptions}
+            subTopics={moduleForTurn?.subTopics}
+            onSelect={selectOption}
+            disabled={loading}
+          />
+        )}
+
+        {!error && !typing && turn && turn.state !== 'MAIN_MENU' && !isModuleMenu && !isQaExplorer && !isSubTopicCompletion && (
           <TurnCard
             key={turn.state}
             message={turn.message}
@@ -113,8 +129,11 @@ export default function Dashboard() {
       </main>
 
       {/* QAExplorer renders its own combined fixed bar (Previous/Next stacked above
-          this same footer) — rendering it again here would duplicate it. */}
-      {!error && turn && !isQaExplorer && (
+          this same footer) — rendering it again here would duplicate it. Also
+          skipped on the Main Menu itself: "Back to Topic Menu"/"Main Menu" are only
+          meaningful once you're actually inside a topic, not while already sitting
+          at the screen they'd navigate to. */}
+      {!error && turn && !isQaExplorer && turn.state !== 'MAIN_MENU' && (
         <div className="fixed-bottom-bar">
           <NavFooter onSelect={selectOption} disabled={loading} />
         </div>

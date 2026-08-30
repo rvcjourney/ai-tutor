@@ -44,8 +44,8 @@ function previewContent(req, res, next) {
       }
       const s = summaryMap.get(row.topic);
       s.subTopics.add(row.subTopic);
-      if (row.type === 'Q') s.questions += 1;
-      else s.mcqs += 1;
+      if (row.type === 'MCQ') s.mcqs += 1;
+      else s.questions += 1; // Q, GREETING, and OVERVIEW are all plain fact cards
     }
     const summary = [...summaryMap.values()].map((s) => ({ ...s, subTopics: s.subTopics.size }));
 

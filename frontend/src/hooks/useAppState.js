@@ -107,10 +107,15 @@ export function useAppState() {
   // Used by the Q&A explorer's "Continue" button: the learner browsed the sub-topic's
   // questions in any order client-side (no backend calls per click), so this fires the
   // existing sequential 'next' a state at a time — same as clicking Next repeatedly —
-  // until landing past the last fact card (first MCQ, or EXPLAIN_FURTHER if none).
-  // Bypasses the per-turn typing delay: it's one "skip ahead" action, not a sequence of
-  // conversational replies, so a single typing indicator covers the whole fast-forward.
+  // until landing past the last fact card of *this* sub-topic. Stops the instant the
+  // sub-topic id changes, not just when the card stops being a plain Q&A card — a
+  // chained intro (Greeting -> a "More about X" overview) is also plain Q&A cards,
+  // just a different sub-topic, and each one needs its own fresh reveal rather than
+  // being skipped straight through. Bypasses the per-turn typing delay: it's one
+  // "skip ahead" action, not a sequence of conversational replies, so a single
+  // typing indicator covers the whole fast-forward.
   const skipToQuiz = useCallback(async () => {
+    const startingSubTopicId = turn?.subTopicId ?? null;
     setLoading(true);
     setTyping(true);
     setError(null);
@@ -119,7 +124,7 @@ export function useAppState() {
     try {
       let response = await chatApi.sendMessage(userId, 'next');
       let guard = 0;
-      while (response.screenType === 'fact' && guard < 50) {
+      while (response.screenType === 'fact' && response.subTopicId === startingSubTopicId && guard < 50) {
         response = await chatApi.sendMessage(userId, 'next');
         guard += 1;
       }
@@ -131,7 +136,7 @@ export function useAppState() {
       setLoading(false);
       setTyping(false);
     }
-  }, [userId, refreshProgress]);
+  }, [turn, userId, refreshProgress]);
 
   return {
     displayName,

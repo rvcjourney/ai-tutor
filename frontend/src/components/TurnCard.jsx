@@ -42,7 +42,9 @@ export default function TurnCard({
           <OptionButtons options={options} onSelect={onSelectOption} disabled={disabled} variant={optionsVariant} />
         )}
         {inputType === 'text' && <ChatInputBar onSend={onSendText} disabled={disabled} />}
-        {inputType === 'none' && !disabled && <p className="chat-ended">✓ Conversation ended — reload to start again.</p>}
+        {/* Defensive fallback — no state currently has a terminal/no-input type, but
+            if one ever does, this keeps the screen from silently dead-ending. */}
+        {inputType === 'none' && !disabled && <p className="chat-ended">Reload the page to start a new session.</p>}
       </div>
     </div>
   );

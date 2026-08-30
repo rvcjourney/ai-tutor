@@ -63,8 +63,9 @@ function validateRow(row, { requireNum = true } = {}) {
   if (!normalized.subTopic) errors.push('missing Sub-Topic');
 
   const type = (normalized.type || '').toUpperCase();
-  if (type !== 'Q' && type !== 'MCQ') {
-    errors.push(`Type must be "Q" or "MCQ", got "${normalized.type || ''}"`);
+  const VALID_TYPES = ['Q', 'MCQ', 'GREETING', 'OVERVIEW'];
+  if (!VALID_TYPES.includes(type)) {
+    errors.push(`Type must be one of ${VALID_TYPES.join('/')}, got "${normalized.type || ''}"`);
   }
   normalized.type = type;
 
@@ -80,7 +81,11 @@ function validateRow(row, { requireNum = true } = {}) {
     errors.push('missing Question');
   }
 
-  if (type === 'Q') {
+  // GREETING/OVERVIEW are structurally identical to Q (a plain read-and-continue
+  // card) — the distinct Type value exists purely so buildTopic() can recognize a
+  // sub-topic's role from an explicit, fixed-vocabulary column instead of having to
+  // guess from its free-text label.
+  if (type === 'Q' || type === 'GREETING' || type === 'OVERVIEW') {
     if (!normalized.answer) errors.push('missing Answer');
   } else if (type === 'MCQ') {
     const filledChoices = ['A', 'B', 'C', 'D'].filter((l) => normalized[`choice${l}`]);
@@ -156,8 +161,11 @@ function groupByTopicAndSubTopic(rows) {
   return topicOrder.map((topicName) => ({ topicName, subTopics: topicGroups.get(topicName) }));
 }
 
+// GREETING/OVERVIEW rows render exactly like Q rows (a plain fact card) — they're
+// grouped in with the Q sequence for state-building purposes, and only matter as a
+// distinct Type for buildTopic()'s role detection.
 function buildStatesForSubTopic(prefix, moduleId, subTopicId, allRows, { endTarget = 'EXPLAIN_FURTHER' } = {}) {
-  const qRows = allRows.filter((r) => r.type === 'Q').sort((a, b) => a.num - b.num);
+  const qRows = allRows.filter((r) => r.type === 'Q' || r.type === 'GREETING' || r.type === 'OVERVIEW').sort((a, b) => a.num - b.num);
   const mcqRows = allRows.filter((r) => r.type === 'MCQ').sort((a, b) => a.num - b.num);
   const states = [];
 
@@ -178,8 +186,8 @@ function buildStatesForSubTopic(prefix, moduleId, subTopicId, allRows, { endTarg
       message: `${row.question}\n${row.answer}`,
       options: [
         { id: 'next', label: 'Next ▸', next },
-        { id: 'back', label: 'Back to topic menu', next: '__MODULE_ENTRY__' },
-        { id: 'menu', label: 'Main Menu', next: 'MAIN_MENU' },
+        { id: 'back', label: 'Topic Menu', next: '__MODULE_ENTRY__' },
+        { id: 'menu', label: 'Home', next: 'MAIN_MENU' },
       ],
     });
   });
@@ -191,8 +199,8 @@ function buildStatesForSubTopic(prefix, moduleId, subTopicId, allRows, { endTarg
     // "navigate" options are mixed into the same array as the graded choices but
     // skip attempt-counting/grading entirely — see fsmEngine's mcq handling.
     const navOptions = [
-      { id: 'back', label: 'Back to topic menu', next: '__MODULE_ENTRY__', navigate: true },
-      { id: 'menu', label: 'Main Menu', next: 'MAIN_MENU', navigate: true },
+      { id: 'back', label: 'Topic Menu', next: '__MODULE_ENTRY__', navigate: true },
+      { id: 'menu', label: 'Home', next: 'MAIN_MENU', navigate: true },
     ];
     states.push({
       id,
@@ -213,61 +221,81 @@ function buildStatesForSubTopic(prefix, moduleId, subTopicId, allRows, { endTarg
   return { states, firstStateId };
 }
 
+function computeFirstStateId(prefix, rows) {
+  const qRows = rows.filter((r) => r.type === 'Q' || r.type === 'GREETING' || r.type === 'OVERVIEW').sort((a, b) => a.num - b.num);
+  const mcqRows = rows.filter((r) => r.type === 'MCQ').sort((a, b) => a.num - b.num);
+  if (qRows.length) return `${prefix}_Q${qRows[0].num}`;
+  if (mcqRows.length) return `${prefix}_MCQ${mcqRows[0].num}`;
+  return null;
+}
+
 function buildTopic(topicName, subTopicsMap) {
   const moduleId = slugifyLower(topicName);
   const moduleIdUpper = slugifyUpper(topicName);
   const menuId = `${moduleIdUpper}_MENU`;
 
+  // Two reusable roles (any topic, not BFSI specials), chained together: entering
+  // the topic auto-plays the Greeting-role sub-topic (if present), which flows
+  // straight into the Overview-role sub-topic (if present), which then flows into
+  // the real sector-picking tile menu. Neither is a separately-tappable tile —
+  // both are hidden from the tile list, since they're steps in a sequence, not
+  // independent choices. A topic with neither behaves exactly as before: straight
+  // to the tile menu.
+  //
+  // A row's explicit Type (GREETING/OVERVIEW) is the source of truth — the
+  // Sub-Topic label is then just a free-text display name, not a magic string.
+  // The old name-based convention ("Greeting", "More about X") is kept as a
+  // fallback purely for content published before Type carried this distinction.
+  const groupMeta = new Map();
+  for (const [subTopicName, rows] of subTopicsMap) {
+    const normalized = subTopicName.trim().toLowerCase();
+    const prefix = `${moduleIdUpper}_${slugifyUpper(subTopicName)}`;
+    groupMeta.set(subTopicName, {
+      prefix,
+      isGreeting: rows.some((r) => r.type === 'GREETING') || normalized === 'greeting',
+      isOverview: rows.some((r) => r.type === 'OVERVIEW') || normalized.startsWith('more about'),
+      firstStateId: computeFirstStateId(prefix, rows),
+    });
+  }
+  const greetingMeta = [...groupMeta.values()].find((m) => m.isGreeting);
+  const overviewMeta = [...groupMeta.values()].find((m) => m.isOverview);
+  const afterGreetingTarget = overviewMeta?.firstStateId || menuId;
+  const topicEntryStateId = greetingMeta?.firstStateId || overviewMeta?.firstStateId || menuId;
+
   const allStates = [];
   const menuOptions = [];
   const subTopicsList = [];
-  // Two reusable naming conventions (any topic, case-insensitive — not BFSI
-  // specials):
-  // - A sub-topic literally named "Greeting" isn't a separate screen to tap
-  //   through — its answer text gets folded straight into the sub-topic menu's
-  //   own message, shown above the tiles. Hidden from the tile list.
-  // - A sub-topic named the *same as its topic* (an "overview" section, e.g.
-  //   topic "BFSI" having its own "BFSI" sub-topic) stays a normal, visible tile,
-  //   but finishing it flows straight into the real tile menu instead of the
-  //   generic end-of-lesson screen — so "please pick a sector" text that ends an
-  //   overview actually lands the learner on real, tappable sector tiles.
-  let introMessage = null;
 
   for (const [subTopicName, rows] of subTopicsMap) {
+    const meta = groupMeta.get(subTopicName);
     const subTopicId = slugifyLower(subTopicName);
-    const prefix = `${moduleIdUpper}_${slugifyUpper(subTopicName)}`;
-    const normalizedSubTopic = subTopicName.trim().toLowerCase();
-    const isIntro = normalizedSubTopic === 'greeting';
-    const isOverview = normalizedSubTopic === topicName.trim().toLowerCase();
-    if (isIntro) {
-      introMessage = rows
-        .map((r) => r.answer)
-        .filter(Boolean)
-        .join('\n\n');
-    }
-    const { states, firstStateId } = buildStatesForSubTopic(prefix, moduleId, subTopicId, rows, {
-      endTarget: isIntro || isOverview ? menuId : undefined,
-    });
+    const endTarget = meta.isGreeting ? afterGreetingTarget : meta.isOverview ? menuId : undefined;
+    const { states, firstStateId } = buildStatesForSubTopic(meta.prefix, moduleId, subTopicId, rows, { endTarget });
     allStates.push(...states);
     // Always listed for admin management, even with zero questions yet — but only
     // reachable from the learner-facing menu once it actually has content. Hidden
-    // ones (the intro) are still fully editable in the admin grid; only the
-    // learner-facing tile list filters them out.
-    subTopicsList.push({ id: subTopicId, label: subTopicName, hidden: isIntro || undefined });
+    // ones (Greeting/overview) are still fully editable in the admin grid; only
+    // the learner-facing tile list filters them out.
+    subTopicsList.push({ id: subTopicId, label: subTopicName, hidden: meta.isGreeting || meta.isOverview || undefined });
     if (firstStateId) {
       menuOptions.push({ id: subTopicId, label: subTopicName, next: firstStateId });
     }
   }
 
-  const defaultMenuMessage = `Welcome to ${topicName}! Please select a topic you would like to learn about.`;
+  // A topic with its own Greeting/Overview intro already said hello — repeating
+  // "Welcome to X!" on the tile menu right after reads as a second, redundant
+  // greeting. Only topics with no intro (nothing else has welcomed the learner yet)
+  // get the fuller line.
+  const menuMessage =
+    greetingMeta || overviewMeta
+      ? 'Please select a topic you would like to learn about.'
+      : `Welcome to ${topicName}! Please select a topic you would like to learn about.`;
+
   allStates.push({
     id: menuId,
     type: 'menu',
     module: moduleId,
-    // A custom "Greeting" fully replaces the generic default line — showing only
-    // what the sheet actually says, not both stacked together. Topics with no
-    // Greeting sub-topic still fall back to the generic line, same as before.
-    message: introMessage || defaultMenuMessage,
+    message: menuMessage,
     options: menuOptions,
   });
 
@@ -278,7 +306,7 @@ function buildTopic(topicName, subTopicsMap) {
     entryState: menuId,
     states: allStates,
     registryEntry: { id: moduleId, title: topicName, available: true, entryState: menuId, subTopics: subTopicsList },
-    mainMenuOption: { id: moduleId, label: topicName, next: menuId },
+    mainMenuOption: { id: moduleId, label: topicName, next: topicEntryStateId },
   };
 }
 

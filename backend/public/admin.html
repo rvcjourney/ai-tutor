@@ -85,7 +85,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 16px;
+      font-weight: 700;
       flex-shrink: 0;
     }
 
@@ -463,6 +464,49 @@
       white-space: pre-wrap;
     }
 
+    /* ---- Toast: a momentary success/error pop-up, distinct from the persistent
+       result box below the form — for "it worked" confirmation you notice without
+       having to scroll down to a line of text. */
+    .toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-16px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      background: var(--panel);
+      border: 1px solid var(--success);
+      box-shadow: var(--shadow-lg);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 30;
+    }
+    .toast.err { border-color: var(--danger); }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--success);
+      color: #fff;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .toast.err .toast-check { background: var(--danger); }
+
     /* Class-only (not ID) so ".ok"/".err"/".info" can win the cascade over the
        default hidden state without an ID-vs-class specificity fight. */
     .result-box {
@@ -575,7 +619,7 @@
 <body>
   <header class="admin-header">
     <div class="admin-header-inner">
-      <div class="admin-logo">🎓</div>
+      <div class="admin-logo">CK</div>
       <div>
         <h1>AI Tutor</h1>
         <p class="admin-header-sub">Admin</p>
@@ -629,7 +673,7 @@
         </div>
 
         <div class="btn-row" style="margin-top: 16px; align-items: center;">
-          <button id="publishBtn">Publish</button>
+          <button id="publishBtn" disabled title="Choose a file or paste CSV content first">Publish</button>
           <span id="previewStatus" class="preview-status"></span>
         </div>
       </details>
@@ -649,6 +693,11 @@
         <button id="modalSave">Save</button>
       </div>
     </div>
+  </div>
+
+  <div id="toast" class="toast">
+    <span class="toast-check" id="toastIcon">&check;</span>
+    <span id="toastMessage"></span>
   </div>
 
   <script src="admin.js"></script>

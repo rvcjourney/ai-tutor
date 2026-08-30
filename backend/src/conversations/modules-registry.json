@@ -33,30 +33,6 @@
       ]
     },
     {
-      "id": "home_loan",
-      "title": "Home Loan",
-      "available": true,
-      "entryState": "HOME_LOAN_MENU",
-      "subTopics": [
-        {
-          "id": "stage_1",
-          "label": "Stage 1"
-        }
-      ]
-    },
-    {
-      "id": "example_topic",
-      "title": "Example Topic",
-      "available": true,
-      "entryState": "EXAMPLE_TOPIC_MENU",
-      "subTopics": [
-        {
-          "id": "example_sub_topic",
-          "label": "Example Sub-Topic"
-        }
-      ]
-    },
-    {
       "id": "bfsi",
       "title": "BFSI",
       "available": true,
@@ -68,8 +44,9 @@
           "hidden": true
         },
         {
-          "id": "bfsi",
-          "label": "BFSI"
+          "id": "more_about_bfsi",
+          "label": "More about BFSI",
+          "hidden": true
         },
         {
           "id": "banking",
