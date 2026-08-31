@@ -26,7 +26,7 @@
     {
       "id": "EXPLAIN_FURTHER",
       "type": "menu",
-      "message": "I hope this was helpful. For more topics, click on the Menu button.",
+      "message": "I hope this was helpful. Click on the topic below to continue learning!",
       "options": [
         {
           "id": "back",
