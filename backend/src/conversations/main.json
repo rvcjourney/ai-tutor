@@ -9,7 +9,7 @@
     {
       "id": "MAIN_MENU",
       "type": "menu",
-      "message": "Welcome, what support do you need with these topics?",
+      "message": "Welcome! Please **click** on the topic you want to learn more...",
       "options": [
         {
           "id": "gold_loan",
