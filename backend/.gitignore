@@ -1,3 +1,9 @@
 node_modules/
 data/
 .env
+
+# Published content — runtime data written by the admin Publish flow, not code. Kept
+# out of git so a code push/deploy never overwrites or resets live-published content.
+# conversations-seed/ (the empty app-chassis baseline) is NOT covered by this and
+# stays tracked — see conversationLoader.js's ensureSeeded().
+src/conversations/*.json

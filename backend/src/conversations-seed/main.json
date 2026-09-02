@@ -10,18 +10,7 @@
       "id": "MAIN_MENU",
       "type": "menu",
       "message": "Welcome! Please **click** on the topic you want to learn more...",
-      "options": [
-        {
-          "id": "gold_loan",
-          "label": "Gold Loan",
-          "next": "GOLD_LOAN_MENU"
-        },
-        {
-          "id": "bfsi",
-          "label": "BFSI",
-          "next": "BFSI_GREETING_Q1"
-        }
-      ]
+      "options": []
     },
     {
       "id": "EXPLAIN_FURTHER",

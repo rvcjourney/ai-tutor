@@ -2,6 +2,26 @@ const fs = require('fs');
 const path = require('path');
 
 const CONVERSATIONS_DIR = path.join(__dirname, '..', 'conversations');
+const SEED_DIR = path.join(__dirname, '..', 'conversations-seed');
+
+// Published content (every file in CONVERSATIONS_DIR) is runtime data, not code — it's
+// gitignored so a `git push` of a code change never overwrites live-published content,
+// and a deploy never resets it back to whatever was last committed. That means a truly
+// fresh environment (first boot on a new machine, or a host with no persistent disk)
+// starts with an empty conversations/ dir — this seeds it from the tracked baseline
+// (app chassis: WELCOME/MAIN_MENU/EXPLAIN_FURTHER, zero topics) so the app boots
+// instead of crashing on missing files, and only where a file doesn't already exist —
+// never overwrites real published content that's already there.
+function ensureSeeded() {
+  fs.mkdirSync(CONVERSATIONS_DIR, { recursive: true });
+  const seedFiles = fs.readdirSync(SEED_DIR).filter((f) => f.endsWith('.json'));
+  for (const file of seedFiles) {
+    const dest = path.join(CONVERSATIONS_DIR, file);
+    if (!fs.existsSync(dest)) {
+      fs.copyFileSync(path.join(SEED_DIR, file), dest);
+    }
+  }
+}
 
 // Ids the engine synthesizes at runtime (per-module reinforcement quiz, "back to
 // topic menu") rather than defining as static states — exempt from reference validation.
@@ -63,6 +83,7 @@ function validateReferences() {
 }
 
 function loadAll() {
+  ensureSeeded();
   statesById.clear();
   modulesRegistry = [];
 
