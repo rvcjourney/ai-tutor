@@ -31,6 +31,18 @@ function repairReplacementChar(text) {
     .replace(new RegExp(`(\\w)${REPLACEMENT_CHAR}(\\w)`, 'g'), '$1—$2');
 }
 
+// A line that's *entirely* `![alt text](https://...)` — standard markdown image
+// syntax, kept to whole-line-only (not mixed into a sentence) so the URL is
+// matched directly off the trimmed line, before any of the prose-cleanup passes
+// below (collapseSpacing, repairReplacementChar) get a chance to touch it.
+const IMAGE_LINE = /^!\[([^\]]*)\]\((\S+)\)$/;
+
+// A line that's *just* a bare URL ending in a common image extension (optionally
+// followed by a CDN-style query string, e.g. Pinterest/imgur resize params) — so
+// pasting a plain image link straight into the sheet works with no markdown
+// syntax required. `![alt](url)` above still wins when a caption is wanted.
+const BARE_IMAGE_LINE = /^(https?:\/\/\S+\.(?:jpg|jpeg|png|gif|webp|bmp|svg))(?:\?\S*)?$/i;
+
 function isBulletLine(line) {
   const markerRun = new RegExp(`^(?:[${REPLACEMENT_CHAR}?]+\\s*)+\\S`);
   return /^\t/.test(line) || markerRun.test(line.trim());
@@ -54,6 +66,24 @@ function stripOuterQuoteWrap(text) {
   return trimmed;
 }
 
+// Character ranges (start/end offsets into the raw, unmodified `text`) of every
+// image line — used by Typewriter to know when the reveal cursor is sitting
+// *inside* an image line's markup, so it can pause instead of exposing the raw,
+// half-typed `![alt](https://...` / URL text before it's recognizable as an image.
+export function findImageLineRanges(text) {
+  if (!text) return [];
+  const ranges = [];
+  let offset = 0;
+  for (const line of String(text).split('\n')) {
+    const trimmedLine = line.trim();
+    if (IMAGE_LINE.test(trimmedLine) || BARE_IMAGE_LINE.test(trimmedLine)) {
+      ranges.push({ start: offset, end: offset + line.length });
+    }
+    offset += line.length + 1; // +1 for the newline consumed by split()
+  }
+  return ranges;
+}
+
 export function parseRichText(text) {
   if (!text) return [];
   const repaired = repairReplacementChar(stripOuterQuoteWrap(String(text)));
@@ -62,8 +92,21 @@ export function parseRichText(text) {
   let currentList = null;
 
   for (const line of lines) {
-    if (!line.trim()) {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) {
       currentList = null;
+      continue;
+    }
+    const imageMatch = IMAGE_LINE.exec(trimmedLine);
+    if (imageMatch) {
+      currentList = null;
+      blocks.push({ type: 'img', alt: imageMatch[1], src: imageMatch[2] });
+      continue;
+    }
+    const bareImageMatch = BARE_IMAGE_LINE.exec(trimmedLine);
+    if (bareImageMatch) {
+      currentList = null;
+      blocks.push({ type: 'img', alt: '', src: trimmedLine });
       continue;
     }
     if (isBulletLine(line)) {

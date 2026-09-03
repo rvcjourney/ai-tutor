@@ -285,6 +285,16 @@ p + .rich-list {
   margin-top: 6px;
 }
 
+/* An image authored inline in Q&A content via `![alt](url)` — capped so a
+   full-resolution photo never blows out the chat bubble it's sitting in. */
+.rich-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 8px 0 0;
+}
+
 /* The learner's own tap/typed input, shown as a sent-message bubble above the bot's
    reply — mirrors a real chat exchange without keeping any scrollback history: only
    the most recent tap is ever shown. */
@@ -468,6 +478,13 @@ p + .rich-list {
 
 .typing-dot:nth-child(3) {
   animation-delay: 0.3s;
+}
+
+/* The same three-dot loading pattern, but sized to sit inline within a message
+   (in place of an image that's still "typing" past) rather than as its own
+   standalone card. */
+.image-loading-dots {
+  padding: 8px 0 0;
 }
 
 @keyframes typing-bounce {
@@ -769,6 +786,70 @@ p + .rich-list {
   opacity: 1;
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* ---- Answered MCQ: same choice grid, locked + highlighted, instead of
+   swapping to a bare feedback card ---- */
+
+.mcq-choice-locked {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.mcq-choice-locked.mcq-choice-correct,
+.mcq-choice-locked.mcq-choice-incorrect {
+  opacity: 1;
+}
+
+.mcq-choice-correct {
+  border-color: var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+}
+.mcq-choice-correct .mcq-letter {
+  border-color: var(--success);
+  background: var(--success);
+  color: #fff;
+  opacity: 1;
+}
+
+.mcq-choice-incorrect {
+  border-color: var(--error);
+  background: var(--error-bg);
+  color: var(--error);
+}
+.mcq-choice-incorrect .mcq-letter {
+  border-color: var(--error);
+  background: var(--error);
+  color: #fff;
+  opacity: 1;
+}
+
+.mcq-reveal-message {
+  margin-top: 2px;
+}
+
+.mcq-continue-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mcq-continue-btn {
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: none;
+}
+
+.mcq-continue-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.mcq-continue-btn:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 /* ---- Persistent nav footer: Back to Topic Menu / Main Menu, always available ---- */

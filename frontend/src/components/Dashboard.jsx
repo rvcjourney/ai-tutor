@@ -120,6 +120,8 @@ export default function Dashboard() {
             optionsVariant={turn.optionsVariant}
             screenType={turn.screenType}
             feedback={turn.feedback}
+            mcqChoices={turn.mcqChoices}
+            revealMessage={turn.revealMessage}
             onSelectOption={selectOption}
             onSendText={sendText}
             disabled={loading}

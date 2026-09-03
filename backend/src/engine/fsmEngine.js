@@ -8,6 +8,7 @@ const subTopicItemProgressRepository = require('../repositories/subTopicItemProg
 const INPUT_TYPE_BY_STATE_TYPE = {
   menu: 'options',
   mcq: 'options',
+  'mcq-answered': 'options',
   quiz: 'text',
   input: 'text',
   exit: 'none',
@@ -86,6 +87,43 @@ function buildNdQuizNode(moduleId, quiz) {
   };
 }
 
+// An MCQ that's just been answered correctly, or exhausted its attempts, doesn't
+// immediately jump to the next question — that used to combine "Correct! ..." with
+// the next question's content on the same screen, which read as confusing (one
+// screen, two questions). Instead it lands on this synthetic "answered" screen:
+// the SAME question and choices stay visible (locked, correct/picked-wrong
+// highlighted) with the explanation below and a Continue action — and only
+// advances to the state the MCQ's own `next` pointed at once the learner taps
+// it. Suffix-based (like "__MODULE_ENTRY__") so it round-trips through
+// persistence/resume without needing its own DB column — `selectedOptionId` is
+// only known at the moment of answering, so it's `null` on a resumed session
+// (still shows which one was correct, just not which one was picked).
+const ANSWERED_MCQ_SUFFIX = { correct: '__ANSWERED_CORRECT', exhausted: '__ANSWERED_EXHAUSTED' };
+
+function buildAnsweredMcqNode(baseState, kind, selectedOptionId = null) {
+  const revealMessage =
+    kind === 'correct'
+      ? baseState.revealMessage
+        ? `Correct! ${baseState.revealMessage}`
+        : 'Correct!'
+      : baseState.revealMessage || 'That was your last attempt.';
+  return {
+    id: `${baseState.id}${ANSWERED_MCQ_SUFFIX[kind]}`,
+    type: 'mcq-answered',
+    module: baseState.module,
+    subTopic: baseState.subTopic,
+    message: baseState.message,
+    mcqChoices: {
+      options: (baseState.options || []).filter((o) => !o.navigate).map((o) => ({ id: o.id, label: o.label })),
+      correctOptionId: baseState.correctOptionId,
+      selectedOptionId: kind === 'correct' ? baseState.correctOptionId : selectedOptionId,
+    },
+    revealMessage,
+    options: [{ id: 'next', label: 'Continue ▸', next: baseState.next }],
+    next: baseState.next,
+  };
+}
+
 /** Resolves a state id to a node. A few ids are reserved and synthesized at runtime
  *  instead of living in the static conversation JSON:
  *  - "ND_WELCOME"/"ND_QUIZ": per-module next-day reinforcement quiz, built from that
@@ -108,6 +146,12 @@ function resolveNode(id, moduleId) {
       throw Object.assign(new Error(`No module entry state found for module "${moduleId}"`), { statusCode: 500 });
     }
     return resolveNode(entryState, moduleId);
+  }
+  for (const [kind, suffix] of Object.entries(ANSWERED_MCQ_SUFFIX)) {
+    if (id.endsWith(suffix)) {
+      const baseState = getState(id.slice(0, -suffix.length));
+      return buildAnsweredMcqNode(baseState, kind);
+    }
   }
   return getState(id);
 }
@@ -136,7 +180,7 @@ function resolveChain(startId, moduleIdHint = null, subTopicIdHint = null) {
   return { node, message: messages.join('\n\n'), moduleId, subTopicId };
 }
 
-const OPTIONS_VARIANT_BY_STATE_TYPE = { mcq: 'mcq', menu: 'menu' };
+const OPTIONS_VARIANT_BY_STATE_TYPE = { mcq: 'mcq', menu: 'menu', 'mcq-answered': 'mcq-answered' };
 
 function buildResponse(node, message, feedback = null, moduleIdHint = null, subTopicIdHint = null) {
   // Fact screens are technically "menu" states (a single Next choice plus Back/Menu),
@@ -173,6 +217,15 @@ function buildResponse(node, message, feedback = null, moduleIdHint = null, subT
     // straight into another sub-topic from there instead of being forced through
     // "Back to Topic Menu" first.
     subTopicOptions: node.id === 'EXPLAIN_FURTHER' ? getVisibleSubTopicOptions(moduleId) : null,
+    // Only populated on the "answered MCQ" screen — the original question's choices,
+    // plus which one was correct and (when known — not on a resumed session) which
+    // one the learner picked, so the UI can keep showing the same choice grid
+    // (locked, highlighted) instead of swapping to a bare feedback card.
+    mcqChoices: node.mcqChoices || null,
+    // The "Correct! ..." / reveal explanation for an answered MCQ — kept separate
+    // from `message` (which stays the original question text) so the UI can lay
+    // out question, choices, and explanation as distinct pieces of the same card.
+    revealMessage: node.revealMessage || null,
   };
 }
 
@@ -416,23 +469,39 @@ function handleMessage(externalUserId, input) {
 
     quizAttemptRepository.log(user.id, mcqAttemptKey, option.id, isCorrect, attemptNumber);
 
+    // Correct (or attempts exhausted) no longer jumps straight to the next
+    // question — it lands on the "answered" screen first (see
+    // buildAnsweredMcqNode): same question and choices, locked and highlighted,
+    // explanation below — so the learner sees just this question's result before
+    // a separate Continue tap reveals what's next, instead of both arriving
+    // combined on one screen. Built directly (not via resolveNode's suffix
+    // lookup) so the real picked choice is known — resolveNode only sees it as
+    // null, on a resumed session.
     if (isCorrect) {
-      const { node, message, moduleId, subTopicId } = resolveChain(currentNode.next, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
-      const prefix = currentNode.revealMessage ? `Correct! ${currentNode.revealMessage}\n\n` : 'Correct!\n\n';
-      return buildResponse(node, prefix + message, 'correct', moduleId, subTopicId);
+      const node = buildAnsweredMcqNode(currentNode, 'correct', option.id);
+      persistProgress(user.id, node, progress.module_id, progress.sub_topic_id, previousForCompletion);
+      return buildResponse(node, node.message, 'correct', progress.module_id, progress.sub_topic_id);
     }
 
     const maxAttempts = currentNode.maxAttempts || 3;
     if (attemptNumber >= maxAttempts) {
-      const { node, message, moduleId, subTopicId } = resolveChain(currentNode.next, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
-      return buildResponse(node, `${currentNode.revealMessage}\n\n${message}`, 'incorrect', moduleId, subTopicId);
+      const node = buildAnsweredMcqNode(currentNode, 'exhausted', option.id);
+      persistProgress(user.id, node, progress.module_id, progress.sub_topic_id, previousForCompletion);
+      return buildResponse(node, node.message, 'incorrect', progress.module_id, progress.sub_topic_id);
     }
 
     // Incorrect, retries remaining — stay on the mcq state.
     persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id, previousForCompletion);
     return buildResponse(currentNode, `${currentNode.incorrectMessage}\n\n${currentNode.message}`, 'incorrect', progress.module_id, progress.sub_topic_id);
+  }
+
+  // The Continue tap on an "answered MCQ" screen — advance to whatever the
+  // original MCQ's own `next` pointed at (another question, or the sub-topic's
+  // completion screen).
+  if (currentNode.type === 'mcq-answered') {
+    const { node, message, moduleId, subTopicId } = resolveChain(currentNode.next, progress.module_id, progress.sub_topic_id);
+    persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+    return buildResponse(node, message, null, moduleId, subTopicId);
   }
 
   // exit / auto should never be the persisted "current" state, but guard defensively.
