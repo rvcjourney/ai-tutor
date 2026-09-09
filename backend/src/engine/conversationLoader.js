@@ -1,50 +1,25 @@
 const fs = require('fs');
 const path = require('path');
+const { query } = require('../db');
 
-const CONVERSATIONS_DIR = path.join(__dirname, '..', 'conversations');
 const SEED_DIR = path.join(__dirname, '..', 'conversations-seed');
-
-// Published content (every file in CONVERSATIONS_DIR) is runtime data, not code — it's
-// gitignored so a `git push` of a code change never overwrites live-published content,
-// and a deploy never resets it back to whatever was last committed. That means a truly
-// fresh environment (first boot on a new machine, or a host with no persistent disk)
-// starts with an empty conversations/ dir — this seeds it from the tracked baseline
-// (app chassis: WELCOME/MAIN_MENU/EXPLAIN_FURTHER, zero topics) so the app boots
-// instead of crashing on missing files, and only where a file doesn't already exist —
-// never overwrites real published content that's already there.
-function ensureSeeded() {
-  fs.mkdirSync(CONVERSATIONS_DIR, { recursive: true });
-  const seedFiles = fs.readdirSync(SEED_DIR).filter((f) => f.endsWith('.json'));
-  for (const file of seedFiles) {
-    const dest = path.join(CONVERSATIONS_DIR, file);
-    if (!fs.existsSync(dest)) {
-      fs.copyFileSync(path.join(SEED_DIR, file), dest);
-    }
-  }
-}
 
 // Ids the engine synthesizes at runtime (per-module reinforcement quiz, "back to
 // topic menu") rather than defining as static states — exempt from reference validation.
 const RESERVED_STATE_IDS = new Set(['ND_WELCOME', 'ND_QUIZ', '__MODULE_ENTRY__']);
 
-const statesById = new Map();
+// The live, in-memory cache every synchronous read (getState/getModulesRegistry/
+// getAllStates) serves from — deliberately kept synchronous even though the data
+// now lives in Postgres, so the large majority of the FSM engine (resolveNode,
+// resolveChain, and everything built on them) never needed to become async just
+// because storage moved. Only the things that *populate* this cache — loadAll at
+// boot, and publishService after a successful publish — touch the database.
+let statesById = new Map();
 let modulesRegistry = [];
 
-function loadStateGraphFile(filePath, parsed) {
-  for (const state of parsed.states) {
-    if (!state.id) {
-      throw new Error(`State missing "id" in ${filePath}`);
-    }
-    if (statesById.has(state.id)) {
-      throw new Error(`Duplicate state id "${state.id}" found in ${filePath} (already defined elsewhere)`);
-    }
-    statesById.set(state.id, state);
-  }
-}
-
-function validateReferences() {
-  for (const state of statesById.values()) {
-    if (state.next && !RESERVED_STATE_IDS.has(state.next) && !statesById.has(state.next)) {
+function validateReferences(candidateStatesById) {
+  for (const state of candidateStatesById.values()) {
+    if (state.next && !RESERVED_STATE_IDS.has(state.next) && !candidateStatesById.has(state.next)) {
       throw new Error(`State "${state.id}" has dangling "next" reference: "${state.next}"`);
     }
     // "menu" options always carry their own "next"; "mcq" answer-choice options don't
@@ -54,7 +29,7 @@ function validateReferences() {
     if (Array.isArray(state.options)) {
       for (const option of state.options) {
         if (!('next' in option)) continue;
-        if (!RESERVED_STATE_IDS.has(option.next) && !statesById.has(option.next)) {
+        if (!RESERVED_STATE_IDS.has(option.next) && !candidateStatesById.has(option.next)) {
           throw new Error(`State "${state.id}" option "${option.id}" has dangling "next" reference: "${option.next}"`);
         }
       }
@@ -65,7 +40,7 @@ function validateReferences() {
       }
       for (const key of ['onCorrect', 'onIncorrect', 'onExhausted']) {
         const target = state.quiz[key];
-        if (!RESERVED_STATE_IDS.has(target) && !statesById.has(target)) {
+        if (!RESERVED_STATE_IDS.has(target) && !candidateStatesById.has(target)) {
           throw new Error(`Quiz state "${state.id}" has dangling "quiz.${key}" reference: "${target}"`);
         }
       }
@@ -82,28 +57,74 @@ function validateReferences() {
   }
 }
 
-function loadAll() {
-  ensureSeeded();
-  statesById.clear();
-  modulesRegistry = [];
+/** Pure: given the rows a set of conversation files would resolve to (each
+ *  `{filename, content}`, `content` already-parsed JSON), builds and validates the
+ *  {statesById, modulesRegistry} shape without touching the live cache — throws on
+ *  any dangling reference / duplicate id / malformed file, same checks as before.
+ *  Used both for the real boot load and by publishService to validate a
+ *  prospective publish before it's committed to the database. */
+function buildCache(files) {
+  const candidateStatesById = new Map();
+  let candidateModulesRegistry = [];
 
-  const files = fs.readdirSync(CONVERSATIONS_DIR).filter((f) => f.endsWith('.json'));
-  for (const file of files) {
-    const filePath = path.join(CONVERSATIONS_DIR, file);
-    const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    if (Array.isArray(parsed.states)) {
-      loadStateGraphFile(filePath, parsed);
-    } else if (Array.isArray(parsed.modules)) {
-      modulesRegistry = parsed.modules;
+  for (const { filename, content } of files) {
+    if (Array.isArray(content.states)) {
+      for (const state of content.states) {
+        if (!state.id) {
+          throw new Error(`State missing "id" in ${filename}`);
+        }
+        if (candidateStatesById.has(state.id)) {
+          throw new Error(`Duplicate state id "${state.id}" found in ${filename} (already defined elsewhere)`);
+        }
+        candidateStatesById.set(state.id, state);
+      }
+    } else if (Array.isArray(content.modules)) {
+      candidateModulesRegistry = content.modules;
     } else {
-      throw new Error(`Conversation file ${filePath} has neither "states" nor "modules" — unrecognized shape`);
+      throw new Error(`Conversation file ${filename} has neither "states" nor "modules" — unrecognized shape`);
     }
   }
 
-  validateReferences();
+  validateReferences(candidateStatesById);
+  return { statesById: candidateStatesById, modulesRegistry: candidateModulesRegistry };
 }
 
-loadAll();
+/** Swaps the live cache to an already-built-and-validated candidate (from
+ *  buildCache). Never throws — call it only after you know the candidate is
+ *  valid (buildCache already would have thrown otherwise). */
+function setCache(cache) {
+  statesById = cache.statesById;
+  modulesRegistry = cache.modulesRegistry;
+}
+
+// A truly fresh database (first boot against a brand-new Postgres, or a host with
+// no persistent volume yet) has no conversation_files rows at all — seed it from
+// the tracked baseline (app chassis: WELCOME/MAIN_MENU/EXPLAIN_FURTHER, zero
+// topics) so the app boots instead of crashing on an empty cache. Only runs when
+// the table is genuinely empty, so it can never overwrite real published content.
+async function seedIfEmpty() {
+  const seedFilenames = fs.readdirSync(SEED_DIR).filter((f) => f.endsWith('.json'));
+  const files = [];
+  for (const filename of seedFilenames) {
+    const content = JSON.parse(fs.readFileSync(path.join(SEED_DIR, filename), 'utf8'));
+    await query('INSERT INTO conversation_files (filename, content) VALUES ($1, $2::jsonb) ON CONFLICT (filename) DO NOTHING', [
+      filename,
+      content,
+    ]);
+    files.push({ filename, content });
+  }
+  return files;
+}
+
+/** Full refresh from the database — used at boot. publishService does NOT call
+ *  this after a publish (that would mean a redundant read-after-write); it
+ *  builds + validates the candidate itself and calls setCache() directly once
+ *  its transaction commits. */
+async function loadAll() {
+  const result = await query('SELECT filename, content FROM conversation_files');
+  const files = result.rows.length > 0 ? result.rows : await seedIfEmpty();
+  setCache(buildCache(files));
+}
 
 function getState(id) {
   const state = statesById.get(id);
@@ -121,4 +142,13 @@ function getAllStates() {
   return Array.from(statesById.values());
 }
 
-module.exports = { getState, getModulesRegistry, getAllStates, reload: loadAll, RESERVED_STATE_IDS };
+module.exports = {
+  getState,
+  getModulesRegistry,
+  getAllStates,
+  loadAll,
+  reload: loadAll,
+  buildCache,
+  setCache,
+  RESERVED_STATE_IDS,
+};

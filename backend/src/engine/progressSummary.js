@@ -62,11 +62,11 @@ function getSubTopicRemainingSeconds(qStates, mcqStates, itemsSeen) {
  *  total items that exist) so it moves as soon as the learner makes any progress,
  *  not just when a whole sub-topic gets finished. estimatedMinutesLeft is a
  *  content-based read on the same remaining items, not a flat per-question guess. */
-function getProgressSummary(userId) {
-  const completed = subTopicProgressRepository.getCompletedForUser(userId);
+async function getProgressSummary(userId) {
+  const completed = await subTopicProgressRepository.getCompletedForUser(userId);
   const completedSet = new Set(completed.map((c) => `${c.module_id}:${c.sub_topic_id}`));
 
-  const itemProgress = subTopicItemProgressRepository.getProgressForUser(userId);
+  const itemProgress = await subTopicItemProgressRepository.getProgressForUser(userId);
   const itemProgressMap = new Map(itemProgress.map((p) => [`${p.module_id}:${p.sub_topic_id}`, p.items_seen]));
 
   let totalSubTopics = 0;

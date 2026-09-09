@@ -17,7 +17,7 @@ function notFound(message) {
  *  Map shape buildTopic() already expects, regenerate the topic's states from
  *  scratch, and publish. Reuses the exact same validated, rollback-safe write path
  *  the CSV importer uses — a CRUD edit is just "the same generator, fed different rows." */
-function regenerateAndPublish(title, rows, allSubTopicLabels) {
+async function regenerateAndPublish(title, rows, allSubTopicLabels) {
   const counters = new Map();
   const numberedRows = rows.map((row) => {
     const key = `${row.subTopic}::${row.type}`;
@@ -36,11 +36,11 @@ function regenerateAndPublish(title, rows, allSubTopicLabels) {
   }
 
   const topicPlan = buildTopic(title, subTopicsMap);
-  publish([topicPlan]);
+  await publish([topicPlan]);
   return topicPlan;
 }
 
-function createTopic(title) {
+async function createTopic(title) {
   if (!title || !title.trim()) throw badRequest('title is required');
   const trimmed = title.trim();
   const moduleId = slugifyLower(trimmed);
@@ -48,11 +48,11 @@ function createTopic(title) {
     throw badRequest(`A topic with id "${moduleId}" already exists`);
   }
   const topicPlan = buildTopic(trimmed, new Map());
-  publish([topicPlan]);
+  await publish([topicPlan]);
   return topicPlan.registryEntry;
 }
 
-function renameTopic(moduleId, newTitle) {
+async function renameTopic(moduleId, newTitle) {
   if (!newTitle || !newTitle.trim()) throw badRequest('title is required');
   const trimmed = newTitle.trim();
   const entry = getTopicEntry(moduleId);
@@ -63,7 +63,7 @@ function renameTopic(moduleId, newTitle) {
     // Title text changed (e.g. casing/punctuation) but the slug didn't — safe to
     // regenerate in place, no old/new identity split to reconcile.
     const rows = getTopicRows(moduleId);
-    const topicPlan = regenerateAndPublish(trimmed, rows, allLabels);
+    const topicPlan = await regenerateAndPublish(trimmed, rows, allLabels);
     return topicPlan.registryEntry;
   }
 
@@ -76,12 +76,12 @@ function renameTopic(moduleId, newTitle) {
   // topic is untouched; if removing the old one afterward fails, you're left with
   // both (recoverable — just delete the old one) rather than with neither.
   const rows = getTopicRows(moduleId).map((r) => ({ ...r, topic: trimmed }));
-  const topicPlan = regenerateAndPublish(trimmed, rows, allLabels);
-  removeTopic(moduleId);
+  const topicPlan = await regenerateAndPublish(trimmed, rows, allLabels);
+  await removeTopic(moduleId);
   return topicPlan.registryEntry;
 }
 
-function createSubTopic(moduleId, label) {
+async function createSubTopic(moduleId, label) {
   if (!label || !label.trim()) throw badRequest('label is required');
   const trimmed = label.trim();
   const entry = getTopicEntry(moduleId);
@@ -92,11 +92,11 @@ function createSubTopic(moduleId, label) {
 
   const rows = getTopicRows(moduleId);
   const allLabels = [...(entry.subTopics || []).map((st) => st.label), trimmed];
-  regenerateAndPublish(entry.title, rows, allLabels);
+  await regenerateAndPublish(entry.title, rows, allLabels);
   return { id: subTopicId, label: trimmed };
 }
 
-function renameSubTopic(moduleId, subTopicId, newLabel) {
+async function renameSubTopic(moduleId, subTopicId, newLabel) {
   if (!newLabel || !newLabel.trim()) throw badRequest('label is required');
   const trimmed = newLabel.trim();
   const entry = getTopicEntry(moduleId);
@@ -110,18 +110,18 @@ function renameSubTopic(moduleId, subTopicId, newLabel) {
 
   const rows = getTopicRows(moduleId).map((r) => (r.subTopic === subTopic.label ? { ...r, subTopic: trimmed } : r));
   const allLabels = (entry.subTopics || []).map((st) => (st.id === subTopicId ? trimmed : st.label));
-  regenerateAndPublish(entry.title, rows, allLabels);
+  await regenerateAndPublish(entry.title, rows, allLabels);
   return { id: newSubTopicId, label: trimmed };
 }
 
-function deleteSubTopic(moduleId, subTopicId) {
+async function deleteSubTopic(moduleId, subTopicId) {
   const entry = getTopicEntry(moduleId);
   const subTopic = (entry.subTopics || []).find((st) => st.id === subTopicId);
   if (!subTopic) throw notFound(`No sub-topic with id "${subTopicId}"`);
 
   const rows = getTopicRows(moduleId).filter((r) => r.subTopic !== subTopic.label);
   const allLabels = (entry.subTopics || []).filter((st) => st.id !== subTopicId).map((st) => st.label);
-  regenerateAndPublish(entry.title, rows, allLabels);
+  await regenerateAndPublish(entry.title, rows, allLabels);
   return { removed: subTopicId };
 }
 
@@ -139,7 +139,7 @@ function findQuestion(moduleId, subTopicId, index) {
   return { entry, subTopic, rows, subRows, index: i };
 }
 
-function createQuestion(moduleId, subTopicId, questionData) {
+async function createQuestion(moduleId, subTopicId, questionData) {
   const entry = getTopicEntry(moduleId);
   const subTopic = (entry.subTopics || []).find((st) => st.id === subTopicId);
   if (!subTopic) throw notFound(`No sub-topic with id "${subTopicId}"`);
@@ -149,11 +149,11 @@ function createQuestion(moduleId, subTopicId, questionData) {
 
   const rows = [...getTopicRows(moduleId), row];
   const allLabels = (entry.subTopics || []).map((st) => st.label);
-  regenerateAndPublish(entry.title, rows, allLabels);
+  await regenerateAndPublish(entry.title, rows, allLabels);
   return row;
 }
 
-function updateQuestion(moduleId, subTopicId, index, questionData) {
+async function updateQuestion(moduleId, subTopicId, index, questionData) {
   const { entry, subTopic, rows, subRows, index: i } = findQuestion(moduleId, subTopicId, index);
   const target = subRows[i];
   const merged = { ...target, ...questionData, topic: entry.title, subTopic: subTopic.label, type: target.type };
@@ -163,16 +163,16 @@ function updateQuestion(moduleId, subTopicId, index, questionData) {
   const targetPos = rows.indexOf(target);
   rows[targetPos] = row;
   const allLabels = (entry.subTopics || []).map((st) => st.label);
-  regenerateAndPublish(entry.title, rows, allLabels);
+  await regenerateAndPublish(entry.title, rows, allLabels);
   return row;
 }
 
-function deleteQuestion(moduleId, subTopicId, index) {
+async function deleteQuestion(moduleId, subTopicId, index) {
   const { entry, subTopic, rows, subRows, index: i } = findQuestion(moduleId, subTopicId, index);
   const target = subRows[i];
   const filtered = rows.filter((r) => r !== target);
   const allLabels = (entry.subTopics || []).map((st) => st.label);
-  regenerateAndPublish(entry.title, filtered, allLabels);
+  await regenerateAndPublish(entry.title, filtered, allLabels);
   return { removed: true };
 }
 

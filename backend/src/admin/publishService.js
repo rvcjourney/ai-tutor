@@ -1,41 +1,26 @@
-const fs = require('fs');
-const path = require('path');
+const { pool } = require('../db');
 const conversationLoader = require('../engine/conversationLoader');
 
-const CONVERSATIONS_DIR = path.join(__dirname, '..', 'conversations');
-const MAIN_FILE = path.join(CONVERSATIONS_DIR, 'main.json');
-const REGISTRY_FILE = path.join(CONVERSATIONS_DIR, 'modules-registry.json');
-
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-}
-
-function writeJson(filePath, data) {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf8');
-}
-
 /** Writes each topic's conversation file + upserts it into modules-registry.json and
- *  MAIN_MENU's options, then reloads the live engine (which re-validates from disk).
- *  If anything fails — a bad row that slipped past csvImporter's checks, a duplicate
- *  state id colliding with an unrelated topic, etc. — every touched file is restored
- *  to what it was before this call, so a bad publish can never leave the app broken. */
-function publish(topicPlans) {
-  const touchedFiles = new Set([MAIN_FILE, REGISTRY_FILE]);
-  for (const plan of topicPlans) {
-    touchedFiles.add(path.join(CONVERSATIONS_DIR, plan.moduleFileName));
-  }
-
-  const backups = new Map();
-  for (const filePath of touchedFiles) {
-    backups.set(filePath, fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : null);
-  }
-
+ *  MAIN_MENU's options, then swaps the live in-memory cache to match. Validates the
+ *  *entire* resulting file set (not just what changed) before writing anything —
+ *  a bad row that slipped past csvImporter's checks, a duplicate state id colliding
+ *  with an unrelated topic, etc. throws before a single statement runs, and the DB
+ *  writes that do happen are wrapped in one transaction so a mid-write failure can
+ *  never leave the database half-updated. Either way, a bad publish can never leave
+ *  the app broken. */
+async function publish(topicPlans) {
+  const client = await pool.connect();
   try {
-    for (const plan of topicPlans) {
-      writeJson(path.join(CONVERSATIONS_DIR, plan.moduleFileName), { states: plan.states });
-    }
+    await client.query('BEGIN');
 
-    const registry = readJson(REGISTRY_FILE);
+    const allRows = await client.query('SELECT filename, content FROM conversation_files');
+    const filesByName = new Map(allRows.rows.map((r) => [r.filename, r.content]));
+
+    const registry = filesByName.get('modules-registry.json');
+    if (!registry) {
+      throw Object.assign(new Error('modules-registry.json not found — database not seeded correctly'), { statusCode: 500 });
+    }
     for (const plan of topicPlans) {
       const idx = registry.modules.findIndex((m) => m.id === plan.moduleId);
       if (idx >= 0) {
@@ -44,9 +29,11 @@ function publish(topicPlans) {
         registry.modules.push(plan.registryEntry);
       }
     }
-    writeJson(REGISTRY_FILE, registry);
 
-    const main = readJson(MAIN_FILE);
+    const main = filesByName.get('main.json');
+    if (!main) {
+      throw Object.assign(new Error('main.json not found — database not seeded correctly'), { statusCode: 500 });
+    }
     const mainMenu = main.states.find((s) => s.id === 'MAIN_MENU');
     if (!mainMenu) {
       throw new Error('main.json has no MAIN_MENU state — cannot register new topics');
@@ -59,9 +46,33 @@ function publish(topicPlans) {
         mainMenu.options.push(plan.mainMenuOption);
       }
     }
-    writeJson(MAIN_FILE, main);
 
-    conversationLoader.reload();
+    filesByName.set('modules-registry.json', registry);
+    filesByName.set('main.json', main);
+    for (const plan of topicPlans) {
+      filesByName.set(plan.moduleFileName, { states: plan.states });
+    }
+
+    // Validate the full resulting set — including every topic NOT touched by this
+    // publish — before writing anything at all.
+    const candidateFiles = [...filesByName.entries()].map(([filename, content]) => ({ filename, content }));
+    const candidateCache = conversationLoader.buildCache(candidateFiles);
+
+    const toWrite = [
+      ['modules-registry.json', registry],
+      ['main.json', main],
+      ...topicPlans.map((p) => [p.moduleFileName, { states: p.states }]),
+    ];
+    for (const [filename, content] of toWrite) {
+      await client.query(
+        `INSERT INTO conversation_files (filename, content) VALUES ($1, $2::jsonb)
+         ON CONFLICT (filename) DO UPDATE SET content = EXCLUDED.content, updated_at = NOW()`,
+        [filename, content]
+      );
+    }
+
+    await client.query('COMMIT');
+    conversationLoader.setCache(candidateCache);
 
     return topicPlans.map((p) => {
       const menuState = p.states.find((s) => s.id === p.entryState);
@@ -73,78 +84,68 @@ function publish(topicPlans) {
       };
     });
   } catch (err) {
-    for (const [filePath, original] of backups) {
-      if (original === null) {
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      } else {
-        fs.writeFileSync(filePath, original, 'utf8');
-      }
-    }
-    try {
-      conversationLoader.reload();
-    } catch (reloadErr) {
-      throw Object.assign(
-        new Error(`Publish failed AND rollback failed to reload — this should never happen: ${err.message}; reload error: ${reloadErr.message}`),
-        { statusCode: 500 }
-      );
-    }
+    await client.query('ROLLBACK').catch(() => {});
     throw Object.assign(err instanceof Error ? err : new Error(String(err)), { statusCode: err.statusCode || 400 });
+  } finally {
+    client.release();
   }
 }
 
 /** Removes a topic entirely: deletes its conversation file, drops its entry from
- *  modules-registry.json, and drops its option from MAIN_MENU. Same backup/rollback
- *  safety as publish() — if the resulting graph fails to reload (shouldn't happen,
- *  but e.g. some other topic secretly depended on a state in this one), everything
- *  is restored and the error is surfaced instead of leaving the app half-broken. */
-function removeTopic(moduleId) {
-  const registry = readJson(REGISTRY_FILE);
-  const entry = registry.modules.find((m) => m.id === moduleId);
-  if (!entry) {
-    throw Object.assign(new Error(`No topic with id "${moduleId}"`), { statusCode: 404 });
-  }
-
-  const moduleFile = path.join(CONVERSATIONS_DIR, `${moduleId.replace(/_/g, '-')}.json`);
-  const touchedFiles = new Set([MAIN_FILE, REGISTRY_FILE, moduleFile]);
-
-  const backups = new Map();
-  for (const filePath of touchedFiles) {
-    backups.set(filePath, fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : null);
-  }
-
+ *  modules-registry.json, and drops its option from MAIN_MENU. Same
+ *  validate-the-whole-set-before-writing-anything safety as publish() — if the
+ *  resulting graph would be invalid (shouldn't happen, but e.g. some other topic
+ *  secretly depended on a state in this one), nothing is written and the error is
+ *  surfaced instead of leaving the app half-broken. */
+async function removeTopic(moduleId) {
+  const client = await pool.connect();
   try {
-    if (fs.existsSync(moduleFile)) fs.unlinkSync(moduleFile);
+    await client.query('BEGIN');
 
+    const allRows = await client.query('SELECT filename, content FROM conversation_files');
+    const filesByName = new Map(allRows.rows.map((r) => [r.filename, r.content]));
+
+    const registry = filesByName.get('modules-registry.json');
+    const entry = registry?.modules.find((m) => m.id === moduleId);
+    if (!entry) {
+      throw Object.assign(new Error(`No topic with id "${moduleId}"`), { statusCode: 404 });
+    }
+
+    const moduleFileName = `${moduleId.replace(/_/g, '-')}.json`;
     registry.modules = registry.modules.filter((m) => m.id !== moduleId);
-    writeJson(REGISTRY_FILE, registry);
 
-    const main = readJson(MAIN_FILE);
-    const mainMenu = main.states.find((s) => s.id === 'MAIN_MENU');
+    const main = filesByName.get('main.json');
+    const mainMenu = main?.states.find((s) => s.id === 'MAIN_MENU');
     if (mainMenu) {
       mainMenu.options = mainMenu.options.filter((o) => o.id !== moduleId);
     }
-    writeJson(MAIN_FILE, main);
 
-    conversationLoader.reload();
+    filesByName.set('modules-registry.json', registry);
+    filesByName.set('main.json', main);
+    filesByName.delete(moduleFileName);
+
+    const candidateFiles = [...filesByName.entries()].map(([filename, content]) => ({ filename, content }));
+    const candidateCache = conversationLoader.buildCache(candidateFiles);
+
+    await client.query('DELETE FROM conversation_files WHERE filename = $1', [moduleFileName]);
+    await client.query('UPDATE conversation_files SET content = $2::jsonb, updated_at = NOW() WHERE filename = $1', [
+      'modules-registry.json',
+      registry,
+    ]);
+    await client.query('UPDATE conversation_files SET content = $2::jsonb, updated_at = NOW() WHERE filename = $1', [
+      'main.json',
+      main,
+    ]);
+
+    await client.query('COMMIT');
+    conversationLoader.setCache(candidateCache);
 
     return { moduleId, title: entry.title };
   } catch (err) {
-    for (const [filePath, original] of backups) {
-      if (original === null) {
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      } else {
-        fs.writeFileSync(filePath, original, 'utf8');
-      }
-    }
-    try {
-      conversationLoader.reload();
-    } catch (reloadErr) {
-      throw Object.assign(
-        new Error(`Delete failed AND rollback failed to reload — this should never happen: ${err.message}; reload error: ${reloadErr.message}`),
-        { statusCode: 500 }
-      );
-    }
+    await client.query('ROLLBACK').catch(() => {});
     throw Object.assign(err instanceof Error ? err : new Error(String(err)), { statusCode: err.statusCode || 400 });
+  } finally {
+    client.release();
   }
 }
 

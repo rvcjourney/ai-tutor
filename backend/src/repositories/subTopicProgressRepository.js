@@ -1,20 +1,25 @@
-const db = require('../db');
+const { query } = require('../db');
 
-function markComplete(userId, moduleId, subTopicId) {
-  db.prepare(
-    `INSERT OR IGNORE INTO sub_topic_completions (user_id, module_id, sub_topic_id) VALUES (?, ?, ?)`
-  ).run(userId, moduleId, subTopicId);
+async function markComplete(userId, moduleId, subTopicId) {
+  await query(
+    `INSERT INTO sub_topic_completions (user_id, module_id, sub_topic_id)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (user_id, module_id, sub_topic_id) DO NOTHING`,
+    [userId, moduleId, subTopicId]
+  );
 }
 
-function getCompletedForUser(userId) {
-  return db.prepare('SELECT module_id, sub_topic_id FROM sub_topic_completions WHERE user_id = ?').all(userId);
+async function getCompletedForUser(userId) {
+  const result = await query('SELECT module_id, sub_topic_id FROM sub_topic_completions WHERE user_id = $1', [userId]);
+  return result.rows;
 }
 
-function isComplete(userId, moduleId, subTopicId) {
-  const row = db
-    .prepare('SELECT 1 FROM sub_topic_completions WHERE user_id = ? AND module_id = ? AND sub_topic_id = ?')
-    .get(userId, moduleId, subTopicId);
-  return Boolean(row);
+async function isComplete(userId, moduleId, subTopicId) {
+  const result = await query(
+    'SELECT 1 FROM sub_topic_completions WHERE user_id = $1 AND module_id = $2 AND sub_topic_id = $3',
+    [userId, moduleId, subTopicId]
+  );
+  return result.rows.length > 0;
 }
 
 module.exports = { markComplete, getCompletedForUser, isComplete };

@@ -3,6 +3,9 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 
+const db = require('./db');
+const conversationLoader = require('./engine/conversationLoader');
+
 const chatRoutes = require('./routes/chat');
 const moduleRoutes = require('./routes/modules');
 const progressRoutes = require('./routes/progress');
@@ -27,6 +30,20 @@ app.use('/admin', adminRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Rule-based learning chatbot backend listening on port ${PORT}`);
+
+// Both the schema and the conversation content now need a database round-trip
+// (Postgres, not the old synchronous SQLite/file setup) — the server only starts
+// accepting requests once both are ready, so a request can never land while the
+// cache is still empty/unseeded.
+async function start() {
+  await db.ensureSchema();
+  await conversationLoader.loadAll();
+  app.listen(PORT, () => {
+    console.log(`Rule-based learning chatbot backend listening on port ${PORT}`);
+  });
+}
+
+start().catch((err) => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
 });

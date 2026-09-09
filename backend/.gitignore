@@ -1,9 +1,9 @@
 node_modules/
-data/
 .env
 
-# Published content — runtime data written by the admin Publish flow, not code. Kept
-# out of git so a code push/deploy never overwrites or resets live-published content.
-# conversations-seed/ (the empty app-chassis baseline) is NOT covered by this and
-# stays tracked — see conversationLoader.js's ensureSeeded().
+# Legacy from the pre-Postgres setup (SQLite file, file-based conversation JSON) —
+# published content and progress both live in Postgres now (see src/db/), not on
+# local disk. Left ignored in case anything's still sitting here locally; nothing
+# reads from or writes to either path anymore.
+data/
 src/conversations/*.json

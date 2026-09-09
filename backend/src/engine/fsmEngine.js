@@ -45,12 +45,15 @@ function getVisibleSubTopicOptions(moduleId) {
  *  sub-topic of a module at least once — used to skip straight to the module's real
  *  menu on repeat visits instead of replaying the whole intro chain every time. A
  *  module with no hidden sub-topics has nothing to skip, so it's trivially "seen." */
-function hasSeenIntro(userId, moduleId) {
+async function hasSeenIntro(userId, moduleId) {
   const module = getModulesRegistry().find((m) => m.id === moduleId);
   if (!module) return false;
   const hiddenSubTopics = (module.subTopics || []).filter((st) => st.hidden);
   if (!hiddenSubTopics.length) return true;
-  return hiddenSubTopics.every((st) => subTopicProgressRepository.isComplete(userId, moduleId, st.id));
+  // Array.prototype.every doesn't await — it'd just check that each Promise object
+  // is truthy, which is always true. Resolve them all first, then check the values.
+  const completions = await Promise.all(hiddenSubTopics.map((st) => subTopicProgressRepository.isComplete(userId, moduleId, st.id)));
+  return completions.every(Boolean);
 }
 
 function buildGreeting(displayName, clientHour) {
@@ -259,9 +262,9 @@ function computeItemPosition(node) {
  *  completion-tracking and "furthest item reached" tracking for free, so a sub-topic
  *  still in progress can show a real "6 of 15 covered" figure instead of just
  *  done/not-done. `previous` is the pre-this-turn {moduleId, subTopicId}, if any. */
-function persistProgress(userId, node, moduleId, subTopicId, previous = null) {
+async function persistProgress(userId, node, moduleId, subTopicId, previous = null) {
   const status = node.type === 'exit' ? 'completed' : 'in_progress';
-  progressRepository.upsert(userId, {
+  await progressRepository.upsert(userId, {
     currentState: node.id,
     lastCompletedState: node.type === 'exit' ? node.id : null,
     moduleId,
@@ -269,11 +272,11 @@ function persistProgress(userId, node, moduleId, subTopicId, previous = null) {
     status,
   });
   if (previous?.moduleId && previous?.subTopicId && node.subTopic !== previous.subTopicId) {
-    subTopicProgressRepository.markComplete(userId, previous.moduleId, previous.subTopicId);
+    await subTopicProgressRepository.markComplete(userId, previous.moduleId, previous.subTopicId);
   } else if (node.subTopic) {
     const itemsSeen = computeItemPosition(node);
     if (itemsSeen !== null) {
-      subTopicItemProgressRepository.recordProgress(userId, moduleId, subTopicId, itemsSeen);
+      await subTopicItemProgressRepository.recordProgress(userId, moduleId, subTopicId, itemsSeen);
     }
   }
 }
@@ -283,20 +286,20 @@ function persistProgress(userId, node, moduleId, subTopicId, previous = null) {
  *  simply doesn't exist anymore. Rather than let that surface as a raw "unknown
  *  state" error with no way out (the old behavior — "Retry" just failed the same
  *  way every time), land them back on the main menu, which always exists. */
-function recoverToMainMenu(userId) {
+async function recoverToMainMenu(userId) {
   const { node, message, moduleId, subTopicId } = resolveChain('MAIN_MENU', null, null);
-  persistProgress(userId, node, moduleId, subTopicId);
+  await persistProgress(userId, node, moduleId, subTopicId);
   return buildResponse(node, message, null, moduleId, subTopicId);
 }
 
-function startSession(externalUserId, { simulateNextDay = false, displayName, clientHour } = {}) {
-  const user = userRepository.findOrCreateByExternalId(externalUserId);
+async function startSession(externalUserId, { simulateNextDay = false, displayName, clientHour } = {}) {
+  const user = await userRepository.findOrCreateByExternalId(externalUserId);
   if (displayName) {
-    userRepository.setDisplayName(user.id, displayName);
+    await userRepository.setDisplayName(user.id, displayName);
   }
   const effectiveName = displayName || user.display_name || null;
 
-  const progress = progressRepository.get(user.id);
+  const progress = await progressRepository.get(user.id);
 
   let entryStateId = 'WELCOME';
   let moduleIdHint = null;
@@ -329,18 +332,18 @@ function startSession(externalUserId, { simulateNextDay = false, displayName, cl
     const { node, message, moduleId, subTopicId } = resolveChain('MAIN_MENU', moduleIdHint, subTopicIdHint);
     // Starting/resuming a session is never itself "finishing" whatever sub-topic a
     // learner's saved position happens to carry — never a completion signal here.
-    persistProgress(user.id, node, moduleId, subTopicId, null);
+    await persistProgress(user.id, node, moduleId, subTopicId, null);
     return buildResponse(node, `${greeting}\n\n${message}`, null, moduleId, subTopicId);
   }
 
   const { node, message, moduleId, subTopicId } = resolveChain(entryStateId, moduleIdHint, subTopicIdHint);
-  persistProgress(user.id, node, moduleId, subTopicId, null);
+  await persistProgress(user.id, node, moduleId, subTopicId, null);
   return buildResponse(node, message, null, moduleId, subTopicId);
 }
 
-function handleMessage(externalUserId, input) {
-  const user = userRepository.findOrCreateByExternalId(externalUserId);
-  const progress = progressRepository.get(user.id);
+async function handleMessage(externalUserId, input) {
+  const user = await userRepository.findOrCreateByExternalId(externalUserId);
+  const progress = await progressRepository.get(user.id);
   if (!progress) {
     throw Object.assign(new Error('No active session — call /chat/start first.'), { statusCode: 400 });
   }
@@ -376,13 +379,13 @@ function handleMessage(externalUserId, input) {
     // fallback would substitute the stale ones), making the breadcrumb/UI still
     // think the learner is inside whatever topic they just left.
     const { node, message, moduleId, subTopicId } = resolveChain('MAIN_MENU', null, null);
-    persistProgress(user.id, node, moduleId, subTopicId, null);
+    await persistProgress(user.id, node, moduleId, subTopicId, null);
     return buildResponse(node, message, null, moduleId, subTopicId);
   }
   if (trimmedInput === 'back') {
     const target = progress.module_id ? '__MODULE_ENTRY__' : 'MAIN_MENU';
     const { node, message, moduleId, subTopicId } = resolveChain(target, progress.module_id, progress.sub_topic_id);
-    persistProgress(user.id, node, moduleId, subTopicId, null);
+    await persistProgress(user.id, node, moduleId, subTopicId, null);
     return buildResponse(node, message, null, moduleId, subTopicId);
   }
 
@@ -401,11 +404,11 @@ function handleMessage(externalUserId, input) {
     // intro chain — but only the first time. Once a learner has already been through
     // it, skip straight to the topic's real sub-topic menu instead of replaying it.
     let targetId = option.next;
-    if (currentNode.id === 'MAIN_MENU' && hasSeenIntro(user.id, option.id)) {
+    if (currentNode.id === 'MAIN_MENU' && (await hasSeenIntro(user.id, option.id))) {
       targetId = getModuleEntryState(option.id) || targetId;
     }
     const { node, message, moduleId, subTopicId } = resolveChain(targetId, progress.module_id, progress.sub_topic_id);
-    persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+    await persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
     return buildResponse(node, message, null, moduleId, subTopicId);
   }
 
@@ -414,7 +417,7 @@ function handleMessage(externalUserId, input) {
       return buildResponse(currentNode, currentNode.message, null, progress.module_id, progress.sub_topic_id);
     }
     const { node, message, moduleId, subTopicId } = resolveChain(currentNode.next, progress.module_id, progress.sub_topic_id);
-    persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+    await persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
     return buildResponse(node, message, null, moduleId, subTopicId);
   }
 
@@ -422,28 +425,28 @@ function handleMessage(externalUserId, input) {
     const quiz = currentNode.quiz;
     // Scoped per-module so exhausting one module's quiz attempts doesn't affect another's.
     const quizAttemptKey = `${currentNode.id}:${currentNode.module || 'global'}`;
-    const attemptNumber = quizAttemptRepository.countAttempts(user.id, quizAttemptKey) + 1;
+    const attemptNumber = (await quizAttemptRepository.countAttempts(user.id, quizAttemptKey)) + 1;
     const normalized = trimmedInput.toLowerCase();
     const matchCount = quiz.keywords.filter((kw) => normalized.includes(kw)).length;
     const isCorrect = matchCount >= quiz.minMatches;
 
-    quizAttemptRepository.log(user.id, quizAttemptKey, trimmedInput, isCorrect, attemptNumber);
+    await quizAttemptRepository.log(user.id, quizAttemptKey, trimmedInput, isCorrect, attemptNumber);
 
     if (isCorrect) {
       const { node, message, moduleId, subTopicId } = resolveChain(quiz.onCorrect, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+      await persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
       const prefix = quiz.correctMessage ? `${quiz.correctMessage}\n\n` : '';
       return buildResponse(node, prefix + message, 'correct', moduleId, subTopicId);
     }
 
     if (attemptNumber >= quiz.maxAttempts) {
       const { node, message, moduleId, subTopicId } = resolveChain(quiz.onExhausted, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+      await persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
       return buildResponse(node, `${quiz.exhaustedMessage}\n\n${message}`, 'incorrect', moduleId, subTopicId);
     }
 
     // Incorrect, retries remaining — stay on the quiz state.
-    persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id, previousForCompletion);
+    await persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id, previousForCompletion);
     return buildResponse(currentNode, `${quiz.incorrectMessage}\n\n${currentNode.message}`, 'incorrect', progress.module_id, progress.sub_topic_id);
   }
 
@@ -458,16 +461,16 @@ function handleMessage(externalUserId, input) {
     // the global shortcuts above) not a completion signal either.
     if (option.navigate) {
       const { node, message, moduleId, subTopicId } = resolveChain(option.next, progress.module_id, progress.sub_topic_id);
-      persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, null);
+      await persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, null);
       return buildResponse(node, message, null, moduleId, subTopicId);
     }
 
     // Scoped per-module, same convention as the free-text quiz's attempt key.
     const mcqAttemptKey = `${currentNode.id}:${currentNode.module || 'global'}`;
-    const attemptNumber = quizAttemptRepository.countAttempts(user.id, mcqAttemptKey) + 1;
+    const attemptNumber = (await quizAttemptRepository.countAttempts(user.id, mcqAttemptKey)) + 1;
     const isCorrect = option.id === currentNode.correctOptionId;
 
-    quizAttemptRepository.log(user.id, mcqAttemptKey, option.id, isCorrect, attemptNumber);
+    await quizAttemptRepository.log(user.id, mcqAttemptKey, option.id, isCorrect, attemptNumber);
 
     // Correct (or attempts exhausted) no longer jumps straight to the next
     // question — it lands on the "answered" screen first (see
@@ -479,19 +482,19 @@ function handleMessage(externalUserId, input) {
     // null, on a resumed session.
     if (isCorrect) {
       const node = buildAnsweredMcqNode(currentNode, 'correct', option.id);
-      persistProgress(user.id, node, progress.module_id, progress.sub_topic_id, previousForCompletion);
+      await persistProgress(user.id, node, progress.module_id, progress.sub_topic_id, previousForCompletion);
       return buildResponse(node, node.message, 'correct', progress.module_id, progress.sub_topic_id);
     }
 
     const maxAttempts = currentNode.maxAttempts || 3;
     if (attemptNumber >= maxAttempts) {
       const node = buildAnsweredMcqNode(currentNode, 'exhausted', option.id);
-      persistProgress(user.id, node, progress.module_id, progress.sub_topic_id, previousForCompletion);
+      await persistProgress(user.id, node, progress.module_id, progress.sub_topic_id, previousForCompletion);
       return buildResponse(node, node.message, 'incorrect', progress.module_id, progress.sub_topic_id);
     }
 
     // Incorrect, retries remaining — stay on the mcq state.
-    persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id, previousForCompletion);
+    await persistProgress(user.id, currentNode, progress.module_id, progress.sub_topic_id, previousForCompletion);
     return buildResponse(currentNode, `${currentNode.incorrectMessage}\n\n${currentNode.message}`, 'incorrect', progress.module_id, progress.sub_topic_id);
   }
 
@@ -500,7 +503,7 @@ function handleMessage(externalUserId, input) {
   // completion screen).
   if (currentNode.type === 'mcq-answered') {
     const { node, message, moduleId, subTopicId } = resolveChain(currentNode.next, progress.module_id, progress.sub_topic_id);
-    persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
+    await persistProgress(user.id, node, moduleId || progress.module_id, subTopicId || progress.sub_topic_id, previousForCompletion);
     return buildResponse(node, message, null, moduleId, subTopicId);
   }
 

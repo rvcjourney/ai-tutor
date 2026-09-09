@@ -13,13 +13,13 @@ function requireCsv(req, res) {
   return csv;
 }
 
-function importContent(req, res, next) {
+async function importContent(req, res, next) {
   try {
     const csv = requireCsv(req, res);
     if (csv === null) return;
 
     const topicPlans = importCsv(csv);
-    const published = publish(topicPlans);
+    const published = await publish(topicPlans);
     res.json({ published });
   } catch (err) {
     next(err);
@@ -85,27 +85,27 @@ function exportContent(req, res, next) {
 
 // ---- Topics ----
 
-function createTopic(req, res, next) {
+async function createTopic(req, res, next) {
   try {
-    const registryEntry = crud.createTopic(req.body.title);
+    const registryEntry = await crud.createTopic(req.body.title);
     res.status(201).json({ topic: registryEntry });
   } catch (err) {
     next(err);
   }
 }
 
-function renameTopic(req, res, next) {
+async function renameTopic(req, res, next) {
   try {
-    const registryEntry = crud.renameTopic(req.params.moduleId, req.body.title);
+    const registryEntry = await crud.renameTopic(req.params.moduleId, req.body.title);
     res.json({ topic: registryEntry });
   } catch (err) {
     next(err);
   }
 }
 
-function deleteTopic(req, res, next) {
+async function deleteTopic(req, res, next) {
   try {
-    const removed = removeTopic(req.params.moduleId);
+    const removed = await removeTopic(req.params.moduleId);
     res.json({ removed });
   } catch (err) {
     next(err);
@@ -114,27 +114,27 @@ function deleteTopic(req, res, next) {
 
 // ---- Sub-topics ----
 
-function createSubTopic(req, res, next) {
+async function createSubTopic(req, res, next) {
   try {
-    const subTopic = crud.createSubTopic(req.params.moduleId, req.body.label);
+    const subTopic = await crud.createSubTopic(req.params.moduleId, req.body.label);
     res.status(201).json({ subTopic });
   } catch (err) {
     next(err);
   }
 }
 
-function renameSubTopic(req, res, next) {
+async function renameSubTopic(req, res, next) {
   try {
-    const subTopic = crud.renameSubTopic(req.params.moduleId, req.params.subTopicId, req.body.label);
+    const subTopic = await crud.renameSubTopic(req.params.moduleId, req.params.subTopicId, req.body.label);
     res.json({ subTopic });
   } catch (err) {
     next(err);
   }
 }
 
-function deleteSubTopic(req, res, next) {
+async function deleteSubTopic(req, res, next) {
   try {
-    const removed = crud.deleteSubTopic(req.params.moduleId, req.params.subTopicId);
+    const removed = await crud.deleteSubTopic(req.params.moduleId, req.params.subTopicId);
     res.json({ removed });
   } catch (err) {
     next(err);
@@ -143,27 +143,27 @@ function deleteSubTopic(req, res, next) {
 
 // ---- Questions ----
 
-function createQuestion(req, res, next) {
+async function createQuestion(req, res, next) {
   try {
-    const question = crud.createQuestion(req.params.moduleId, req.params.subTopicId, req.body);
+    const question = await crud.createQuestion(req.params.moduleId, req.params.subTopicId, req.body);
     res.status(201).json({ question });
   } catch (err) {
     next(err);
   }
 }
 
-function updateQuestion(req, res, next) {
+async function updateQuestion(req, res, next) {
   try {
-    const question = crud.updateQuestion(req.params.moduleId, req.params.subTopicId, req.params.index, req.body);
+    const question = await crud.updateQuestion(req.params.moduleId, req.params.subTopicId, req.params.index, req.body);
     res.json({ question });
   } catch (err) {
     next(err);
   }
 }
 
-function deleteQuestion(req, res, next) {
+async function deleteQuestion(req, res, next) {
   try {
-    const removed = crud.deleteQuestion(req.params.moduleId, req.params.subTopicId, req.params.index);
+    const removed = await crud.deleteQuestion(req.params.moduleId, req.params.subTopicId, req.params.index);
     res.json({ removed });
   } catch (err) {
     next(err);
