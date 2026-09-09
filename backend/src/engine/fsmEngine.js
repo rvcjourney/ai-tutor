@@ -232,9 +232,11 @@ function buildResponse(node, message, feedback = null, moduleIdHint = null, subT
   };
 }
 
-function isNewCalendarDay(updatedAtSql) {
+function isNewCalendarDay(updatedAt) {
+  // `updatedAt` is a JS Date (pg returns TIMESTAMPTZ columns as Date objects,
+  // not the SQL string node:sqlite used to return).
   const todayUtc = new Date().toISOString().slice(0, 10);
-  const updatedDate = updatedAtSql.slice(0, 10);
+  const updatedDate = new Date(updatedAt).toISOString().slice(0, 10);
   return updatedDate !== todayUtc;
 }
 
