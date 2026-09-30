@@ -7,10 +7,18 @@ ADMIN FEATURES
 1) Bulk content upload via CSV
    - Paste or upload a CSV (Topic, Sub-Topic, Type, #, Question, Choice A-D, Correct, Answer/Explanation).
    - "Preview" validates the file and shows what would be published (topic, sub-topics, question/MCQ counts) without writing anything.
-   - "Publish" writes it live — every file it touches is backed up first, and if anything fails, everything is rolled back automatically. A bad upload can never leave the app half-broken.
+   - "Publish" writes it live in a single database transaction. The whole resulting content is validated BEFORE anything is written, and if anything fails the transaction rolls back. A bad upload can never leave the app half-broken.
+   - Duplicate state ids (e.g. two sub-topics that normalize to the same name, like "Career Growth & Skills" vs "Career Growth and Skills") are caught at publish and reported clearly.
 
 2) Automatic content cleanup on upload
    - Fixes CSVs exported from Excel with broken encoding: recovers lost "₹" signs and mangled em/en dashes automatically, no manual find-replace needed.
+
+2b) Rich content in answers/questions
+   - **bold** text is supported.
+   - Images: write ![alt](url), or just paste a bare image URL on its own line. Self-hosted images go in frontend/public/images/ and are referenced as /images/<file> (hotlinked hosts like Google Drive often block embedding).
+
+2c) Topic intro chaining via the Type column
+   - Type can be Q, MCQ, GREETING or OVERVIEW. GREETING and OVERVIEW rows auto-play in order when a topic is first opened, then lead into the real sub-topic menu. Repeat visits skip straight to the menu.
 
 3) Download / export content
    - Any topic's current content can be downloaded as a CSV in the same format Publish accepts.
@@ -50,7 +58,8 @@ USER (LEARNER) FEATURES
    - The last question's "Next" becomes "Continue", which hands off into the graded quiz for that sub-topic.
 
 6) Graded quiz (MCQs)
-   - Multiple-choice questions, up to 3 attempts each, with the correct answer and explanation revealed after the attempts are used up.
+   - Multiple-choice questions, up to 3 attempts each.
+   - After answering (correct, or attempts used up), the SAME card stays on screen with the choices locked: correct answer in green, a wrong pick in red, the explanation below, and a small "Continue" button at the bottom right for the next question.
    - Clear correct/incorrect feedback, distinct from a normal reply.
 
 7) Always-available navigation
@@ -64,6 +73,10 @@ NOT YET BUILT (open items)
 - Automated WhatsApp reminders to bring back learners who've stalled.
 - A supervisor/manager view showing all learners' progress at once (today, each learner only sees their own).
 - Automated tests.
+- Admin login: /admin.html currently has no authentication, so anyone who can reach the URL can publish or delete content.
+- HTTPS / domain (today it runs on plain http://ip:port).
+- Automated database backups (the Docker volume db_data is the only copy of the data).
+- Real learner accounts (today a learner is identified by a name typed once plus an ID stored in the browser).
 
 
 Techstack ---------------------------
@@ -72,8 +85,8 @@ Here's the actual stack, straight from the two package.json files:
 Backend (/backend)
 
 Node.js + Express — the whole API (/chat, /modules, /progress, /quiz, /admin), plain REST, JSON in/out.
-node:sqlite (Node's built-in SQLite, no external driver) — stores users, progress, quiz attempts, sub-topic completion, and item-level progress. Chosen originally to avoid needing native build tools for better-sqlite3.
-Plain JSON files on disk (backend/src/conversations/*.json) — the actual course content (topics/sub-topics/questions), loaded into memory as a Map at boot, hot-reloadable without a restart.
+PostgreSQL 16 via the "pg" package (connection pool, DATABASE_URL) — stores users, progress, quiz attempts, sub-topic completion, item-level progress, AND the course content. (Originally node:sqlite + JSON files on disk; migrated because Render's free tier has no persistent storage.)
+Course content (topics/sub-topics/questions) lives in the conversation_files table (one JSONB row per former JSON file), loaded into an in-memory Map at boot and swapped live after each publish, no restart needed. A baseline chassis (no topics) is seeded from backend/src/conversations-seed/ only when the table is empty.
 csv-parse — parses the admin's CSV uploads.
 cors, dotenv — standard middleware/config.
 nodemon (dev only) — auto-restart on file changes.
@@ -89,7 +102,8 @@ Admin panel
 Plain HTML/CSS/vanilla JS (backend/public/admin.html + admin.js) — no framework, no build step, served directly as a static file by the Express backend.
 Deployment
 
-Render — two services: the frontend (static Vite build) and the backend (Node/Express), currently on Render's free tier with ephemeral disk (the durable-storage gap we've talked about — SQLite + the conversation JSON both live on that disk today, not in a managed database).
+Docker Compose on a VPS — two containers: "app" (one Express process serving the API, the built React app, and the admin panel on port 4000) and "db" (postgres:16-alpine with the named volume db_data, which is what makes data survive redeploys). Built from a single multi-stage Dockerfile. Redeploy = git pull, then docker compose up -d --build. "docker compose down -v" is the only command that deletes the data.
+(Previously on Render's free tier, which has ephemeral disk and no persistent storage.)
 Notably absent, by design: no LLM, no vector DB, no RAG — the "AI Tutor" name refers to the guided/conversational UX, not the underlying logic, which is a deterministic rule-based FSM you (or another admin) author entirely through CSV/the admin grid.
 
 Why we not choose python ?
