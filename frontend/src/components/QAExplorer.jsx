@@ -1,16 +1,25 @@
 import { useEffect, useState } from 'react';
 import * as chatApi from '../api/chatApi';
-import Typewriter from './Typewriter';
+import RichText from './RichText';
 import NavFooter from './NavFooter';
 
+// Fixed, text-length-independent pacing — matches TurnCard's instant-render
+// style instead of typing every question/answer out character by character.
+// This explorer exists specifically so a learner can browse back and forth
+// through a sub-topic's full Q&A list freely; a multi-second typewriter reveal
+// on every single Previous/Next tap worked against exactly that, without a real
+// network round trip underneath to justify the wait. The "thinking" beat is
+// kept short and constant instead, for the same live-conversation feel without
+// the browsing cost.
+const READ_PAUSE_MS = 250;
 const THINKING_PAUSE_MS = 350;
 
 export default function QAExplorer({ moduleId, subTopicId, onContinue, onSelect, disabled }) {
   const [items, setItems] = useState(null); // null = still loading
   const [loadError, setLoadError] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  // 'question' -> typing the question out; 'gap' -> brief thinking pause;
-  // 'answer' -> typing the answer out; 'done' -> both fully shown, nav enabled.
+  // 'question' -> question shown, brief read beat running; 'gap' -> thinking
+  // pause (dots); 'done' -> answer shown, nav enabled.
   const [phase, setPhase] = useState('question');
 
   useEffect(() => {
@@ -36,8 +45,14 @@ export default function QAExplorer({ moduleId, subTopicId, onContinue, onSelect,
   }, [items, selectedIndex]);
 
   useEffect(() => {
+    if (phase !== 'question') return undefined;
+    const timer = setTimeout(() => setPhase('gap'), READ_PAUSE_MS);
+    return () => clearTimeout(timer);
+  }, [phase]);
+
+  useEffect(() => {
     if (phase !== 'gap') return undefined;
-    const timer = setTimeout(() => setPhase('answer'), THINKING_PAUSE_MS);
+    const timer = setTimeout(() => setPhase('done'), THINKING_PAUSE_MS);
     return () => clearTimeout(timer);
   }, [phase]);
 
@@ -80,9 +95,7 @@ export default function QAExplorer({ moduleId, subTopicId, onContinue, onSelect,
   return (
     <div className="qa-explorer">
       <div className="user-bubble-row">
-        <div className="user-bubble">
-          <Typewriter text={selected.question} plain onDone={() => setPhase((p) => (p === 'question' ? 'gap' : p))} />
-        </div>
+        <div className="user-bubble">{selected.question}</div>
       </div>
 
       {phase === 'gap' && (
@@ -95,10 +108,10 @@ export default function QAExplorer({ moduleId, subTopicId, onContinue, onSelect,
         </div>
       )}
 
-      {(phase === 'answer' || phase === 'done') && (
+      {phase === 'done' && (
         <div className="bot-message-card">
           <div className="bot-bubble">
-            <Typewriter text={selected.answer} onDone={() => setPhase((p) => (p === 'answer' ? 'done' : p))} />
+            <RichText text={selected.answer} />
           </div>
         </div>
       )}

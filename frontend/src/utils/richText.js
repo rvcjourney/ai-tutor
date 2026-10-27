@@ -66,24 +66,6 @@ function stripOuterQuoteWrap(text) {
   return trimmed;
 }
 
-// Character ranges (start/end offsets into the raw, unmodified `text`) of every
-// image line — used by Typewriter to know when the reveal cursor is sitting
-// *inside* an image line's markup, so it can pause instead of exposing the raw,
-// half-typed `![alt](https://...` / URL text before it's recognizable as an image.
-export function findImageLineRanges(text) {
-  if (!text) return [];
-  const ranges = [];
-  let offset = 0;
-  for (const line of String(text).split('\n')) {
-    const trimmedLine = line.trim();
-    if (IMAGE_LINE.test(trimmedLine) || BARE_IMAGE_LINE.test(trimmedLine)) {
-      ranges.push({ start: offset, end: offset + line.length });
-    }
-    offset += line.length + 1; // +1 for the newline consumed by split()
-  }
-  return ranges;
-}
-
 export function parseRichText(text) {
   if (!text) return [];
   const repaired = repairReplacementChar(stripOuterQuoteWrap(String(text)));

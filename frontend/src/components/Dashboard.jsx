@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useAppState } from '../hooks/useAppState';
 import NamePrompt from './NamePrompt';
 import ProgressHeader from './ProgressHeader';
@@ -28,12 +29,42 @@ export default function Dashboard() {
     retry,
   } = useAppState();
 
+  // Computed ahead of the `displayName` early return below, and the two hooks
+  // that depend on it, so every hook is called unconditionally on every render
+  // (rules-of-hooks) — turn/progress are simply both null/undefined before the
+  // name is submitted, which every one of these expressions already tolerates.
+  const moduleForTurn = turn?.moduleId ? progress?.modules?.find((m) => m.id === turn.moduleId) : null;
+  const isModuleMenu = Boolean(moduleForTurn && moduleForTurn.entryState === turn?.state);
+
+  // Tracks each module's percent as of its last render, so a genuine 0%->100%
+  // transition (just now finished) can be told apart from "already was 100%,
+  // the learner is just revisiting" — the latter shouldn't re-trigger the
+  // closure banner every time. Keyed by moduleId since more than one topic can
+  // be in progress across a session.
+  const previousModulePercentRef = useRef({});
+  const prevPercent = moduleForTurn ? previousModulePercentRef.current[moduleForTurn.id] : undefined;
+  const justCompletedTopic = Boolean(
+    isModuleMenu && moduleForTurn && moduleForTurn.totalSubTopics > 0 && moduleForTurn.percent === 100 &&
+      prevPercent !== undefined && prevPercent < 100
+  );
+  // No progress at all yet — the moment to frame "what you'll cover," before it
+  // becomes repeat-visit noise on every later return to this same menu.
+  const showObjectives = Boolean(isModuleMenu && moduleForTurn && moduleForTurn.totalSubTopics > 0 && moduleForTurn.percent === 0);
+
+  useEffect(() => {
+    if (moduleForTurn) {
+      previousModulePercentRef.current[moduleForTurn.id] = moduleForTurn.percent;
+    }
+    // Deliberately keyed on the primitive id/percent, not the moduleForTurn object
+    // itself — a fresh object reference arrives on every progress refetch even
+    // when its values haven't changed, which would re-run this every turn.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moduleForTurn?.id, moduleForTurn?.percent]);
+
   if (!displayName) {
     return <NamePrompt onSubmit={submitName} />;
   }
 
-  const moduleForTurn = turn?.moduleId ? progress?.modules?.find((m) => m.id === turn.moduleId) : null;
-  const isModuleMenu = Boolean(moduleForTurn && moduleForTurn.entryState === turn.state);
   const isQaExplorer = Boolean(turn && !isModuleMenu && turn.screenType === 'fact' && turn.moduleId && turn.subTopicId);
   const isSubTopicCompletion = Boolean(turn?.subTopicOptions?.length > 0);
   const subTopicForTurn = turn?.subTopicId ? moduleForTurn?.subTopics?.find((st) => st.id === turn.subTopicId) : null;
@@ -82,6 +113,9 @@ export default function Dashboard() {
             subTopics={moduleForTurn.subTopics}
             onSelect={selectOption}
             disabled={loading}
+            topicTitle={moduleForTurn.title}
+            showObjectives={showObjectives}
+            justCompleted={justCompletedTopic}
           />
         )}
 

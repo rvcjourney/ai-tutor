@@ -317,6 +317,68 @@ p + .rich-list {
   animation: turn-in 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ---- Topic objectives (shown once, before the learner has started a topic) ---- */
+
+.topic-objectives {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  animation: turn-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.topic-objectives-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.topic-objectives-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+/* ---- Topic complete banner (shown once, the turn a topic hits 100%) ---- */
+
+.topic-complete-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  animation: turn-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.topic-complete-icon {
+  font-size: 26px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.topic-complete-title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--success);
+}
+
+.topic-complete-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.8;
+}
+
 .module-list {
   display: flex;
   flex-direction: column;
@@ -478,13 +540,6 @@ p + .rich-list {
 
 .typing-dot:nth-child(3) {
   animation-delay: 0.3s;
-}
-
-/* The same three-dot loading pattern, but sized to sit inline within a message
-   (in place of an image that's still "typing" past) rather than as its own
-   standalone card. */
-.image-loading-dots {
-  padding: 8px 0 0;
 }
 
 @keyframes typing-bounce {
@@ -717,6 +772,11 @@ p + .rich-list {
   transform: scale(0.98);
 }
 
+.option-buttons button.option-selected {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
 /* ---- MCQ grid (graded answer choices) ---- */
 
 .mcq-grid {
@@ -768,6 +828,27 @@ p + .rich-list {
 
 .mcq-choice:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+/* Held briefly after a tap (see OptionButtons' SELECT_HOLD_MS) so the exact
+   choice made is visibly confirmed before the screen swaps to the typing
+   indicator — same accent treatment as :hover, just not dependent on the
+   pointer still being there. Compound selectors (rather than a bare
+   .option-selected) so each wins over its own base rule's specificity without
+   needing !important. */
+.mcq-choice.option-selected {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.mcq-choice.option-selected .mcq-letter {
+  border-color: var(--accent);
+  color: var(--accent);
+  opacity: 1;
+}
+
+.qa-primary-btn.option-selected {
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .mcq-nav {
