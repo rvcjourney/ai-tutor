@@ -634,6 +634,13 @@ p + .rich-list {
   opacity: 0.55;
 }
 
+/* Reuses the Q&A explorer's nav-row look for the module list's own pagination
+   — same component, just sitting in normal document flow here instead of a
+   fixed bottom bar. */
+.module-list-pagination {
+  margin-top: 14px;
+}
+
 .qa-actions {
   display: flex;
   flex-direction: column;
@@ -957,7 +964,7 @@ button:disabled {
   flex-shrink: 0;
 }
 
-@media (max-width: 420px) {
+@media (max-width: 480px) {
   .mcq-grid {
     grid-template-columns: 1fr;
   }

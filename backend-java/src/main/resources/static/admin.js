@@ -49,6 +49,7 @@ const els = {
   grid: document.getElementById('grid'),
   gridHead: document.getElementById('gridHead'),
   gridBody: document.getElementById('gridBody'),
+  gridPagination: document.getElementById('gridPagination'),
 };
 
 els.downloadBtn.addEventListener('click', () => {
@@ -87,6 +88,89 @@ function setGridRows(headHtml, bodyHtml) {
   els.gridBody.innerHTML = bodyHtml;
 }
 
+const PAGE_SIZE = 10;
+
+// Generic client-side pagination for a grid: the full item list was already
+// fetched in one request (these lists are small enough that a second
+// server round-trip per page isn't worth the complexity), so paging just
+// means re-slicing and re-rendering in place. `renderRow(item, absoluteIndex)`
+// gets the item's index in the *full* list, not its position on the page —
+// the Questions grid's edit/delete actions are index-based into the full
+// array, so page-relative indexes would silently act on the wrong question.
+function renderPaginatedGrid({ items, head, renderRow, paginationEl, onRendered, resetPage }) {
+  let page = resetPage ?? 0;
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+
+  function renderPage() {
+    const start = page * PAGE_SIZE;
+    const pageItems = items.slice(start, start + PAGE_SIZE);
+    setGridRows(head, pageItems.map((item, i) => renderRow(item, start + i)).join(''));
+    if (onRendered) onRendered();
+    renderControls();
+  }
+
+  function renderControls() {
+    if (totalPages <= 1) {
+      paginationEl.innerHTML = '';
+      return;
+    }
+    paginationEl.innerHTML = `
+      <button type="button" class="small secondary" data-pg="prev" ${page <= 0 ? 'disabled' : ''}>&lsaquo; Prev</button>
+      <span class="pagination-info">Page ${page + 1} of ${totalPages} &middot; ${items.length} total</span>
+      <button type="button" class="small secondary" data-pg="next" ${page >= totalPages - 1 ? 'disabled' : ''}>Next &rsaquo;</button>
+    `;
+    paginationEl.querySelector('[data-pg="prev"]').addEventListener('click', () => {
+      page -= 1;
+      renderPage();
+    });
+    paginationEl.querySelector('[data-pg="next"]').addEventListener('click', () => {
+      page += 1;
+      renderPage();
+    });
+  }
+
+  renderPage();
+}
+
+// Same pagination behavior as renderPaginatedGrid, but for the CSV preview
+// table, which gets its own fresh <table> markup per preview rather than
+// reusing the shared #gridBody/#gridHead elements.
+function renderPaginatedRows({ items, bodyEl, paginationEl, renderRow }) {
+  let page = 0;
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+
+  function renderPage() {
+    const start = page * PAGE_SIZE;
+    bodyEl.innerHTML = items
+      .slice(start, start + PAGE_SIZE)
+      .map((item, i) => renderRow(item, start + i))
+      .join('');
+    renderControls();
+  }
+
+  function renderControls() {
+    if (totalPages <= 1) {
+      paginationEl.innerHTML = '';
+      return;
+    }
+    paginationEl.innerHTML = `
+      <button type="button" class="small secondary" data-pg="prev" ${page <= 0 ? 'disabled' : ''}>&lsaquo; Prev</button>
+      <span class="pagination-info">Page ${page + 1} of ${totalPages} &middot; ${items.length} total</span>
+      <button type="button" class="small secondary" data-pg="next" ${page >= totalPages - 1 ? 'disabled' : ''}>Next &rsaquo;</button>
+    `;
+    paginationEl.querySelector('[data-pg="prev"]').addEventListener('click', () => {
+      page -= 1;
+      renderPage();
+    });
+    paginationEl.querySelector('[data-pg="next"]').addEventListener('click', () => {
+      page += 1;
+      renderPage();
+    });
+  }
+
+  renderPage();
+}
+
 // ---- Topics grid ----
 
 async function showTopics() {
@@ -102,52 +186,52 @@ async function showTopics() {
   els.gridEmpty.style.display = 'block';
   els.gridEmpty.textContent = 'Loading…';
   els.grid.style.display = 'none';
+  els.gridPagination.innerHTML = '';
 
   const data = await api('GET', '/modules');
   const modules = data.modules || [];
   if (modules.length === 0) {
     setGridEmpty('No topics yet — click "Add Topic" to create one.');
-    return;
-  }
-
-  const rows = modules
-    .map(
-      (m) => `
-    <tr>
-      <td>${escapeHtml(m.title)}</td>
-      <td>${Array.isArray(m.subTopics) ? m.subTopics.length : '—'}</td>
-      <td class="actions">
-        <button class="small secondary" data-action="manage" data-id="${escapeHtml(m.id)}">View</button>
-        <button class="small secondary" data-action="edit" data-id="${escapeHtml(m.id)}" data-title="${escapeHtml(m.title)}">Edit</button>
-        <button class="small danger" data-action="delete" data-id="${escapeHtml(m.id)}" data-title="${escapeHtml(m.title)}">Delete</button>
-      </td>
-    </tr>`
-    )
-    .join('');
-
-  setGridRows('<tr><th>Topic</th><th>Sub-topics</th><th></th></tr>', rows);
-
-  els.gridBody.querySelectorAll('button[data-action]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const { action, id, title } = btn.dataset;
-      if (action === 'manage') {
-        await enterTopic(id);
-      } else if (action === 'edit') {
-        openModal({
-          title: 'Edit topic',
-          fields: [{ name: 'title', label: 'Title', type: 'text', value: title }],
-          onSave: async (values) => {
-            await api('PUT', `/admin/topics/${encodeURIComponent(id)}`, { title: values.title });
-            await showTopics();
-          },
+  } else {
+    renderPaginatedGrid({
+      items: modules,
+      paginationEl: els.gridPagination,
+      head: '<tr><th>Topic</th><th>Sub-topics</th><th></th></tr>',
+      renderRow: (m) => `
+      <tr>
+        <td>${escapeHtml(m.title)}</td>
+        <td>${Array.isArray(m.subTopics) ? m.subTopics.length : '—'}</td>
+        <td class="actions">
+          <button class="small secondary" data-action="manage" data-id="${escapeHtml(m.id)}">View</button>
+          <button class="small secondary" data-action="edit" data-id="${escapeHtml(m.id)}" data-title="${escapeHtml(m.title)}">Edit</button>
+          <button class="small danger" data-action="delete" data-id="${escapeHtml(m.id)}" data-title="${escapeHtml(m.title)}">Delete</button>
+        </td>
+      </tr>`,
+      onRendered: () => {
+        els.gridBody.querySelectorAll('button[data-action]').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const { action, id, title } = btn.dataset;
+            if (action === 'manage') {
+              await enterTopic(id);
+            } else if (action === 'edit') {
+              openModal({
+                title: 'Edit topic',
+                fields: [{ name: 'title', label: 'Title', type: 'text', value: title }],
+                onSave: async (values) => {
+                  await api('PUT', `/admin/topics/${encodeURIComponent(id)}`, { title: values.title });
+                  await showTopics();
+                },
+              });
+            } else if (action === 'delete') {
+              if (!confirm(`Delete "${title}"? This removes it from the live app immediately.`)) return;
+              await api('DELETE', `/admin/topics/${encodeURIComponent(id)}`);
+              await showTopics();
+            }
+          });
         });
-      } else if (action === 'delete') {
-        if (!confirm(`Delete "${title}"? This removes it from the live app immediately.`)) return;
-        await api('DELETE', `/admin/topics/${encodeURIComponent(id)}`);
-        await showTopics();
-      }
+      },
     });
-  });
+  }
 
   els.addBtn.onclick = () => {
     openModal({
@@ -185,12 +269,15 @@ function showSubTopics(moduleId, data) {
   renderBreadcrumb();
 
   const subTopics = data.subTopics || [];
+  els.gridPagination.innerHTML = '';
   if (subTopics.length === 0) {
     setGridEmpty('No sub-topics yet — click "Add Sub-Topic" to create one.');
   } else {
-    const rows = subTopics
-      .map(
-        (st) => `
+    renderPaginatedGrid({
+      items: subTopics,
+      paginationEl: els.gridPagination,
+      head: '<tr><th>Sub-Topic</th><th>Questions</th><th></th></tr>',
+      renderRow: (st) => `
       <tr>
         <td>${escapeHtml(st.label)}</td>
         <td>${st.items.length}</td>
@@ -199,35 +286,34 @@ function showSubTopics(moduleId, data) {
           <button class="small secondary" data-action="edit" data-id="${escapeHtml(st.id)}" data-label="${escapeHtml(st.label)}">Edit</button>
           <button class="small danger" data-action="delete" data-id="${escapeHtml(st.id)}" data-label="${escapeHtml(st.label)}">Delete</button>
         </td>
-      </tr>`
-      )
-      .join('');
-    setGridRows('<tr><th>Sub-Topic</th><th>Questions</th><th></th></tr>', rows);
-
-    els.gridBody.querySelectorAll('button[data-action]').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const { action, id, label } = btn.dataset;
-        if (action === 'manage') {
-          showQuestions(id);
-        } else if (action === 'edit') {
-          openModal({
-            title: 'Edit sub-topic',
-            fields: [{ name: 'label', label: 'Label', type: 'text', value: label }],
-            onSave: async (values) => {
-              await api('PUT', `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(id)}`, {
-                label: values.label,
+      </tr>`,
+      onRendered: () => {
+        els.gridBody.querySelectorAll('button[data-action]').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const { action, id, label } = btn.dataset;
+            if (action === 'manage') {
+              showQuestions(id);
+            } else if (action === 'edit') {
+              openModal({
+                title: 'Edit sub-topic',
+                fields: [{ name: 'label', label: 'Label', type: 'text', value: label }],
+                onSave: async (values) => {
+                  await api('PUT', `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(id)}`, {
+                    label: values.label,
+                  });
+                  await refreshTopicData();
+                  showSubTopics(state.topicId, state.topicData);
+                },
               });
+            } else if (action === 'delete') {
+              if (!confirm(`Delete sub-topic "${label}" and all its questions?`)) return;
+              await api('DELETE', `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(id)}`);
               await refreshTopicData();
               showSubTopics(state.topicId, state.topicData);
-            },
+            }
           });
-        } else if (action === 'delete') {
-          if (!confirm(`Delete sub-topic "${label}" and all its questions?`)) return;
-          await api('DELETE', `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(id)}`);
-          await refreshTopicData();
-          showSubTopics(state.topicId, state.topicData);
-        }
-      });
+        });
+      },
     });
   }
 
@@ -254,11 +340,18 @@ function showQuestions(subTopicId) {
   els.addBtn.textContent = '+ Add Question';
   renderBreadcrumb();
 
+  els.gridPagination.innerHTML = '';
   if (subTopic.items.length === 0) {
     setGridEmpty('No questions yet — click "Add Question" to create one.');
   } else {
-    const rows = subTopic.items
-      .map((item, index) => {
+    renderPaginatedGrid({
+      items: subTopic.items,
+      paginationEl: els.gridPagination,
+      head: '<tr><th>Type</th><th>Question</th><th>Answer / Explanation</th><th>Correct</th><th></th></tr>',
+      // `index` here is the item's position in the *full* subTopic.items array
+      // (see renderPaginatedGrid) — required, not cosmetic: the edit/delete API
+      // calls below are index-based into that full array.
+      renderRow: (item, index) => {
         const correctText = item.type === 'MCQ' ? `<span class="correct-badge">${escapeHtml(item.correct)}</span>` : '—';
         // MCQ items carry their reveal text as "explanation", not "answer" — this is
         // the actual uploaded content the grid was missing entirely, forcing an Edit
@@ -275,26 +368,26 @@ function showQuestions(subTopicId) {
           <button class="small danger" data-action="delete" data-index="${index}">Delete</button>
         </td>
       </tr>`;
-      })
-      .join('');
-    setGridRows('<tr><th>Type</th><th>Question</th><th>Answer / Explanation</th><th>Correct</th><th></th></tr>', rows);
-
-    els.gridBody.querySelectorAll('button[data-action]').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const { action, index } = btn.dataset;
-        const item = subTopic.items[Number(index)];
-        if (action === 'edit') {
-          openQuestionModal({ mode: 'edit', item, index: Number(index) });
-        } else if (action === 'delete') {
-          if (!confirm('Delete this question?')) return;
-          await api(
-            'DELETE',
-            `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(subTopicId)}/questions/${index}`
-          );
-          await refreshTopicData();
-          showQuestions(subTopicId);
-        }
-      });
+      },
+      onRendered: () => {
+        els.gridBody.querySelectorAll('button[data-action]').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const { action, index } = btn.dataset;
+            const item = subTopic.items[Number(index)];
+            if (action === 'edit') {
+              openQuestionModal({ mode: 'edit', item, index: Number(index) });
+            } else if (action === 'delete') {
+              if (!confirm('Delete this question?')) return;
+              await api(
+                'DELETE',
+                `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(subTopicId)}/questions/${index}`
+              );
+              await refreshTopicData();
+              showQuestions(subTopicId);
+            }
+          });
+        });
+      },
     });
   }
 
@@ -559,25 +652,6 @@ async function runPreview() {
       .map((s) => `<span class="preview-stat"><strong>${escapeHtml(s.title)}</strong> — ${s.subTopics} sub-topics, ${s.questions} Q, ${s.mcqs} MCQ</span>`)
       .join('');
 
-    const rowsHtml = data.rows
-      .map(
-        (r) => `
-      <tr>
-        <td>${escapeHtml(r.topic)}</td>
-        <td>${escapeHtml(r.subTopic)}</td>
-        <td><span class="type-pill type-${r.type.toLowerCase()}">${escapeHtml(r.type)}</span></td>
-        <td>${escapeHtml(r.num)}</td>
-        ${renderPreviewCell(r.question)}
-        ${renderPreviewCell(r.choiceA)}
-        ${renderPreviewCell(r.choiceB)}
-        ${renderPreviewCell(r.choiceC)}
-        ${renderPreviewCell(r.choiceD)}
-        <td>${r.correct ? `<span class="correct-badge">${escapeHtml(r.correct)}</span>` : '—'}</td>
-        ${renderPreviewCell(r.answer)}
-      </tr>`
-      )
-      .join('');
-
     previewResultBox.innerHTML = `
       <div class="preview-intro">
         <span>Nothing published yet — <strong>${data.rows.length} row${data.rows.length === 1 ? '' : 's'}</strong> parsed successfully.</span>
@@ -591,9 +665,30 @@ async function runPreview() {
               <th>A</th><th>B</th><th>C</th><th>D</th><th>Correct</th><th>Answer/Explanation</th>
             </tr>
           </thead>
-          <tbody>${rowsHtml}</tbody>
+          <tbody id="previewTableBody"></tbody>
         </table>
-      </div>`;
+      </div>
+      <div id="previewPagination" class="pagination-row"></div>`;
+
+    renderPaginatedRows({
+      items: data.rows,
+      bodyEl: document.getElementById('previewTableBody'),
+      paginationEl: document.getElementById('previewPagination'),
+      renderRow: (r) => `
+      <tr>
+        <td>${escapeHtml(r.topic)}</td>
+        <td>${escapeHtml(r.subTopic)}</td>
+        <td><span class="type-pill type-${r.type.toLowerCase()}">${escapeHtml(r.type)}</span></td>
+        <td>${escapeHtml(r.num)}</td>
+        ${renderPreviewCell(r.question)}
+        ${renderPreviewCell(r.choiceA)}
+        ${renderPreviewCell(r.choiceB)}
+        ${renderPreviewCell(r.choiceC)}
+        ${renderPreviewCell(r.choiceD)}
+        <td>${r.correct ? `<span class="correct-badge">${escapeHtml(r.correct)}</span>` : '—'}</td>
+        ${renderPreviewCell(r.answer)}
+      </tr>`,
+    });
   } catch (err) {
     previewResultBox.className = 'result-box err raw';
     previewResultBox.textContent = err.message;
@@ -627,7 +722,20 @@ publishBtn.addEventListener('click', async () => {
       )
       .join('');
     resultBox.innerHTML = `<div class="preview-cards">${cards}</div>`;
-    if (state.view === 'topics') await showTopics();
+    // Refresh whatever grid is actually on screen, not just the top-level Topics
+    // list — publishing an update while drilled into that same topic's
+    // sub-topics/questions grid used to leave it showing stale data until the
+    // admin manually navigated away and back.
+    if (state.view === 'topics') {
+      await showTopics();
+    } else if (state.topicId && data.published.some((p) => p.moduleId === state.topicId)) {
+      await refreshTopicData();
+      if (state.view === 'questions') {
+        showQuestions(state.subTopicId);
+      } else {
+        showSubTopics(state.topicId, state.topicData);
+      }
+    }
   } catch (err) {
     showToast(err.message, true);
     resultBox.className = 'result-box err raw';
