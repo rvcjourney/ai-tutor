@@ -717,6 +717,11 @@ p + .rich-list {
   transform: scale(0.98);
 }
 
+.option-buttons button.option-selected {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
 /* ---- MCQ grid (graded answer choices) ---- */
 
 .mcq-grid {
@@ -768,6 +773,27 @@ p + .rich-list {
 
 .mcq-choice:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+/* Held briefly after a tap (see OptionButtons' SELECT_HOLD_MS) so the exact
+   choice made is visibly confirmed before the screen swaps to the typing
+   indicator — same accent treatment as :hover, just not dependent on the
+   pointer still being there. Compound selectors (rather than a bare
+   .option-selected) so each wins over its own base rule's specificity without
+   needing !important. */
+.mcq-choice.option-selected {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.mcq-choice.option-selected .mcq-letter {
+  border-color: var(--accent);
+  color: var(--accent);
+  opacity: 1;
+}
+
+.qa-primary-btn.option-selected {
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .mcq-nav {
