@@ -58,11 +58,8 @@ export function useAppState() {
         if (elapsed < MIN_TYPING_MS) await wait(MIN_TYPING_MS - elapsed);
         setTurn(response);
         await refreshProgress();
-      } catch {
-        // Deliberately not showing err.message here — it's developer-facing
-        // (a raw fetch failure like "Failed to fetch," or a backend error string
-        // meant for debugging), not something a learner should have to read.
-        setError("We couldn't load that. Check your internet connection and try again.");
+      } catch (err) {
+        setError(err.message || 'Something went wrong. Is the backend running?');
       } finally {
         setLoading(false);
         setTyping(false);
@@ -133,8 +130,8 @@ export function useAppState() {
       }
       setTurn(response);
       await refreshProgress();
-    } catch {
-      setError("We couldn't load that. Check your internet connection and try again.");
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Is the backend running?');
     } finally {
       setLoading(false);
       setTyping(false);
