@@ -7,6 +7,11 @@ CSV upload or the admin panel and that is stored in PostgreSQL.
 
 ## Recent updates
 
+- **Backend rewritten from Node/Express to Java/Spring Boot** (`backend-java/`), for the team now
+  maintaining this project. Behaviorally identical — same routes, same JSON shapes, same CSV
+  format, same FSM logic, same PostgreSQL schema — so the React frontend and the admin panel needed
+  no changes. The old Node backend (`backend/`) is kept in the repo until the Java version is fully
+  verified in production, then removed. See `backend-java/README.md`.
 - **VPS deployment runs on PostgreSQL**, not SQLite — all published content and learner progress
   live in Postgres, persisted via a Docker named volume so nothing is lost on redeploy. There is no
   SQLite anywhere in the codebase — only a few code comments reference the old behavior for
@@ -41,13 +46,14 @@ CSV upload or the admin panel and that is stored in PostgreSQL.
 
 | Path | What it is |
 |---|---|
-| `backend/` | Node.js/Express REST API, the FSM conversation engine, and the admin panel (`backend/public/admin.html`). See `backend/README.md` for API endpoints and the data model. |
+| `backend-java/` | **Active backend** — Java/Spring Boot REST API + FSM conversation engine. Same routes/JSON/CSV format as the old Node backend. See `backend-java/README.md`. |
+| `backend/` | Legacy Node.js/Express backend, kept only until the Java rewrite is fully verified in production. Its `public/admin.html`/`admin.js` are still the live admin panel (copied into the Java build, unmodified). |
 | `frontend/` | React + Vite chat UI for learners. |
-| `Dockerfile` | Multi-stage build: builds the frontend, then packages it with the backend into one image. |
+| `backend-java/Dockerfile` | Multi-stage build: builds the frontend, builds the Spring Boot jar, packages both into one runtime image. |
 | `docker-compose.yml` | Runs that image (`app`) plus a Postgres 16 container (`db`) with a persistent volume. |
 
-The `app` container is one Express process on one port. It serves the API, the built React app, and
-the admin panel, so there is no separate frontend server and no CORS setup.
+The `app` container is one Spring Boot process on one port. It serves the API, the built React app,
+and the admin panel, so there is no separate frontend server and no CORS setup.
 
 ## Quick start (Docker Compose)
 
@@ -191,19 +197,22 @@ work).
 
 ## Tech stack
 
-### Backend (`/backend`)
+### Backend (`/backend-java`)
 
-- **Node.js + Express** — the whole API (`/chat`, `/modules`, `/progress`, `/quiz`, `/admin`), plain
-  REST, JSON in/out.
-- **PostgreSQL 16** via the `pg` package (connection pool, `DATABASE_URL`) — stores users, progress,
-  quiz attempts, sub-topic completion, item-level progress, **and** the course content.
-- Course content lives in the `conversation_files` table (one JSONB row per former JSON file),
-  loaded into an in-memory `Map` at boot and swapped live after each publish — no restart needed. A
-  baseline chassis (no topics) is seeded from `backend/src/conversations-seed/` only when the table
-  is empty.
-- **csv-parse** for CSV uploads; **cors**, **dotenv** for middleware/config; **nodemon** (dev only).
-- No ORM, no template engine — the whole conversation logic is a hand-rolled finite-state-machine
-  engine (`fsmEngine.js`), not an LLM.
+- **Java 17 + Spring Boot 3** — the whole API (`/chat`, `/modules`, `/progress`, `/quiz`, `/admin`),
+  plain REST, JSON in/out. Built with Maven.
+- **Spring Data JPA / Hibernate** over **PostgreSQL 16** — stores users, progress, quiz attempts,
+  sub-topic completion, item-level progress, **and** the course content.
+- Course content lives in the `conversation_files` table (one JSONB row per former JSON file,
+  mapped via Hibernate's native JSON support), loaded into an in-memory cache at boot and swapped
+  atomically after each publish — no restart needed. A baseline chassis (no topics) is seeded from
+  `backend-java/src/main/resources/conversations-seed/` only when the table is empty.
+- **Apache Commons CSV** for CSV uploads.
+- No ORM-generated business logic, no template engine — the whole conversation state machine is a
+  hand-rolled `FsmEngine` (direct port of the original Node `fsmEngine.js`), not an LLM.
+- Previously Node.js/Express (`backend/`, kept in the repo until the Java version is fully verified
+  in production — see "Recent updates" above). The rewrite is a behavioral port, not a redesign:
+  same routes, same JSON shapes, same CSV format, same Postgres schema.
 
 ### Frontend (`/frontend`)
 
@@ -216,8 +225,8 @@ work).
 
 ### Admin panel
 
-Plain HTML/CSS/vanilla JS (`backend/public/admin.html` + `admin.js`) — no framework, no build step,
-served directly as a static file by the Express backend.
+Plain HTML/CSS/vanilla JS (`backend/public/admin.html` + `admin.js`, unchanged by the backend
+rewrite) — no framework, no build step, served directly as a static resource by Spring Boot.
 
 ### Why not Python?
 

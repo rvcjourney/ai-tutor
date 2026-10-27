@@ -1,0 +1,37 @@
+server:
+  port: ${PORT:4000}
+
+spring:
+  application:
+    name: ai-tutor-backend
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ai_tutor}
+    username: ${SPRING_DATASOURCE_USERNAME:app}
+    password: ${SPRING_DATASOURCE_PASSWORD:app}
+
+  # schema.sql uses CREATE TABLE IF NOT EXISTS, so running it on every boot is a
+  # fast no-op after the first — same idempotent bootstrap the Node version used.
+  sql:
+    init:
+      mode: always
+
+  jpa:
+    # Never let Hibernate auto-generate/alter schema — schema.sql above is the
+    # single source of truth, same as the Node app's db/schema.sql.
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+
+logging:
+  level:
+    com.aitutor: info
