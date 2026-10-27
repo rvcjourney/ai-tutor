@@ -2,8 +2,9 @@
 
 Config-driven FSM conversation engine + REST API. No LLM/RAG/AI — every response comes from
 conversation graphs (states, transitions, quiz rules) stored as JSON blobs in Postgres. This is a
-behavioral port of the original Node/Express backend (`../backend/`) — same routes, same JSON
-shapes, same CSV format, same Postgres schema — built for a team that maintains Java/Spring Boot.
+behavioral port of the original Node/Express backend (see the `main` branch) — same routes, same
+JSON shapes, same CSV format, same Postgres schema — built for a team that maintains Java/Spring
+Boot.
 
 ## Setup
 
@@ -33,10 +34,24 @@ Maven Wrapper (`mvn -N wrapper:wrapper`) and use `./mvnw` instead.
 
 ## API
 
-Identical contract to the original Node backend — see the root `README.md`'s "Content format (CSV)"
-section and `../backend/README.md` for the full endpoint list, request/response shapes, and the
-CSV column format. Nothing here differs by language; this file only covers what's Java-specific
-(build, run, project layout).
+- `POST /chat/start` `{ userId, displayName?, clientHour?, simulateNextDay? }` — creates/resumes a session.
+- `POST /chat/message` `{ userId, input }` — `input` is an option `id` for menu states or free text for quiz/input states.
+- `POST /quiz/submit` `{ userId, input }` — alias for `/chat/message`, but 400s if the learner isn't currently on a quiz state.
+- `GET /modules` — the top-level topics and which are available.
+- `GET /modules/{moduleId}/subtopics/{subTopicId}/qa` — the Q&A pairs for one sub-topic (never MCQs), for the two-pane explorer.
+- `GET /progress?userId=` — current state, last completed state, module, status, and the full progress summary (per-module/per-sub-topic percentages, estimated minutes left).
+- `POST /admin/import` `{ csv }` — publishes new/updated topics from a CSV. `POST /admin/preview` validates without publishing.
+- `GET /admin/topics/{moduleId}` — a topic's content, reconstructed from the published state graph (admin grid view).
+- `GET /admin/topics/{moduleId}/export` — downloads a topic as CSV, same format `/admin/import` accepts.
+- `POST/PUT/DELETE /admin/topics/{moduleId}` — create/rename/delete a topic.
+- `POST/PUT/DELETE /admin/topics/{moduleId}/subtopics/{subTopicId}` — create/rename/delete a sub-topic.
+- `POST/PUT/DELETE /admin/topics/{moduleId}/subtopics/{subTopicId}/questions/{index}` — create/update/delete one question. All single-record CRUD routes go through the same validated, rollback-safe publish pipeline as the CSV path.
+
+**No authentication** on `/admin/*` — anyone who can reach these routes can add/remove content; fine
+for local dev and internal testing, revisit before exposing the deployed URL publicly.
+
+See [Content format (CSV)](../README.md#content-format-csv) in the root README for the column list
+and validation rules.
 
 ## Project layout
 
@@ -52,6 +67,14 @@ CSV column format. Nothing here differs by language; this file only covers what'
 
 ## Data model
 
-Unchanged from the Node version — same tables, same columns, same JSONB content shape. See the root
-`README.md`'s "Content format" section or `../backend/README.md`'s "Data model" section; this
-service reads and writes the exact same schema, just through JPA instead of hand-written SQL.
+Everything lives in Postgres (`src/main/resources/schema.sql`):
+
+- `conversation_files` — the FSM graph (states, transitions, quiz rules) and the topic registry, one
+  row per former JSON file, `content` as `jsonb`. Source of truth for everything `ConversationCache`
+  loads into its in-memory cache at boot.
+- Per-user state: `users`, `user_progress` (current/last-completed state, module, status),
+  `quiz_attempts` (answer log, used for retry counting), `sub_topic_completions`,
+  `sub_topic_item_progress`.
+
+Unchanged from the Node version — same tables, same columns, same JSONB content shape. This service
+reads and writes the exact same schema, just through JPA instead of hand-written SQL.

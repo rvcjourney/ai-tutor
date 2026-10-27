@@ -1,6 +1,5 @@
 **/node_modules
 **/dist
 .git
-backend/data
-backend/.env
+backend-java/target
 *.md

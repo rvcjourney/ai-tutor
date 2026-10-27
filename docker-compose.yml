@@ -18,11 +18,9 @@ services:
       retries: 10
 
   app:
-    # Java/Spring Boot backend (replaces the old Node/Express one — see
-    # backend-java/README or the root README's "Recent updates" section). The
-    # original Node Dockerfile is left in place at the repo root during cutover
-    # verification; point `dockerfile` back at it if you need to compare the two
-    # side by side against this same database.
+    # Java/Spring Boot backend — see backend-java/README.md. The old Node/Express
+    # backend lives on the `main` branch, untouched, if you ever need to compare
+    # the two against this same database.
     build:
       context: .
       dockerfile: backend-java/Dockerfile

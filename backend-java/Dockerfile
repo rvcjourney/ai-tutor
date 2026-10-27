@@ -19,12 +19,12 @@ COPY backend-java/pom.xml ./
 # re-download the whole dependency tree on every build.
 RUN mvn -B -q dependency:go-offline
 COPY backend-java/src ./src
-# The built frontend + the existing admin panel land in Spring Boot's static
-# resources before packaging — same "one process serves everything" shape as the
-# Node version's backend/public, just assembled at build time instead of via a
-# COPY --from in the final stage (Maven needs them present for the jar to embed).
+# admin.html/admin.js are committed under src/main/resources/static (copied
+# above with the rest of src) — the only thing that still needs assembling at
+# build time is the React build, which lands alongside them in the same static
+# resources directory before packaging, so the final jar serves everything from
+# one place.
 COPY --from=frontend-build /app/frontend/dist/. ./src/main/resources/static/
-COPY backend/public/admin.html backend/public/admin.js ./src/main/resources/static/
 RUN mvn -B -q -DskipTests package
 
 # ---- Stage 3: the runtime image ----

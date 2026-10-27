@@ -1,9 +1,0 @@
-node_modules/
-.env
-
-# Legacy from the pre-Postgres setup (SQLite file, file-based conversation JSON) —
-# published content and progress both live in Postgres now (see src/db/), not on
-# local disk. Left ignored in case anything's still sitting here locally; nothing
-# reads from or writes to either path anymore.
-data/
-src/conversations/*.json

@@ -10,8 +10,8 @@ CSV upload or the admin panel and that is stored in PostgreSQL.
 - **Backend rewritten from Node/Express to Java/Spring Boot** (`backend-java/`), for the team now
   maintaining this project. Behaviorally identical — same routes, same JSON shapes, same CSV
   format, same FSM logic, same PostgreSQL schema — so the React frontend and the admin panel needed
-  no changes. The old Node backend (`backend/`) is kept in the repo until the Java version is fully
-  verified in production, then removed. See `backend-java/README.md`.
+  no changes. The old Node backend has been removed from this branch; it's still on `main` if you
+  ever need to compare the two against the same database. See `backend-java/README.md`.
 - **VPS deployment runs on PostgreSQL**, not SQLite — all published content and learner progress
   live in Postgres, persisted via a Docker named volume so nothing is lost on redeploy. There is no
   SQLite anywhere in the codebase — only a few code comments reference the old behavior for
@@ -46,11 +46,12 @@ CSV upload or the admin panel and that is stored in PostgreSQL.
 
 | Path | What it is |
 |---|---|
-| `backend-java/` | **Active backend** — Java/Spring Boot REST API + FSM conversation engine. Same routes/JSON/CSV format as the old Node backend. See `backend-java/README.md`. |
-| `backend/` | Legacy Node.js/Express backend, kept only until the Java rewrite is fully verified in production. Its `public/admin.html`/`admin.js` are still the live admin panel (copied into the Java build, unmodified). |
+| `backend-java/` | Java/Spring Boot REST API + FSM conversation engine, plus the admin panel (`src/main/resources/static/admin.html`/`admin.js`). See `backend-java/README.md`. |
 | `frontend/` | React + Vite chat UI for learners. |
 | `backend-java/Dockerfile` | Multi-stage build: builds the frontend, builds the Spring Boot jar, packages both into one runtime image. |
 | `docker-compose.yml` | Runs that image (`app`) plus a Postgres 16 container (`db`) with a persistent volume. |
+
+The old Node/Express backend lives on the `main` branch, untouched — not in this one.
 
 The `app` container is one Spring Boot process on one port. It serves the API, the built React app,
 and the admin panel, so there is no separate frontend server and no CORS setup.
@@ -105,8 +106,8 @@ Nothing in the code is tied to any particular host — pick whichever fits your 
 | Situation | What to do |
 |---|---|
 | You use Docker | As above: `.env` + `docker compose up -d --build`. |
-| You already run Postgres (managed/cloud) | Skip the `db` service. Point `DATABASE_URL` (on the `app` service, or in `backend/.env` if not using Docker) at your own connection string. The app creates its own tables on first boot (`backend/src/db/schema.sql`, idempotent). |
-| No Docker | Node.js 22+. `cd backend && npm install`, `cd frontend && npm install && npm run build`, copy `frontend/dist/*` into `backend/public/`, then `node backend/src/server.js` with `DATABASE_URL` set. |
+| You already run Postgres (managed/cloud) | Skip the `db` service. Point `SPRING_DATASOURCE_URL`/`_USERNAME`/`_PASSWORD` (on the `app` service, or as env vars if not using Docker) at your own connection string. The app creates its own tables on first boot (`backend-java/src/main/resources/schema.sql`, idempotent). |
+| No Docker | Java 17+ and Maven. `cd backend-java && mvn spring-boot:run` with `SPRING_DATASOURCE_URL`/`_USERNAME`/`_PASSWORD` set. See `backend-java/README.md`. |
 | Custom domain / HTTPS | Put a reverse proxy (Caddy, nginx) in front of whatever port the app binds to — the app has no HTTPS logic of its own and needs no changes. |
 
 ### Environment variables
@@ -115,8 +116,9 @@ Nothing in the code is tied to any particular host — pick whichever fits your 
 |---|---|---|
 | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | root `.env` (Docker only) | Credentials for the `db` container. Plain alphanumeric password only. |
 | `APP_PORT` | root `.env` (Docker only) | The port the app is reachable on from outside the container (maps to the app's internal port 4000). |
-| `DATABASE_URL` | `backend/.env` (non-Docker) or set directly on the `app` service | Full Postgres connection string, e.g. `postgresql://user:pass@host:5432/dbname`. |
-| `PORT` | `backend/.env` (non-Docker) | Port the Express server listens on. Defaults to 4000. |
+| `SPRING_DATASOURCE_URL` | non-Docker, or set directly on the `app` service | Full JDBC connection string, e.g. `jdbc:postgresql://host:5432/dbname`. |
+| `SPRING_DATASOURCE_USERNAME` / `SPRING_DATASOURCE_PASSWORD` | non-Docker, or set directly on the `app` service | Postgres credentials. |
+| `PORT` | non-Docker | Port the Spring Boot server listens on. Defaults to 4000. |
 | `VITE_API_BASE_URL` | frontend build-time env | Leave empty (`""`) when frontend and backend share one origin (the normal Docker setup). Set to a full URL only if they're served from different origins. |
 
 ## Moving content to a new server
@@ -146,7 +148,7 @@ Each row is one screen: `Topic`, `Sub-Topic`, `Type`, `#`, `Question`, `Choice A
 Question/Answer/Choice text. Self-host images under `frontend/public/images/` rather than
 hotlinking — some hosts (e.g. Google Drive) block embedding.
 
-Full column list, validation rules, and the admin CRUD grid are documented in `backend/README.md`.
+Full column list, validation rules, and the admin CRUD grid are documented in `backend-java/README.md`.
 
 ## Local development without Docker
 
@@ -154,7 +156,7 @@ You need a PostgreSQL you can reach (the `db` service in `docker-compose.yml` is
 host by default — use your own instance, or add a `ports: ['5432:5432']` mapping to it for local
 work).
 
-- Backend: `cd backend && npm install`, copy `backend/.env.example` to `backend/.env` and set `DATABASE_URL`, then `npm run dev`. See `backend/README.md`.
+- Backend: `cd backend-java && mvn spring-boot:run` with `SPRING_DATASOURCE_URL`/`_USERNAME`/`_PASSWORD` set. See `backend-java/README.md`.
 - Frontend: `cd frontend && npm install && npm run dev`. It calls the backend at `http://localhost:4000` by default; set `VITE_API_BASE_URL` to point elsewhere.
 
 ## Features
@@ -210,9 +212,8 @@ work).
 - **Apache Commons CSV** for CSV uploads.
 - No ORM-generated business logic, no template engine — the whole conversation state machine is a
   hand-rolled `FsmEngine` (direct port of the original Node `fsmEngine.js`), not an LLM.
-- Previously Node.js/Express (`backend/`, kept in the repo until the Java version is fully verified
-  in production — see "Recent updates" above). The rewrite is a behavioral port, not a redesign:
-  same routes, same JSON shapes, same CSV format, same Postgres schema.
+- Previously Node.js/Express — see the `main` branch for that version. The rewrite is a behavioral
+  port, not a redesign: same routes, same JSON shapes, same CSV format, same Postgres schema.
 
 ### Frontend (`/frontend`)
 
@@ -225,8 +226,9 @@ work).
 
 ### Admin panel
 
-Plain HTML/CSS/vanilla JS (`backend/public/admin.html` + `admin.js`, unchanged by the backend
-rewrite) — no framework, no build step, served directly as a static resource by Spring Boot.
+Plain HTML/CSS/vanilla JS (`backend-java/src/main/resources/static/admin.html` + `admin.js`,
+unchanged in substance by the backend rewrite — only moved) — no framework, no build step, served
+directly as a static resource by Spring Boot.
 
 ### Why not Python?
 
