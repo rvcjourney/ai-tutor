@@ -20,7 +20,7 @@ import com.aitutor.repository.SubTopicItemProgressRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -263,9 +263,16 @@ public class FsmEngine {
                 subTopicOptions, node.mcqChoices, node.revealMessage);
     }
 
+    // The learner base is India — "a new day" needs to mean a new day in IST, not
+    // UTC. UTC's midnight boundary falls at 5:30 AM IST, so comparing in UTC made
+    // the next-day reinforcement quiz trigger up to 5.5 hours later than a learner
+    // would actually perceive "the next day" to be (e.g. reopening the app at
+    // 2 AM IST was still "the same day" by UTC's clock).
+    private static final ZoneId LEARNER_ZONE = ZoneId.of("Asia/Kolkata");
+
     private boolean isNewCalendarDay(OffsetDateTime updatedAt) {
-        LocalDate today = OffsetDateTime.now(ZoneOffset.UTC).toLocalDate();
-        LocalDate updatedDate = updatedAt.withOffsetSameInstant(ZoneOffset.UTC).toLocalDate();
+        LocalDate today = OffsetDateTime.now(LEARNER_ZONE).toLocalDate();
+        LocalDate updatedDate = updatedAt.atZoneSameInstant(LEARNER_ZONE).toLocalDate();
         return !updatedDate.equals(today);
     }
 
