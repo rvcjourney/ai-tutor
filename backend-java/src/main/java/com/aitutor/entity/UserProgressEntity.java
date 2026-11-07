@@ -35,6 +35,12 @@ public class UserProgressEntity {
     @Column(name = "status", nullable = false)
     private String status;
 
+    // Recomputed and written explicitly on every call (see UserProgressService)
+    // rather than relying on the column DEFAULT — the DEFAULT only covers a
+    // brand-new row before any real percent has been computed.
+    @Column(name = "progress_percent", nullable = false)
+    private Integer progressPercent = 0;
+
     // insertable=false so Postgres's column DEFAULT NOW() fires on INSERT (never
     // sent as NULL by Hibernate); left updatable so UserProgressService can bump it
     // explicitly on every UPDATE, mirroring progressRepository.js's `updated_at = NOW()`.
@@ -45,13 +51,14 @@ public class UserProgressEntity {
     }
 
     public UserProgressEntity(Long userId, String currentState, String lastCompletedState, String moduleId,
-                               String subTopicId, String status) {
+                               String subTopicId, String status, Integer progressPercent) {
         this.userId = userId;
         this.currentState = currentState;
         this.lastCompletedState = lastCompletedState;
         this.moduleId = moduleId;
         this.subTopicId = subTopicId;
         this.status = status;
+        this.progressPercent = progressPercent;
     }
 
     public Long getId() {
@@ -100,6 +107,14 @@ public class UserProgressEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getProgressPercent() {
+        return progressPercent;
+    }
+
+    public void setProgressPercent(Integer progressPercent) {
+        this.progressPercent = progressPercent;
     }
 
     public OffsetDateTime getUpdatedAt() {

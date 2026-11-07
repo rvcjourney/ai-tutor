@@ -25,9 +25,13 @@ public class UserProgressService {
         return repository.findByUserId(userId);
     }
 
+    /** `progressPercent` is supplied by the caller (FsmEngine), not computed in
+     *  here — it must be calculated from the already-updated completion/item
+     *  progress tables, and this method has no visibility into whether those
+     *  writes have landed yet for the current turn. */
     @Transactional
     public UserProgressEntity upsert(Long userId, String currentState, String lastCompletedState,
-                                      String moduleId, String subTopicId, String status) {
+                                      String moduleId, String subTopicId, String status, int progressPercent) {
         Optional<UserProgressEntity> existing = repository.findByUserId(userId);
         if (existing.isPresent()) {
             UserProgressEntity p = existing.get();
@@ -36,9 +40,10 @@ public class UserProgressService {
             if (moduleId != null) p.setModuleId(moduleId);
             if (subTopicId != null) p.setSubTopicId(subTopicId);
             p.setStatus(status);
+            p.setProgressPercent(progressPercent);
             p.setUpdatedAt(OffsetDateTime.now());
             return repository.save(p);
         }
-        return repository.save(new UserProgressEntity(userId, currentState, lastCompletedState, moduleId, subTopicId, status));
+        return repository.save(new UserProgressEntity(userId, currentState, lastCompletedState, moduleId, subTopicId, status, progressPercent));
     }
 }

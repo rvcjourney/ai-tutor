@@ -58,7 +58,12 @@ public class ProgressController {
             response.put("updatedAt", p.getUpdatedAt());
         }
 
-        response.put("overallPercent", summary.overallPercent());
+        // overallPercent comes from the stored column (kept fresh on every
+        // progress-changing action by FsmEngine), not recomputed here — that's
+        // the whole point of storing it. A learner with no progress row yet has
+        // nothing stored, so 0 is the correct value for them regardless.
+        int overallPercent = progress.map(UserProgressEntity::getProgressPercent).orElse(0);
+        response.put("overallPercent", overallPercent);
         response.put("estimatedMinutesLeft", summary.estimatedMinutesLeft());
         response.put("modules", summary.modules());
         return response;

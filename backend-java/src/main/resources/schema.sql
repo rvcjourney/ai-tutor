@@ -13,8 +13,19 @@ CREATE TABLE IF NOT EXISTS user_progress (
   module_id TEXT,
   sub_topic_id TEXT,
   status TEXT NOT NULL DEFAULT 'in_progress',
+  -- Overall percent across every module, recomputed and written on every
+  -- progress-changing action (see FsmEngine#persistProgress) rather than
+  -- calculated on read. Only the overall figure is stored here — per-module
+  -- percentages still can't fit on this table (one row per user, not per
+  -- user+module) and stay computed on read via /progress.
+  progress_percent INTEGER NOT NULL DEFAULT 0,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- user_progress may already exist (from before this column was added) on a
+-- database that's already running — CREATE TABLE IF NOT EXISTS above is a
+-- no-op against it, so this picks up the ones schema.sql's normal path won't.
+ALTER TABLE user_progress ADD COLUMN IF NOT EXISTS progress_percent INTEGER NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS quiz_attempts (
   id SERIAL PRIMARY KEY,

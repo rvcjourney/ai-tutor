@@ -61,16 +61,18 @@ public class FsmEngine {
     private final QuizAttemptRepository quizAttemptRepository;
     private final SubTopicCompletionRepository subTopicCompletionRepository;
     private final SubTopicItemProgressRepository subTopicItemProgressRepository;
+    private final ProgressSummaryService progressSummaryService;
 
     public FsmEngine(ConversationCache cache, UserService userService, UserProgressService progressService,
                       QuizAttemptRepository quizAttemptRepository, SubTopicCompletionRepository subTopicCompletionRepository,
-                      SubTopicItemProgressRepository subTopicItemProgressRepository) {
+                      SubTopicItemProgressRepository subTopicItemProgressRepository, ProgressSummaryService progressSummaryService) {
         this.cache = cache;
         this.userService = userService;
         this.progressService = progressService;
         this.quizAttemptRepository = quizAttemptRepository;
         this.subTopicCompletionRepository = subTopicCompletionRepository;
         this.subTopicItemProgressRepository = subTopicItemProgressRepository;
+        this.progressSummaryService = progressSummaryService;
     }
 
     // ---- small lookups ----
@@ -297,11 +299,13 @@ public class FsmEngine {
 
     /** Persists where the learner landed, and — the actual completion trigger —
      *  marks the sub-topic they were just IN as done the moment they leave it.
-     *  `previous` is the pre-this-turn {moduleId, subTopicId}, if any. */
+     *  `previous` is the pre-this-turn {moduleId, subTopicId}, if any.
+     *
+     *  The completion/item-progress writes happen *before* the overall percent
+     *  is computed and stored on user_progress — computing it first would store
+     *  a percent that's one turn stale, since it wouldn't yet reflect whatever
+     *  this exact turn just completed or advanced. */
     private void persistProgress(Long userId, State node, String moduleId, String subTopicId, ModuleSubTopicPair previous) {
-        String status = "exit".equals(node.type) ? "completed" : "in_progress";
-        progressService.upsert(userId, node.id, "exit".equals(node.type) ? node.id : null, moduleId, subTopicId, status);
-
         if (previous != null && previous.moduleId() != null && previous.subTopicId() != null
                 && !previous.subTopicId().equals(node.subTopic)) {
             subTopicCompletionRepository.markComplete(userId, previous.moduleId(), previous.subTopicId());
@@ -311,6 +315,10 @@ public class FsmEngine {
                 subTopicItemProgressRepository.recordProgress(userId, moduleId, subTopicId, itemsSeen);
             }
         }
+
+        String status = "exit".equals(node.type) ? "completed" : "in_progress";
+        int overallPercent = progressSummaryService.getProgressSummary(userId).overallPercent();
+        progressService.upsert(userId, node.id, "exit".equals(node.type) ? node.id : null, moduleId, subTopicId, status, overallPercent);
     }
 
     /** A learner's saved position can go stale if an admin deletes/renames the
