@@ -78,3 +78,42 @@ Everything lives in Postgres (`src/main/resources/schema.sql`):
 
 Unchanged from the Node version — same tables, same columns, same JSONB content shape. This service
 reads and writes the exact same schema, just through JPA instead of hand-written SQL.
+
+## Testing notes — editing progress tables directly
+
+If you're poking at `sub_topic_item_progress`, `sub_topic_completions`, or `user_progress` directly
+from a database tool (IntelliJ's Database window, psql, etc.) while testing, a few things behave
+differently than you might expect:
+
+- **`sub_topic_completions` overrides everything.** If a row exists there for a given
+  `(user_id, module_id, sub_topic_id)`, that sub-topic always shows 100% in `/progress`, regardless
+  of whatever is in `sub_topic_item_progress.items_seen`. To test a sub-topic as "in progress"
+  again, delete the matching row from `sub_topic_completions` too, not just edit `items_seen`.
+
+- **`items_seen` only ever moves forward, enforced by the app, not just convention.** Every write
+  does `items_seen = GREATEST(items_seen, newly_computed_position)`, and that new position is
+  calculated fresh from the learner's real `current_state` — never from whatever you last set
+  manually. So: setting `items_seen` *higher* than reality sticks. Setting it *lower* sticks only
+  until that learner takes one more real action in the app — their next tap recomputes their actual
+  position and `GREATEST` pushes the stored value back up, silently undoing the manual edit. This is
+  expected behavior, not a bug — if a lowered value "reverts" after the test user does anything, that's
+  why.
+
+- **For a genuine reset-and-retest** (walk a sub-topic again from scratch), edit `items_seen` alone
+  isn't enough. Delete both of these for that user/module/sub-topic, then have them re-enter it from
+  the main menu:
+  ```sql
+  DELETE FROM sub_topic_item_progress WHERE user_id = <id> AND module_id = '<module_id>' AND sub_topic_id = '<sub_topic_id>';
+  DELETE FROM sub_topic_completions WHERE user_id = <id> AND module_id = '<module_id>' AND sub_topic_id = '<sub_topic_id>';
+  ```
+
+- **`user_progress.progress_percent` is also app-maintained, not read live.** It's a stored overall
+  percent, recomputed and written by the backend on every progress-changing action (see
+  `FsmEngine#persistProgress`) — not recalculated on read. A direct edit to it will show up in
+  `/progress` immediately, but gets overwritten the next time that learner's progress actually
+  changes, same as `items_seen`.
+
+- **`conversation_files` edits need an app restart to take effect.** Content isn't read from the
+  database per-request — it's loaded into memory once at startup (`ConversationCache`) and only
+  refreshed when something goes through the real publish path (CSV upload or the admin CRUD grid). A
+  direct database edit to a `conversation_files` row will sit there unused until the app restarts.
