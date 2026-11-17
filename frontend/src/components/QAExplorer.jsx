@@ -5,7 +5,7 @@ import NavFooter from './NavFooter';
 
 const THINKING_PAUSE_MS = 350;
 
-export default function QAExplorer({ moduleId, subTopicId, onContinue, onLeave, disabled }) {
+export default function QAExplorer({ moduleId, subTopicId, resumeItemsSeen, onContinue, onLeave, disabled }) {
   const [items, setItems] = useState(null); // null = still loading
   const [loadError, setLoadError] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -22,12 +22,21 @@ export default function QAExplorer({ moduleId, subTopicId, onContinue, onLeave, 
     let cancelled = false;
     setItems(null);
     setLoadError(null);
-    setSelectedIndex(0);
-    maxIndexReachedRef.current = 0;
     chatApi
       .getSubTopicQa(moduleId, subTopicId)
       .then((data) => {
-        if (!cancelled) setItems(data.items);
+        if (cancelled) return;
+        // Resume at the next unseen question instead of always the first.
+        // `resumeItemsSeen` is the 1-based position of the furthest item this
+        // learner has already reached in this sub-topic (from sub_topic_item_
+        // progress via the /progress API) — that number converts directly to
+        // the 0-based index of the *next* one. Clamped to the last item if
+        // their progress already extends past this sub-topic's fact cards
+        // (e.g. into its MCQs), since there's nothing further to resume to here.
+        const resumeIndex = Math.max(0, Math.min(resumeItemsSeen || 0, data.items.length - 1));
+        setItems(data.items);
+        setSelectedIndex(resumeIndex);
+        maxIndexReachedRef.current = resumeIndex;
       })
       .catch((err) => {
         if (!cancelled) setLoadError(err.message || 'Could not load questions.');
@@ -35,6 +44,7 @@ export default function QAExplorer({ moduleId, subTopicId, onContinue, onLeave, 
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moduleId, subTopicId]);
 
   useEffect(() => {

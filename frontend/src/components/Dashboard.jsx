@@ -91,6 +91,7 @@ export default function Dashboard() {
             key={turn.state}
             moduleId={turn.moduleId}
             subTopicId={turn.subTopicId}
+            resumeItemsSeen={subTopicForTurn?.itemsSeen}
             onContinue={skipToQuiz}
             onLeave={leaveQaExplorer}
             disabled={loading}
