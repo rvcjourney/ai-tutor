@@ -141,6 +141,39 @@ export function useAppState() {
     }
   }, [turn, userId, refreshProgress]);
 
+  // Used by the Q&A explorer's Topic Menu/Home buttons — leaving via a nav
+  // shortcut instead of reading all the way to "Continue" used to record zero
+  // progress for whatever was actually browsed, since the explorer's position
+  // is purely client-side (see skipToQuiz above) until something syncs it to
+  // the server. `stepsToSync` is how many real 'next' taps are needed to walk
+  // the server from wherever it still thinks the learner is (the first
+  // question) up to the *furthest* one they actually reached — same real
+  // taps Continue already uses, just stopping partway instead of walking to
+  // the end, then followed by the actual nav action.
+  const leaveQaExplorer = useCallback(
+    async (option, stepsToSync) => {
+      setLoading(true);
+      setTyping(true);
+      setError(null);
+      setLastUserMessage(option.label);
+      lastActionRef.current = { type: 'message', input: option.id };
+      try {
+        for (let i = 0; i < stepsToSync; i++) {
+          await chatApi.sendMessage(userId, 'next');
+        }
+        const response = await chatApi.sendMessage(userId, option.id);
+        setTurn(response);
+        await refreshProgress();
+      } catch {
+        setError("We couldn't load that. Check your internet connection and try again.");
+      } finally {
+        setLoading(false);
+        setTyping(false);
+      }
+    },
+    [userId, refreshProgress]
+  );
+
   return {
     displayName,
     submitName,
@@ -153,6 +186,7 @@ export function useAppState() {
     selectOption,
     sendText,
     skipToQuiz,
+    leaveQaExplorer,
     retry,
   };
 }

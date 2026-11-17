@@ -25,6 +25,7 @@ export default function Dashboard() {
     selectOption,
     sendText,
     skipToQuiz,
+    leaveQaExplorer,
     retry,
   } = useAppState();
 
@@ -91,7 +92,7 @@ export default function Dashboard() {
             moduleId={turn.moduleId}
             subTopicId={turn.subTopicId}
             onContinue={skipToQuiz}
-            onSelect={selectOption}
+            onLeave={leaveQaExplorer}
             disabled={loading}
           />
         )}

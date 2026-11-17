@@ -1,23 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as chatApi from '../api/chatApi';
 import Typewriter from './Typewriter';
 import NavFooter from './NavFooter';
 
 const THINKING_PAUSE_MS = 350;
 
-export default function QAExplorer({ moduleId, subTopicId, onContinue, onSelect, disabled }) {
+export default function QAExplorer({ moduleId, subTopicId, onContinue, onLeave, disabled }) {
   const [items, setItems] = useState(null); // null = still loading
   const [loadError, setLoadError] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   // 'question' -> typing the question out; 'gap' -> brief thinking pause;
   // 'answer' -> typing the answer out; 'done' -> both fully shown, nav enabled.
   const [phase, setPhase] = useState('question');
+  // The furthest index actually reached, not just the current one — reading
+  // ahead to Q6 and then tapping back to re-read Q3 should still count as
+  // having reached Q6 if the learner leaves from there. Ratchets up only,
+  // reset whenever the sub-topic itself changes (a fresh one starts at 0).
+  const maxIndexReachedRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
     setItems(null);
     setLoadError(null);
     setSelectedIndex(0);
+    maxIndexReachedRef.current = 0;
     chatApi
       .getSubTopicQa(moduleId, subTopicId)
       .then((data) => {
@@ -33,6 +39,7 @@ export default function QAExplorer({ moduleId, subTopicId, onContinue, onSelect,
 
   useEffect(() => {
     setPhase('question');
+    maxIndexReachedRef.current = Math.max(maxIndexReachedRef.current, selectedIndex);
   }, [items, selectedIndex]);
 
   useEffect(() => {
@@ -115,7 +122,7 @@ export default function QAExplorer({ moduleId, subTopicId, onContinue, onSelect,
             {isLast ? 'Continue ▸' : 'Next ›'}
           </button>
         </div>
-        <NavFooter onSelect={onSelect} disabled={disabled} />
+        <NavFooter onSelect={(option) => onLeave(option, maxIndexReachedRef.current)} disabled={disabled} />
       </div>
     </div>
   );
