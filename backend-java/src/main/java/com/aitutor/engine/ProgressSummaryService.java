@@ -21,13 +21,29 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
 
 /**
- * Port of backend/src/engine/progressSummary.js. Content-based time estimate:
- * instead of a flat "1 minute per question," reads the actual remaining text
- * (question + answer / choices + explanation) and estimates from real reading
- * speed, plus a small fixed overhead per item for the tap/decide interaction.
- * Module-tile progress is counted in whole sub-topics (done vs not); sub-topic
- * progress is finer (items seen / total items) so an in-progress sub-topic
- * shows a real running percentage.
+ * Port of backend/src/engine/progressSummary.js, since revised to fix three
+ * real inconsistencies between the header, topic tiles, and sub-topic tiles
+ * that surfaced in testing:
+ *
+ * 1. The topic tile's percent is now item-weighted (items seen ÷ items total,
+ *    across that topic's *visible* sub-topics) instead of whole-sub-topics-
+ *    completed-ratio — the old version showed "0%" for a learner 93% through
+ *    every sub-topic, since partial progress didn't count until a sub-topic
+ *    was entirely finished. The "X/Y topics" *count* text is unchanged — it's
+ *    still how many sub-topics are fully done, which is still meaningful on
+ *    its own.
+ * 2. Hidden Greeting/Overview sub-topics are now excluded from the overall
+ *    percent and the time estimate, matching how they're already excluded
+ *    from the topic tile's "X/Y topics" count. Previously the header moved
+ *    when a learner read an intro screen, even though no tile reflected that —
+ *    the header couldn't be derived from what was on screen.
+ * 3. Percentages round *down*, not to the nearest whole number — so 199/200
+ *    items no longer displays as "100% complete" while one item remains.
+ *
+ * Time estimate is still content-based: instead of a flat "1 minute per
+ * question," it reads the actual remaining text (question + answer / choices
+ * + explanation) and estimates from real reading speed, plus a small fixed
+ * overhead per item for the tap/decide interaction.
  */
 @Service
 public class ProgressSummaryService {
@@ -99,6 +115,12 @@ public class ProgressSummaryService {
         return seconds;
     }
 
+    /** Rounds down, not to the nearest whole number — so e.g. 199/200 items
+     *  shows as 99%, not 100%, while one item still remains. */
+    private int percentOf(int seen, int total) {
+        return total > 0 ? (int) Math.floor((seen * 100.0) / total) : 0;
+    }
+
     public ProgressSummaryDto getProgressSummary(Long userId) {
         List<SubTopicCompletionEntity> completed = completionRepository.findByUserId(userId);
         Set<String> completedSet = new HashSet<>();
@@ -113,6 +135,9 @@ public class ProgressSummaryService {
 
         int totalSubTopics = 0;
         int totalCompleted = 0;
+        // Visible sub-topics only, from here down — a hidden Greeting/Overview's
+        // items no longer feed the overall percent or the time estimate, so the
+        // header stays derivable from what's actually shown as tiles.
         int totalItemsAll = 0;
         int totalItemsSeenAll = 0;
         double totalRemainingSeconds = 0;
@@ -124,6 +149,11 @@ public class ProgressSummaryService {
             List<SubTopicProgressDto> subTopicDetails = new ArrayList<>();
             int visibleCount = 0;
             int visibleCompleted = 0;
+            // Item-weighted, visible-sub-topics-only — this is what the topic
+            // tile's own percent is now based on, instead of the completed/total
+            // sub-topic ratio (which hid all partial progress as 0%).
+            int moduleItemsTotal = 0;
+            int moduleItemsSeen = 0;
 
             for (SubTopicEntry st : subTopics) {
                 String key = m.id + ":" + st.id;
@@ -131,31 +161,35 @@ public class ProgressSummaryService {
                 SubTopicStates subStates = getSubTopicStates(m.id, st.id);
                 int itemsSeen = isCompleted ? subStates.totalItems()
                         : Math.min(itemProgressMap.getOrDefault(key, 0), subStates.totalItems());
-                int percent = subStates.totalItems() > 0 ? Math.round((itemsSeen * 100f) / subStates.totalItems()) : 0;
-                totalItemsAll += subStates.totalItems();
-                totalItemsSeenAll += itemsSeen;
-                if (!isCompleted) {
-                    double remaining = getSubTopicRemainingSeconds(subStates.qStates(), subStates.mcqStates(), itemsSeen);
-                    moduleRemainingSeconds += remaining;
-                    totalRemainingSeconds += remaining;
-                }
+                int percent = percentOf(itemsSeen, subStates.totalItems());
                 boolean hidden = st.isHidden();
-                subTopicDetails.add(new SubTopicProgressDto(st.id, st.label, hidden, isCompleted,
-                        itemsSeen, subStates.totalItems(), isCompleted ? 100 : percent));
+
                 if (!hidden) {
+                    moduleItemsTotal += subStates.totalItems();
+                    moduleItemsSeen += itemsSeen;
+                    totalItemsAll += subStates.totalItems();
+                    totalItemsSeenAll += itemsSeen;
+                    if (!isCompleted) {
+                        double remaining = getSubTopicRemainingSeconds(subStates.qStates(), subStates.mcqStates(), itemsSeen);
+                        moduleRemainingSeconds += remaining;
+                        totalRemainingSeconds += remaining;
+                    }
                     visibleCount++;
                     if (isCompleted) visibleCompleted++;
                 }
+
+                subTopicDetails.add(new SubTopicProgressDto(st.id, st.label, hidden, isCompleted,
+                        itemsSeen, subStates.totalItems(), isCompleted ? 100 : percent));
             }
 
             totalSubTopics += visibleCount;
             totalCompleted += visibleCompleted;
-            int modulePercent = visibleCount > 0 ? Math.round((visibleCompleted * 100f) / visibleCount) : 0;
+            int modulePercent = percentOf(moduleItemsSeen, moduleItemsTotal);
             modules.add(new ModuleProgressDto(m.id, m.title, m.entryState, visibleCount, visibleCompleted,
                     modulePercent, (int) Math.ceil(moduleRemainingSeconds / 60), subTopicDetails));
         }
 
-        int overallPercent = totalItemsAll > 0 ? Math.round((totalItemsSeenAll * 100f) / totalItemsAll) : 0;
+        int overallPercent = percentOf(totalItemsSeenAll, totalItemsAll);
         return new ProgressSummaryDto(overallPercent, (int) Math.ceil(totalRemainingSeconds / 60), modules);
     }
 }
