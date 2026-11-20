@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
  *  the Node version's actual wire format, which backend/public/admin.js (left
  *  unmodified) was built against. */
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api5/admin")
 public class AdminController {
 
     private final CsvImporter csvImporter;

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Port of backend/src/routes/chat.js + controllers/chatController.js. */
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/api5/chat")
 public class ChatController {
 
     private final FsmEngine fsmEngine;

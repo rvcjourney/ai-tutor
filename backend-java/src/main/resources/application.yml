@@ -1,14 +1,33 @@
 server:
-  port: ${PORT:4000}
+  port: ${PORT:8120}
 
 spring:
   application:
     name: ai-tutor-backend
 
+
+#local db
+#  datasource:
+#    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5434}/${DB_NAME:postgres}?currentSchema=${DB_SCHEMA:ai_tutor}
+#    username: ${DB_USERNAME:postgres}
+#    password: ${DB_PASSWORD:postgres}
+#    driver-class-name: org.postgresql.Driver
+
+  #test2 Db
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ai_tutor}
-    username: ${SPRING_DATASOURCE_USERNAME:app}
-    password: ${SPRING_DATASOURCE_PASSWORD:app}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5434}/${DB_NAME:vector_db}?currentSchema=${DB_SCHEMA:ai_tutor}
+    username: ${DB_USERNAME:imagedata}
+    password: ${DB_PASSWORD:root123}
+    driver-class-name: org.postgresql.Driver
+
+  #prod Db
+#  datasource:
+#    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5434}/${DB_NAME:postgres}?currentSchema=${DB_SCHEMA:ai_tutor}
+#    username: ${DB_USERNAME:postgres}
+#    password: ${DB_PASSWORD:postgres}
+#    driver-class-name: org.postgresql.Driver
+
+
 
   # schema.sql uses CREATE TABLE IF NOT EXISTS, so running it on every boot is a
   # fast no-op after the first — same idempotent bootstrap the Node version used.
@@ -29,8 +48,8 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 2MB
-      max-request-size: 2MB
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 logging:
   level:

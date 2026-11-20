@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** Port of backend/src/routes/modules.js + controllers/moduleController.js. */
 @RestController
+@RequestMapping("/api5")
 public class ModuleController {
 
     private final ConversationCache cache;

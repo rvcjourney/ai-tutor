@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Port of backend/src/routes/quiz.js + controllers/quizController.js — an alias
  *  for /chat/message that 400s if the learner isn't currently on a quiz state. */
 @RestController
-@RequestMapping("/quiz")
+@RequestMapping("/api5/quiz")
 public class QuizController {
 
     private final FsmEngine fsmEngine;

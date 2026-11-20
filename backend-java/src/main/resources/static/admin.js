@@ -188,7 +188,7 @@ async function showTopics() {
   els.grid.style.display = 'none';
   els.gridPagination.innerHTML = '';
 
-  const data = await api('GET', '/modules');
+  const data = await api('GET', '/api5/modules');
   const modules = data.modules || [];
   if (modules.length === 0) {
     setGridEmpty('No topics yet — click "Add Topic" to create one.');
@@ -218,13 +218,13 @@ async function showTopics() {
                 title: 'Edit topic',
                 fields: [{ name: 'title', label: 'Title', type: 'text', value: title }],
                 onSave: async (values) => {
-                  await api('PUT', `/admin/topics/${encodeURIComponent(id)}`, { title: values.title });
+                  await api('PUT', `/api5/admin/topics/${encodeURIComponent(id)}`, { title: values.title });
                   await showTopics();
                 },
               });
             } else if (action === 'delete') {
               if (!confirm(`Delete "${title}"? This removes it from the live app immediately.`)) return;
-              await api('DELETE', `/admin/topics/${encodeURIComponent(id)}`);
+              await api('DELETE', `/api5/admin/topics/${encodeURIComponent(id)}`);
               await showTopics();
             }
           });
@@ -238,7 +238,7 @@ async function showTopics() {
       title: 'Add topic',
       fields: [{ name: 'title', label: 'Title', type: 'text', value: '' }],
       onSave: async (values) => {
-        await api('POST', '/admin/topics', { title: values.title });
+        await api('POST', '/api5/admin/topics', { title: values.title });
         await showTopics();
       },
     });
@@ -246,7 +246,7 @@ async function showTopics() {
 }
 
 async function enterTopic(moduleId) {
-  const data = await api('GET', `/admin/topics/${encodeURIComponent(moduleId)}`);
+  const data = await api('GET', `/api5/admin/topics/${encodeURIComponent(moduleId)}`);
   state.topicId = moduleId;
   state.topicData = data;
   showSubTopics(moduleId, data);
@@ -255,7 +255,7 @@ async function enterTopic(moduleId) {
 // ---- Sub-topics grid ----
 
 async function refreshTopicData() {
-  state.topicData = await api('GET', `/admin/topics/${encodeURIComponent(state.topicId)}`);
+  state.topicData = await api('GET', `/api5/admin/topics/${encodeURIComponent(state.topicId)}`);
 }
 
 function showSubTopics(moduleId, data) {
@@ -298,7 +298,7 @@ function showSubTopics(moduleId, data) {
                 title: 'Edit sub-topic',
                 fields: [{ name: 'label', label: 'Label', type: 'text', value: label }],
                 onSave: async (values) => {
-                  await api('PUT', `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(id)}`, {
+                  await api('PUT', `/api5/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(id)}`, {
                     label: values.label,
                   });
                   await refreshTopicData();
@@ -307,7 +307,7 @@ function showSubTopics(moduleId, data) {
               });
             } else if (action === 'delete') {
               if (!confirm(`Delete sub-topic "${label}" and all its questions?`)) return;
-              await api('DELETE', `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(id)}`);
+              await api('DELETE', `/api5/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(id)}`);
               await refreshTopicData();
               showSubTopics(state.topicId, state.topicData);
             }
@@ -322,7 +322,7 @@ function showSubTopics(moduleId, data) {
       title: 'Add sub-topic',
       fields: [{ name: 'label', label: 'Label', type: 'text', value: '' }],
       onSave: async (values) => {
-        await api('POST', `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics`, { label: values.label });
+        await api('POST', `/api5/admin/topics/${encodeURIComponent(state.topicId)}/subtopics`, { label: values.label });
         await refreshTopicData();
         showSubTopics(state.topicId, state.topicData);
       },
@@ -380,7 +380,7 @@ function showQuestions(subTopicId) {
               if (!confirm('Delete this question?')) return;
               await api(
                 'DELETE',
-                `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(subTopicId)}/questions/${index}`
+                `/api5/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(subTopicId)}/questions/${index}`
               );
               await refreshTopicData();
               showQuestions(subTopicId);
@@ -465,13 +465,13 @@ function openQuestionModal({ mode, item, index }) {
       if (mode === 'create') {
         await api(
           'POST',
-          `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(state.subTopicId)}/questions`,
+          `/api5/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(state.subTopicId)}/questions`,
           payload
         );
       } else {
         await api(
           'PUT',
-          `/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(state.subTopicId)}/questions/${index}`,
+          `/api5/admin/topics/${encodeURIComponent(state.topicId)}/subtopics/${encodeURIComponent(state.subTopicId)}/questions/${index}`,
           payload
         );
       }
@@ -645,7 +645,7 @@ async function runPreview() {
   previewResultBox.className = 'result-box';
   previewStatus.textContent = 'Checking…';
   try {
-    const data = await api('POST', '/admin/preview', { csv });
+    const data = await api('POST', '/api5/admin/preview', { csv });
     previewResultBox.className = 'result-box info';
 
     const summaryHtml = data.summary
@@ -710,7 +710,7 @@ publishBtn.addEventListener('click', async () => {
   publishBtn.disabled = true;
   publishBtn.textContent = 'Publishing…';
   try {
-    const data = await api('POST', '/admin/import', { csv });
+    const data = await api('POST', '/api5/admin/import', { csv });
     showToast(`Published ${data.published.length} topic${data.published.length === 1 ? '' : 's'} successfully`);
     resultBox.className = 'result-box ok';
     const cards = data.published
